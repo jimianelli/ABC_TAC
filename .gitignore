@@ -1,0 +1,21 @@
+# R
+.Rhistory
+.Rdata
+.RData
+.Ruserdata
+.Rproj.user/
+
+# Quarto
+/.quarto/
+*_cache/
+*_files/
+
+# Output files
+*.html
+*.pdf
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
