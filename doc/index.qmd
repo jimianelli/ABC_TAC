@@ -1,0 +1,917 @@
+---
+title: "An evaluation of ABC and TAC projections for the Bering Sea and Aleutian Island groundfish"
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    embed-resources: true
+    lightbox: true
+  pdf:
+    toc: true
+execute:
+  echo: false
+  warning: false
+  message: false
+bibliography: ref.bib
+link-citations: true
+---
+
+```{r}
+library(here)
+library(tidyverse)
+library(scales)
+library(GGally)
+
+theme_set(theme_minimal(base_size = 12))
+
+df <- read_csv(here("data", "BSAI_OFL_ABC_TAC.csv"), show_col_types = FALSE)
+
+mainspp <- c(
+  "Pollock",
+  "Yellowfin sole",
+  "Pacific cod",
+  "Atka mackerel",
+  "Northern rock sole",
+  "Flathead sole",
+  "Pacific ocean perch"
+)
+
+dfOY <- df %>%
+  filter(OY == 1) %>%
+  group_by(Year = ProjYear, lag, Species, Order) %>%
+  summarise(
+    ABC = sum(ABC, na.rm = TRUE),
+    OFL = sum(OFL, na.rm = TRUE),
+    TAC = sum(TAC, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+species_order <- dfOY %>% distinct(Species, Order)
+
+main_share <- dfOY %>%
+  filter(lag == 1) %>%
+  summarise(share = sum(ABC[Species %in% mainspp], na.rm = TRUE) / sum(ABC, na.rm = TRUE)) %>%
+  pull(share)
+
+cv_tbl <- dfOY %>%
+  filter(lag == 1, Species %in% mainspp) %>%
+  group_by(Species) %>%
+  summarise(
+    cv_ABC = sd(ABC, na.rm = TRUE) / mean(ABC, na.rm = TRUE),
+    cv_TAC = sd(TAC, na.rm = TRUE) / mean(TAC, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+cv_max <- cv_tbl %>% arrange(desc(cv_ABC)) %>% slice(1)
+cv_min_tac <- cv_tbl %>% arrange(cv_TAC) %>% slice(1)
+
+dat <- dfOY %>%
+  filter(Species %in% mainspp) %>%
+  mutate(
+    Stock = fct_reorder(Species, -Order),
+    Species = fct_reorder(Species, Order),
+    lag = if_else(lag == 2, "two", "one")
+  ) %>%
+  select(Stock, Species, Year, TAC, ABC, lag, Order) %>%
+  pivot_wider(names_from = lag, values_from = c(TAC, ABC)) %>%
+  mutate(
+    ABC_deltat = (ABC_one - ABC_two) / 1000,
+    TAC_deltat = (TAC_one - TAC_two) / 1000,
+    ABC_delta = if_else(ABC_two > 0, (ABC_one - ABC_two) / ABC_two, NA_real_),
+    TAC_delta = if_else(ABC_two > 0, (TAC_one - TAC_two) / ABC_two, NA_real_),
+    TAC_sign = if_else(TAC_delta < 0, "-", "+"),
+    ABC_sign = if_else(ABC_delta < 0, "-", "+")
+  )
+
+mean_deltas <- dat %>%
+  summarise(
+    mean_abc = mean(ABC_delta, na.rm = TRUE),
+    mean_tac = mean(TAC_delta, na.rm = TRUE)
+  )
+
+mean_by_species <- dat %>%
+  group_by(Species) %>%
+  summarise(
+    mean_abc = mean(ABC_delta, na.rm = TRUE),
+    mean_tac = mean(TAC_delta, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+max_abc <- mean_by_species %>% arrange(desc(mean_abc)) %>% slice(1)
+min_abc <- mean_by_species %>% arrange(mean_abc) %>% slice(1)
+min_tac <- mean_by_species %>% arrange(mean_tac) %>% slice(1)
+
+rollover <- dfOY %>%
+  filter(Year > 2000, Species %in% mainspp) %>%
+  mutate(application = if_else(lag == 1, "Used", "Projected")) %>%
+  select(Year, Species, ABC, TAC, application) %>%
+  pivot_wider(names_from = application, values_from = c(ABC, TAC)) %>%
+  group_by(Species) %>%
+  arrange(Year) %>%
+  mutate(
+    Projected_ABC = lag(ABC_Used),
+    Projected_TAC = lag(TAC_Used)
+  ) %>%
+  ungroup() %>%
+  mutate(
+    ABC_delta = if_else(Projected_ABC > 0, (ABC_Used - Projected_ABC) / Projected_ABC, NA_real_),
+    TAC_delta = if_else(Projected_TAC > 0, (TAC_Used - Projected_TAC) / Projected_TAC, NA_real_)
+  ) %>%
+  left_join(species_order, by = "Species")
+
+rollover_means <- rollover %>%
+  summarise(
+    mean_abc = mean(ABC_delta, na.rm = TRUE),
+    mean_tac = mean(TAC_delta, na.rm = TRUE)
+  )
+
+model_err <- dat %>%
+  filter(Year > 2000) %>%
+  mutate(
+    ABC_err_model = if_else(ABC_one > 0, abs(ABC_one - ABC_two) / ABC_one, NA_real_),
+    TAC_err_model = if_else(TAC_one > 0, abs(TAC_one - TAC_two) / TAC_one, NA_real_)
+  ) %>%
+  select(Species, Year, ABC_err_model, TAC_err_model)
+
+rollover_err <- rollover %>%
+  mutate(
+    ABC_err_roll = if_else(ABC_Used > 0, abs(ABC_Used - Projected_ABC) / ABC_Used, NA_real_),
+    TAC_err_roll = if_else(TAC_Used > 0, abs(TAC_Used - Projected_TAC) / TAC_Used, NA_real_)
+  ) %>%
+  select(Species, Year, ABC_err_roll, TAC_err_roll)
+
+comp_err <- model_err %>%
+  inner_join(rollover_err, by = c("Species", "Year"))
+
+comp_summary <- comp_err %>%
+  summarise(
+    model_better_abc = mean(ABC_err_model < ABC_err_roll, na.rm = TRUE),
+    model_better_tac = mean(TAC_err_model < TAC_err_roll, na.rm = TRUE),
+    mean_abc_model = mean(ABC_err_model, na.rm = TRUE),
+    mean_abc_roll = mean(ABC_err_roll, na.rm = TRUE),
+    mean_tac_model = mean(TAC_err_model, na.rm = TRUE),
+    mean_tac_roll = mean(TAC_err_roll, na.rm = TRUE)
+  )
+
+comp_by_species <- comp_err %>%
+  group_by(Species) %>%
+  summarise(
+    mean_abc_model = mean(ABC_err_model, na.rm = TRUE),
+    mean_abc_roll = mean(ABC_err_roll, na.rm = TRUE),
+    mean_tac_model = mean(TAC_err_model, na.rm = TRUE),
+    mean_tac_roll = mean(TAC_err_roll, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+species_abc_adv <- sum(comp_by_species$mean_abc_model < comp_by_species$mean_abc_roll, na.rm = TRUE)
+species_tac_adv <- sum(comp_by_species$mean_tac_model < comp_by_species$mean_tac_roll, na.rm = TRUE)
+```
+
+# Introduction
+
+Annual ABC and TAC decisions in the Bering Sea and Aleutian Islands (BSAI) groundfish fisheries set the management ceilings that balance conservation, stability, and economic planning. Multi-year advice provides predictable expectations, but it is built on forecasts that can change as new data arrive, which can create abrupt revisions in advice.
+
+This work evaluates whether two-year model projections provide a meaningful improvement over a simple rollover of the previous year's values. Quantifying when projections track final outcomes, and when they do not, helps interpret the reliability of advice, supports communication with stakeholders, and identifies where interim updates may add value.
+
+This document compares final (lag 1) ABC and TAC values to their two-year projections (lag 2) using OY = 1 records. The seven main species listed above account for about `r percent(main_share, accuracy = 1)` of total ABC, so most of the signal comes from them.
+
+# Methods
+
+Data were compiled for the 1986–2025 period for the Bering Sea and Aleutian Islands (BSAI) region, consistent with the management framework described in the [BSAI fishery management plan](https://files.npfmc.org/fmp/BSAI/BSAIfmp.pdf) and the [BSAI groundfish amendments action summary](https://files.npfmc.org/fmp/BSAI/BSAIGFAmActionSumm.pdf). The dataset includes ABCs, TACs, and OFLs set by management for the next year and the year after (lag 1 and lag 2). We first evaluated overall variability across the main stocks for both ABC and TAC, then examined patterns in the Pollock stock in more detail.
+
+As an exploratory extension, we attempted to replace the ATTACH catch function with a DSEM-based approach that maps ABC inputs to expected TACs for key species while modeling cross-species dependence and temporal dynamics. This provides a direct comparison to the static SUR-style framework in ATTACH and helps assess whether a dynamic model can better replicate management outcomes.
+
+## Performance measures
+
+For each species $s$ and projection year $t$, let $X_{t,1}$ be the final (lag 1) value and $X_{t,2}$ the two-year projection (lag 2), where $X$ is either ABC or TAC. We computed percent differences as:
+
+$$
+\Delta X_{t} = \frac{X_{t,1} - X_{t,2}}{X_{t,2}}.
+$$
+
+To keep ABC and TAC deltas on a common scale, TAC percent changes were scaled by the two-year ABC:
+
+$$
+\Delta TAC_{t} = \frac{TAC_{t,1} - TAC_{t,2}}{ABC_{t,2}}.
+$$
+
+Absolute changes in thousand tons are:
+
+$$
+\Delta X_{t}^{(kt)} = \frac{X_{t,1} - X_{t,2}}{1000}.
+$$
+
+Interannual variability was summarized using the coefficient of variation:
+
+$$
+CV(X) = \frac{sd(X)}{mean(X)}.
+$$
+
+For the projection-versus-rollover comparison, we used absolute percent error against the final value:
+
+$$
+APE_{model}(X) = \frac{\lvert X_{t,1} - X_{t,2} \rvert}{X_{t,1}}, \quad
+APE_{roll}(X) = \frac{\lvert X_{t,1} - X_{t-1,1} \rvert}{X_{t,1}}.
+$$
+
+
+## Dynamic structural equation model setup
+
+This section sets up a dynamic structural equation model (DSEM) using the `dsem` package. DSEMs blend structural equation modeling with state-space time-series dynamics to estimate both contemporaneous effects and temporal persistence, allowing mechanistic interpretation of multivariate ecological systems [@Thorson2024DSEM]. The dependent variables are TACs for Pollock and Pacific cod, and the independent variables are ABCs for all other species. The code below fits a parsimonious AR(1) structure for each TAC with contemporaneous ABC effects and shows how to generate expected TACs given new ABC inputs.
+
+Seemingly unrelated regression (SUR) provides a useful static reference point for understanding dynamic structural equation models (DSEM). In SUR, multiple regression equations are estimated jointly, allowing for contemporaneous correlation among equation-specific error terms while excluding any dynamic feedback or causal coupling across outcomes [@Zellner1962SUR]. DSEM can be viewed as a strict generalization of this framework: correlated disturbances are retained, but are embedded within a dynamic state-space formulation that allows for autoregressive behavior, latent processes, and explicit structural pathways across variables and time [@Asparouhov2018DSEM]. From this perspective, SUR corresponds to a single-time-slice, purely contemporaneous special case of DSEM in which temporal dependence and structural effects are suppressed. This connection clarifies how joint modeling gains efficiency through shared stochastic components, while DSEM extends that logic by separating persistent process variation from transient noise and propagating information forward through time.
+
+In the BSAI context, the ATTACH model implemented in the `catchfunction` package uses a two-step regression workflow (ABC → TAC, then TAC → catch) with SUR linking TAC-stage errors across species, and an ensemble of alternative error structures in the catch stage to reflect correlated shocks and the ecosystem cap [@FaigHaynie2020ATTACH]. This provides a static, cross-equation baseline that motivates the move to DSEM when temporal dynamics and lagged effects are of interest.
+
+For clarity and understanding, we constructed similar log-log TAC~ABC regressions for the main stocks and pooled "Others". Here, TACs for each stock were estimated statistically using a log-linear model. For $j = 1, 2, \ldots, n$ stocks, the general model for stock $i$ took the form:
+
+$$
+\ln(\mathrm{TAC}_{i,t}) = \alpha_i + \beta_i \ln(\mathrm{ABC}_{i,t}) + \sum_{j \ne i}^{n} \beta_{ij} \ln(\mathrm{ABC}_{j,t}) + \sum_{k=1}^{m} \beta_k I_{k,t} + \varepsilon_{i,t}.
+$$
+
+where $\alpha_i$ is the stock-specific intercept for species $i$, $\beta_i$ is the elasticity of the TAC of species $i$ with respect to its own ABC, and $\beta_{ij}$ is the elasticity for the ABC of species $j \neq i$ in the TAC equation for species $i$. The effect ($\beta_k$) of $k = 1, 2, \ldots, m$ events or policy changes (e.g., changes in management, area closures, or implementation of catch share programs) on TAC was also estimated, where $I_{k,t}$ is an indicator variable for event $k$ in year $t$, and $\varepsilon_{i,t}$ denotes the residual error for the prediction in year $t$. 
+
+
+# Results
+## Variability across species
+
+@fig-cv shows the interannual CVs for ABC and TAC.
+Pacific ocean perch has the highest ABC variability (CV about `r round(cv_max$cv_ABC, 2)`), while Pollock has the lowest TAC variability (CV about `r round(cv_min_tac$cv_TAC, 2)`), indicating tighter management consistency for the largest stock.
+
+```{r}
+#| label: fig-cv
+#| fig-cap: "Interannual variability (CV) of ABC and TAC for the main species."
+cv_long <- cv_tbl %>%
+  pivot_longer(cols = c(cv_ABC, cv_TAC), names_to = "Measure", values_to = "CV") %>%
+  mutate(
+    Measure = recode(Measure, cv_ABC = "ABC", cv_TAC = "TAC"),
+    Species = fct_reorder(Species, CV)
+  )
+
+ggplot(cv_long, aes(x = Species, y = CV, fill = Measure)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  coord_flip() +
+  labs(x = NULL, y = "Coefficient of variation", fill = NULL) +
+  theme(legend.position = "top")
+```
+
+## BSAI Pollock 
+
+Pollock provides a clear example of how ABC, OFL, and TAC move together over time (see @fig-pollock-ts).
+OFL generally sits above ABC, and TAC sits below ABC, with tighter TAC variability consistent with the low CV reported above.
+
+```{r}
+#| label: fig-pollock-ts
+#| fig-cap: "Pollock ABC, OFL, and TAC over time (lag 1, OY = 1)."
+pollock_ts <- dfOY %>%
+  filter(lag == 1, Species == "Pollock") %>%
+  pivot_longer(cols = c(ABC, OFL, TAC), names_to = "Measure", values_to = "value")
+
+ggplot(pollock_ts, aes(x = Year, y = value / 1000, color = Measure)) +
+  geom_line(linewidth = 1) +
+  scale_y_continuous(labels = comma) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(x = NULL, y = "thousand t", color = NULL)
+```
+
+## Two-year vs final differences (percent)
+
+@fig-delta-pct summarizes the percent difference between final and two-year values, scaled by the two-year ABC to keep ABC and TAC deltas on the same scale.
+Across species, the average ABC adjustment is about `r percent(mean_deltas$mean_abc, accuracy = 0.1)`, while TAC adjustments are smaller at `r percent(mean_deltas$mean_tac, accuracy = 0.1)`.
+Atka mackerel has the largest positive mean ABC revision (`r percent(max_abc$mean_abc, accuracy = 0.1)`), while Northern rock sole shows the only negative mean ABC adjustment (`r percent(min_abc$mean_abc, accuracy = 0.1)`); Pollock has the most negative mean TAC change (`r percent(min_tac$mean_tac, accuracy = 0.1)`).
+
+```{r}
+#| label: fig-delta-pct
+#| fig-cap: "Percent changes between final (lag 1) and two-year (lag 2) values, scaled by the two-year ABC."
+#| fig-height: 7
+#| fig-width: 8
+delta_long_pct <- dat %>%
+  filter(Year > 1990) %>%
+  select(Year, Species, Order, ABC_delta, TAC_delta) %>%
+  pivot_longer(cols = c(ABC_delta, TAC_delta), names_to = "Measure", values_to = "Delta") %>%
+  mutate(
+    Measure = recode(Measure, ABC_delta = "ABC", TAC_delta = "TAC"),
+    Species = fct_reorder(Species, Order)
+  )
+
+ggplot(delta_long_pct, aes(x = Year, y = Delta, fill = Delta)) +
+  geom_col() +
+  facet_grid(Species ~ Measure, scales = "free_y") +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  scale_fill_gradient2(
+    low = muted("red"),
+    mid = "white",
+    high = muted("blue"),
+    midpoint = 0,
+    na.value = "grey90"
+  ) +
+  labs(x = NULL, y = "Percent change", fill = "Change") +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    strip.text.y = element_text(angle = 0)
+  )
+```
+
+## Two-year vs final differences (kt)
+
+The heatmaps in @fig-delta-kt-heat highlight the absolute magnitude of adjustments in thousands of tons.
+Large swings cluster in the biggest stocks (notably Pollock), while smaller species show less absolute movement even when percent changes are sizable.
+
+```{r}
+#| label: fig-delta-kt-heat
+#| fig-cap: "Absolute changes between final and two-year values (thousand tons)."
+#| fig-height: 7
+#| fig-width: 8
+complete_years <- dat %>%
+  group_by(Year) %>%
+  summarise(miss = sum(is.na(ABC_deltat) | is.na(TAC_deltat)), .groups = "drop") %>%
+  filter(miss == 0) %>%
+  pull(Year)
+
+delta_long_kt <- dat %>%
+  filter(Year > 1990, Year %in% complete_years) %>%
+  select(Year, Species, Order, ABC_deltat, TAC_deltat) %>%
+  pivot_longer(cols = c(ABC_deltat, TAC_deltat), names_to = "Measure", values_to = "Delta") %>%
+  mutate(
+    Measure = recode(Measure, ABC_deltat = "ABC", TAC_deltat = "TAC"),
+    Species = fct_reorder(Species, Order)
+  )
+
+ggplot(delta_long_kt, aes(x = Year, y = Species, fill = Delta)) +
+  geom_tile() +
+  facet_grid(Measure ~ .) +
+  scale_fill_gradient2(
+    low = muted("red"),
+    mid = "white",
+    high = muted("blue"),
+    midpoint = 0,
+    na.value = "grey90",
+    labels = comma
+  ) +
+  labs(x = NULL, y = NULL, fill = "Change (kt)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+The results shown in
+@fig-delta-kt-heat-nopollock is provided to show contrast among other stocks with pollock removed.
+
+```{r}
+#| label: fig-delta-kt-heat-nopollock
+#| fig-cap: "Absolute changes between final and two-year values (thousand tons), excluding Pollock."
+#| fig-height: 7
+#| fig-width: 8
+delta_long_kt_nopollock <- delta_long_kt %>%
+  filter(Species != "Pollock")
+
+ggplot(delta_long_kt_nopollock, aes(x = Year, y = Species, fill = Delta)) +
+  geom_tile() +
+  facet_grid(Measure ~ .) +
+  scale_fill_gradient2(
+    low = muted("red"),
+    mid = "white",
+    high = muted("blue"),
+    midpoint = 0,
+    na.value = "grey90",
+    labels = comma
+  ) +
+  labs(x = NULL, y = NULL, fill = "Change (kt)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+## Rollover scenario
+
+To gauge a simple alternative, @fig-rollover compares final values to a naive rollover that uses the previous year's final value as the "projection."
+The average rollover changes are small but positive (`r percent(rollover_means$mean_abc, accuracy = 0.1)` for ABC and `r percent(rollover_means$mean_tac, accuracy = 0.1)` for TAC), suggesting a mild upward drift when viewed against a strict carry-forward baseline.
+
+```{r}
+#| label: fig-rollover
+#| fig-cap: "Rollover comparison: final values vs prior-year final values used as a naive projection."
+#| fig-height: 7
+#| fig-width: 8
+rollover_long <- rollover %>%
+  select(Year, Species, Order, ABC_delta, TAC_delta) %>%
+  pivot_longer(cols = c(ABC_delta, TAC_delta), names_to = "Measure", values_to = "Delta") %>%
+  mutate(
+    Measure = recode(Measure, ABC_delta = "ABC", TAC_delta = "TAC"),
+    Species = fct_reorder(Species, Order)
+  )
+
+ggplot(rollover_long, aes(x = Year, y = Delta, fill = Delta)) +
+  geom_col() +
+  facet_grid(Species ~ Measure, scales = "free_y") +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  scale_fill_gradient2(
+    low = muted("red"),
+    mid = "white",
+    high = muted("blue"),
+    midpoint = 0,
+    na.value = "grey90"
+  ) +
+  labs(x = NULL, y = "Rollover change", fill = "Change") +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    strip.text.y = element_text(angle = 0)
+  ) + ggthemes::theme_few()
+```
+
+## Projection vs rollover accuracy
+
+Using the overlap period (2001 onward), we compared how close the two-year model projections (lag 2) and a naive rollover (previous year's lag 1 value) came to the final values used (lag 1).
+On average, the model-based projections show slightly lower absolute percent error for ABC (`r percent(comp_summary$mean_abc_model, accuracy = 0.1)` vs `r percent(comp_summary$mean_abc_roll, accuracy = 0.1)`), and a similarly small improvement for TAC (`r percent(comp_summary$mean_tac_model, accuracy = 0.1)` vs `r percent(comp_summary$mean_tac_roll, accuracy = 0.1)`).
+However, the model is closer than the rollover in only `r percent(comp_summary$model_better_abc, accuracy = 1)` of ABC cases and `r percent(comp_summary$model_better_tac, accuracy = 1)` of TAC cases, and the mean advantage appears in `r species_abc_adv` of 7 stocks for ABC and `r species_tac_adv` of 7 stocks for TAC.
+This suggests there is enough information to compare the two approaches, but the performance edge of two-year projections over a rollover baseline is modest and uneven—more evident for ABC than for TAC.
+@tbl-proj-roll summarizes the mean absolute percent errors by species for each approach.
+
+```{r}
+#| label: tbl-proj-roll
+#| tbl-cap: "Mean absolute percent error for two-year projections vs rollover baselines (2001+)."
+tbl_proj_roll <- comp_by_species %>%
+  mutate(
+    abc_diff = mean_abc_model - mean_abc_roll,
+    tac_diff = mean_tac_model - mean_tac_roll
+  ) %>%
+  select(
+    Species,
+    mean_abc_model,
+    mean_abc_roll,
+    abc_diff,
+    mean_tac_model,
+    mean_tac_roll,
+    tac_diff
+  ) %>%
+  mutate(across(-Species, ~ percent(.x, accuracy = 0.1)))
+
+knitr::kable(
+  tbl_proj_roll,
+  col.names = c(
+    "Species",
+    "ABC model",
+    "ABC rollover",
+    "ABC model - rollover",
+    "TAC model",
+    "TAC rollover",
+    "TAC model - rollover"
+  ),
+  align = "lrrrrrr"
+)
+```
+
+## Projected vs used time series
+
+@fig-ts contrasts the two-year projections with the final values used in the next year.
+The projected series are generally smoother, with the largest departures in higher-variability 
+stocks (Pacific ocean perch and Flathead sole), which aligns with the elevated CVs in @fig-cv.
+
+```{r}
+#| label: fig-ts
+#| fig-cap: "Projected (lag 2) vs used (lag 1) ABC time series by species."
+ts_dat <- dfOY %>%
+  filter(Year > 2004, Species %in% mainspp) %>%
+  mutate(Series = if_else(lag == 1, "Used (lag 1)", "Projected (lag 2)")) %>%
+  select(Year, Species, ABC, Series) %>%
+  left_join(species_order, by = "Species") %>%
+  mutate(Species = fct_reorder(Species, Order))
+
+ggplot(ts_dat, aes(x = Year, y = ABC / 1000, color = Series)) +
+  geom_line(linewidth = 0.9) +
+  facet_wrap(~Species, scales = "free_y") +
+  scale_y_continuous(labels = comma) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(x = NULL, y = "ABC (thousand t)", color = NULL)
+```
+
+## TAC cross-species relationships
+
+@fig-tac-pairs shows pairwise relationships among TAC values for the main species, with all 
+remaining species pooled as "Others," using points with a smooth fit in the lower triangle.
+
+```{r}
+#| label: fig-tac-pairs
+#| fig-cap: "Pairs plot of TAC across the seven main species (lag 1, OY = 1)."
+tac_pairs_spp <- setdiff(mainspp, c("Pacific ocean perch", "Flathead sole"))
+
+tac_main <- dfOY %>%
+  filter(lag == 1, Species %in% tac_pairs_spp) %>%
+  mutate(TAC = TAC / 1000) %>%
+  select(Year, Species, TAC) %>%
+  pivot_wider(names_from = Species, values_from = TAC)
+
+tac_other <- dfOY %>%
+  filter(lag == 1, !Species %in% tac_pairs_spp) %>%
+  group_by(Year) %>%
+  summarise(Others = sum(TAC, na.rm = TRUE) / 1000, .groups = "drop")
+
+tac_wide <- tac_main %>%
+  left_join(tac_other, by = "Year") %>%
+  select(Year, all_of(tac_pairs_spp), Others)
+
+spp_labels <- c(tac_pairs_spp, "Others")
+spp_cols <- gsub(" ", "_", spp_labels)
+tac_wide <- tac_wide %>% rename_with(~ spp_cols, all_of(spp_labels))
+
+lower_points_smooth <- function(data, mapping, ...) {
+  ggplot(data = data, mapping = mapping) +
+    geom_point(alpha = 0.5, size = 0.7) +
+    geom_smooth(method = "loess", se = FALSE, linewidth = 0.6, color = "steelblue")
+}
+
+GGally::ggpairs(
+  tac_wide,
+  columns = spp_cols,
+  columnLabels = spp_labels,
+  lower = list(continuous = lower_points_smooth),
+  diag = list(continuous = "densityDiag"),
+  upper = list(continuous = "cor")
+) +
+  ggthemes::theme_few(base_size = 9)
+```
+
+
+## TAC-ABC regressions
+As noted, we fit multiple regressions for the five main species (Pollock, Pacific cod, Yellowfin sole, Atka mackerel, 
+Northern rock sole) and a pooled "Other" category comprising all remaining species. Each model uses log(ABC) for 
+the focal stock, separate log(ABC) terms for each other stock group, and a centered year term to proxy policy indicators.
+
+```{r}
+#| label: tbl-pre-dsem-reg
+#| tbl-cap: "Log-log TAC~ABC regressions with separate other-stock terms (lag 1, OY = 1)."
+main5 <- setdiff(mainspp, c("Pacific ocean perch", "Flathead sole"))
+group_names <- c(main5, "Other")
+
+reg_base <- dfOY %>%
+  filter(lag == 1) %>%
+  mutate(Group = if_else(Species %in% main5, Species, "Other")) %>%
+  group_by(Year, Group) %>%
+  summarise(
+    ABC = sum(ABC, na.rm = TRUE),
+    TAC = sum(TAC, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  pivot_wider(names_from = Group, values_from = c(ABC, TAC), values_fill = 0)
+
+safe_names <- function(x) gsub(" ", "_", x)
+names(reg_base) <- safe_names(names(reg_base))
+group_safe <- safe_names(group_names)
+
+reg_fits <- purrr::map2(group_names, group_safe, function(group, group_safe) {
+  abc_col <- paste0("ABC_", group_safe)
+  tac_col <- paste0("TAC_", group_safe)
+  other_groups <- setdiff(group_names, group)
+  other_cols <- paste0("ABC_", safe_names(other_groups))
+
+  df <- reg_base %>%
+    transmute(
+      Year,
+      ABC_i = .data[[abc_col]],
+      TAC_i = .data[[tac_col]],
+      across(all_of(other_cols), ~ .x, .names = "{.col}"),
+      Year_c = Year - mean(Year)
+    ) %>%
+    filter(TAC_i > 0) %>%
+    filter(if_all(all_of(c("ABC_i", other_cols)), ~ .x > 0)) %>%
+    mutate(
+      log_TAC_i = log(TAC_i),
+      log_ABC_i = log(ABC_i),
+      across(all_of(other_cols), ~ log(.x), .names = "log_{.col}")
+    )
+
+  rhs <- c("log_ABC_i", paste0("log_", other_cols), "Year_c")
+  model <- lm(as.formula(paste("log_TAC_i ~", paste(rhs, collapse = " + "))), data = df)
+  list(species = group, data = df, model = model)
+})
+
+reg_results <- purrr::map_dfr(reg_fits, function(x) {
+  coefs <- coef(x$model)
+  out <- tibble(
+    Species = x$species,
+    n = nrow(x$data),
+    Intercept = unname(coefs["(Intercept)"]),
+    log_ABC = unname(coefs["log_ABC_i"]),
+    Year_c = unname(coefs["Year_c"]),
+    R2 = summary(x$model)$r.squared
+  )
+
+  for (g in group_names) {
+    col_name <- paste0("log_ABC_", safe_names(g))
+    out[[col_name]] <- if (g == x$species) NA_real_ else unname(coefs[col_name])
+  }
+
+  out
+}) %>%
+  mutate(order = match(Species, group_names)) %>%
+  arrange(order) %>%
+  select(-order)
+
+reg_pred <- purrr::map_dfr(reg_fits, function(x) {
+  pred_log <- predict(x$model, newdata = x$data)
+  tibble(
+    Year = x$data$Year,
+    Species = x$species,
+    Observed = x$data$TAC_i,
+    Predicted = exp(pred_log)
+  )
+})
+
+abc_cols <- paste0("log_ABC_", safe_names(group_names))
+
+reg_results %>%
+  gt::gt(rowname_col = "Species") %>%
+  gt::cols_label(
+    n = "n",
+    Intercept = "Intercept",
+    log_ABC = "log(ABC)",
+    Year_c = "Year (centered)",
+    R2 = "R2",
+    !!!setNames(paste0("log(ABC ", group_names, ")"), abc_cols)
+  ) %>%
+  gt::fmt_number(columns = c(Intercept, log_ABC, all_of(abc_cols), Year_c, R2), decimals = 3) %>%
+  gt::fmt_number(columns = n, decimals = 0)
+```
+
+```{r}
+#| label: fig-pre-dsem-pred
+#| fig-cap: "Observed vs predicted TAC from log-linear multiple regressions (lag 1, OY = 1)."
+#| fig-height: 5
+#| fig-width: 7
+ggplot(reg_pred, aes(x = Year)) +
+  geom_line(aes(y = Predicted, color = "Predicted"), linewidth = 1) +
+  geom_point(aes(y = Observed, color = "Observed"), size = 1.2, alpha = 0.8) +
+  facet_grid(Species ~ ., scales = "free_y") +
+  scale_color_manual(values = c(Predicted = "steelblue", Observed = "grey40")) +
+  scale_y_continuous(labels = comma) +
+  labs(x = NULL, y = "TAC", color = NULL)
+```
+## DAGs for the DSEM
+
+```{r}
+#| label: fig-dsem-dag-contemporaneous
+#| fig-cap: "Contemporaneous DSEM DAG with ABC drivers for Pollock and Pacific cod TACs."
+abc_vars <- c(
+  "ABC_Yellowfin_sole",
+  "ABC_Atka_mackerel",
+  "ABC_Northern_rock_sole",
+  "ABC_Flathead_sole",
+  "ABC_Pacific_ocean_perch"
+)
+
+dag_static <- ggdag::dagify(
+  TAC_Pollock ~ ABC_Yellowfin_sole + ABC_Atka_mackerel + ABC_Northern_rock_sole +
+    ABC_Flathead_sole + ABC_Pacific_ocean_perch,
+  TAC_Pacific_cod ~ ABC_Yellowfin_sole + ABC_Atka_mackerel + ABC_Northern_rock_sole +
+    ABC_Flathead_sole + ABC_Pacific_ocean_perch,
+  labels = c(
+    ABC_Yellowfin_sole = "ABC: Yellowfin sole",
+    ABC_Atka_mackerel = "ABC: Atka mackerel",
+    ABC_Northern_rock_sole = "ABC: Northern rock sole",
+    ABC_Flathead_sole = "ABC: Flathead sole",
+    ABC_Pacific_ocean_perch = "ABC: Pacific ocean perch",
+    TAC_Pollock = "TAC: Pollock",
+    TAC_Pacific_cod = "TAC: Pacific cod"
+  ),
+  coords = list(
+    x = c(
+      ABC_Yellowfin_sole = 0,
+      ABC_Atka_mackerel = 0,
+      ABC_Northern_rock_sole = 0,
+      ABC_Flathead_sole = 0,
+      ABC_Pacific_ocean_perch = 0,
+      TAC_Pollock = 2,
+      TAC_Pacific_cod = 2
+    ),
+    y = c(
+      ABC_Yellowfin_sole = 2,
+      ABC_Atka_mackerel = 1,
+      ABC_Northern_rock_sole = 0,
+      ABC_Flathead_sole = -1,
+      ABC_Pacific_ocean_perch = -2,
+      TAC_Pollock = 1,
+      TAC_Pacific_cod = -1
+    )
+  )
+)
+
+dag_static_tidy <- ggdag::tidy_dagitty(dag_static)
+
+ggplot(dag_static_tidy, aes(x = x, y = y, xend = xend, yend = yend)) +
+  ggdag::geom_dag_edges() +
+  ggdag::geom_dag_node() +
+  ggdag::geom_dag_label_repel(aes(label = label), color = "black", size = 3) +
+  ggdag::theme_dag()
+```
+
+```{r}
+#| label: fig-dsem-dag-dynamic
+#| fig-cap: "Dynamic DSEM DAG with AR(1) TAC structure and contemporaneous ABC effects."
+dag_dynamic <- ggdag::dagify(
+  TAC_Pollock_t ~ ABC_Yellowfin_sole_t + ABC_Atka_mackerel_t + ABC_Northern_rock_sole_t +
+    ABC_Flathead_sole_t + ABC_Pacific_ocean_perch_t + TAC_Pollock_t1,
+  TAC_Pacific_cod_t ~ ABC_Yellowfin_sole_t + ABC_Atka_mackerel_t + ABC_Northern_rock_sole_t +
+    ABC_Flathead_sole_t + ABC_Pacific_ocean_perch_t + TAC_Pacific_cod_t1,
+  labels = c(
+    ABC_Yellowfin_sole_t = "ABC YFS (t)",
+    ABC_Atka_mackerel_t = "ABC AMK (t)",
+    ABC_Northern_rock_sole_t = "ABC NRS (t)",
+    ABC_Flathead_sole_t = "ABC FHS (t)",
+    ABC_Pacific_ocean_perch_t = "ABC POP (t)",
+    TAC_Pollock_t1 = "TAC Pollock (t-1)",
+    TAC_Pollock_t = "TAC Pollock (t)",
+    TAC_Pacific_cod_t1 = "TAC Pac. cod (t-1)",
+    TAC_Pacific_cod_t = "TAC Pac. cod (t)"
+  ),
+  coords = list(
+    x = c(
+      ABC_Yellowfin_sole_t = 0,
+      ABC_Atka_mackerel_t = 0,
+      ABC_Northern_rock_sole_t = 0,
+      ABC_Flathead_sole_t = 0,
+      ABC_Pacific_ocean_perch_t = 0,
+      TAC_Pollock_t1 = 1,
+      TAC_Pollock_t = 2,
+      TAC_Pacific_cod_t1 = 1,
+      TAC_Pacific_cod_t = 2
+    ),
+    y = c(
+      ABC_Yellowfin_sole_t = 2,
+      ABC_Atka_mackerel_t = 1,
+      ABC_Northern_rock_sole_t = 0,
+      ABC_Flathead_sole_t = -1,
+      ABC_Pacific_ocean_perch_t = -2,
+      TAC_Pollock_t1 = 1,
+      TAC_Pollock_t = 1,
+      TAC_Pacific_cod_t1 = -1,
+      TAC_Pacific_cod_t = -1
+    )
+  )
+)
+
+dag_dynamic_tidy <- ggdag::tidy_dagitty(dag_dynamic)
+
+ggplot(dag_dynamic_tidy, aes(x = x, y = y, xend = xend, yend = yend)) +
+  ggdag::geom_dag_edges() +
+  ggdag::geom_dag_node() +
+  ggdag::geom_dag_label_repel(aes(label = label), color = "black", size = 3) +
+  ggdag::theme_dag()
+```
+
+```{r}
+#| label: dsem-setup
+#| eval: true
+library(dsem)
+
+dsem_dep <- c("Pollock", "Pacific cod")
+dsem_indep <- setdiff(mainspp, dsem_dep)
+
+dsem_df <- dfOY %>%
+  filter(lag == 1, Species %in% mainspp) %>%
+  select(Year, Species, TAC, ABC) %>%
+  pivot_wider(
+    names_from = Species,
+    values_from = c(TAC, ABC),
+    names_sep = "_"
+  ) %>%
+  arrange(Year)
+
+safe_names <- function(x) gsub(" ", "_", x)
+names(dsem_df) <- safe_names(names(dsem_df))
+
+dep_safe <- safe_names(dsem_dep)
+indep_safe <- safe_names(dsem_indep)
+
+y_cols <- paste0("TAC_", dep_safe)
+x_cols <- paste0("ABC_", indep_safe)
+
+# Scale inputs for numerical stability; back-transform predictions later.
+ts_raw <- dsem_df[, c(y_cols, x_cols)]
+ts_scaled <- scale(ts_raw)
+ts_center <- attr(ts_scaled, "scaled:center")
+ts_scale <- attr(ts_scaled, "scaled:scale")
+
+tsdata <- ts(ts_scaled, start = min(dsem_df$Year))
+
+# Build SEM: AR(1) for TACs plus contemporaneous ABC effects.
+ar_lines <- paste0(y_cols, " -> ", y_cols, ", 1, ar_", dep_safe)
+abc_lines <- unlist(lapply(y_cols, function(y) {
+  paste0(x_cols, " -> ", y, ", 0, b_", gsub("ABC_", "", x_cols), "_to_", gsub("TAC_", "", y))
+}))
+
+sem <- paste(c(ar_lines, abc_lines), collapse = "\n")
+
+fit <- dsem(
+  sem = sem,
+  tsdata = tsdata,
+  estimate_delta0 = TRUE,
+  control = dsem_control(
+    quiet = TRUE,
+    gmrf_parameterization = "full",
+    newton_loops = 0,
+    extra_convergence_checks = FALSE,
+    getsd = TRUE
+  )
+)
+
+dsem_summary <- summary(fit)
+
+# Predict expected TACs given new ABC inputs (append future rows with TAC = NA).
+n_future <- 5
+new_abc_raw <- matrix(NA_real_, nrow = n_future, ncol = length(x_cols))
+colnames(new_abc_raw) <- x_cols
+
+scale_with <- function(x, center, scale) {
+  sweep(sweep(x, 2, center, "-"), 2, scale, "/")
+}
+
+new_abc_scaled <- scale_with(new_abc_raw, ts_center[x_cols], ts_scale[x_cols])
+
+newdata <- as.data.frame(tsdata)
+newdata_future <- as.data.frame(new_abc_scaled)
+newdata_future[, y_cols] <- NA_real_
+newdata <- bind_rows(newdata, newdata_future)
+
+newdata_ts <- ts(as.matrix(newdata), start = start(tsdata), frequency = frequency(tsdata))
+
+pred_scaled <- predict(fit, newdata = newdata_ts, type = "response")
+colnames(pred_scaled) <- colnames(newdata_ts)
+pred <- sweep(pred_scaled, 2, ts_scale[colnames(pred_scaled)], "*")
+pred <- sweep(pred, 2, ts_center[colnames(pred)], "+")
+pred_tac_future <- tail(pred[, y_cols], n_future)
+```
+
+## DSEM estimates
+This DSEM estimates TAC dynamics for Pollock and Pacific cod with two components: (1) AR(1) persistence in each 
+TAC time series and (2) contemporaneous influence of ABCs from the other species. The model is fit on scaled 
+inputs for stability, then predictions are transformed back to the original TAC units for interpretation.
+
+```{r}
+#| label: tbl-dsem-summary
+#| tbl-cap: "Summary of DSEM results."
+dsem_anova <- dsem_summary %>%
+  mutate(
+    Term = if_else(lag > 0, paste0(path, " (lag ", lag, ")"), path),
+    Group = case_when(
+      lag > 0 ~ "Autoregressive (lagged TAC)",
+      str_detect(first, "^ABC_") ~ "ABC -> TAC",
+      TRUE ~ "Other"
+    ),
+    Estimate = Estimate,
+    Std_Error = Std_Error,
+    z_value = z_value,
+    p_value = p_value
+  ) %>%
+  arrange(Group, Term) %>%
+  select(Group, Term, Estimate, Std_Error, z_value, p_value)
+
+dsem_anova %>%
+  gt::gt(rowname_col = "Term", groupname_col = "Group") %>%
+  gt::cols_label(
+    Estimate = "Estimate",
+    Std_Error = "Std. Error",
+    z_value = "z",
+    p_value = "p"
+  ) %>%
+  gt::fmt_number(columns = c(Estimate, Std_Error), decimals = 3) %>%
+  gt::fmt_number(columns = z_value, decimals = 2) %>%
+  gt::fmt_number(columns = p_value, decimals = 3)
+```
+
+```{r}
+#| label: fig-dsem-pred
+#| fig-cap: "Observed vs predicted TACs from the DSEM (back-transformed to original units)."
+#| fig-height: 5
+#| fig-width: 7
+
+pred_years <- c(dsem_df$Year, max(dsem_df$Year) + seq_len(n_future))
+pred_df <- as_tibble(pred[, y_cols]) %>%
+  mutate(Year = pred_years) %>%
+  pivot_longer(-Year, names_to = "Species", values_to = "Predicted")
+
+obs_df <- dsem_df %>%
+  select(Year, all_of(y_cols)) %>%
+  pivot_longer(-Year, names_to = "Species", values_to = "Observed")
+
+plot_df <- left_join(pred_df, obs_df, by = c("Year", "Species"))
+
+ggplot(plot_df, aes(x = Year)) +
+  geom_line(aes(y = Predicted, color = "Predicted"), linewidth = 1) +
+  geom_point(aes(y = Observed, color = "Observed"), size = 1.4, alpha = 0.8) +
+  facet_grid(Species~., scales = "free_y") +
+  scale_color_manual(values = c(Predicted = "steelblue", Observed = "grey40")) +
+  scale_y_continuous(labels = comma) +
+  labs(x = NULL, y = "TAC", color = NULL)
+```
+
+
+# Discussion
+## Projection updates under new data and assessment
+
+Multi-year catch advice inevitably embeds a forecasting problem: projections are conditioned on assumptions about future recruitment, selectivity, mortality, and implementation error, all frozen at the time advice is issued [@MAFMC2012MultiYearABC; @ICESAdviceFramework]. The literature above converges on a shared observation: when a new assessment assimilates additional data, the posterior state of the stock can shift abruptly relative to those earlier projections [@SanchezMarono2021Lag]. The impact of updating data and assessment 
+creates a  discontinuity and reflects the consequence of evolving data streams and analyses.
+
+Interim management procedure (MP) work reframes the problem by explicitly separating assessment cadence from advice cadence [@Huynh2020InterimMP; @Klibansky2022InterimAdvice]. Rather than treating interim updates as ad-hoc corrections, these approaches formalize how limited new information (recent catches, survey indices, environmental indicators) should update catch advice between full assessments. The goal is not to eliminate snap—information shocks are unavoidable—but to bound it, so that revisions are predictable, explainable, and risk-consistent.
+
+This framing is directly relevant to BSAI groundfish, where large stocks (pollock, cod, flatfish) dominate total ABC and where management stability is highly valued. Multi-year ABCs smooth year-to-year variability, but smoothing pushes uncertainty forward in time. When a subsequent assessment revises recruitment trajectories or selectivity patterns, the resulting adjustment can appear disproportionate relative to the modest interim changes that preceded it. The Canadian and U.S. guidance documents emphasize that this tension is intrinsic: stability and responsiveness trade off, and neither can be maximized simultaneously [@Krohn2019DFOInterim; @MAFMC2012MultiYearABC; @SEDAR2022Projections].
+
+The ICES and MSE-oriented literature adds an important synthesis [@ICESAdviceFramework]. Geromont and Butterworth [@Geromont2015ComplexVsSimple] and Walter et al. [@Walter2023WhenMSE] show that systems relying on simple, pre-tested update rules often experience smaller and more interpretable snaps than systems that defer all learning to infrequent, high-dimensional assessments. In that sense, forecast-to-assimilation snap is best understood as a design property of the advice system, not merely an outcome of assessment error. For BSAI groundfish, this perspective motivates explicit evaluation of how multi-year projections, rollover rules, and interim updates distribute learning over time—shaping not only biological risk, but also the credibility and usability of scientific advice.
+
+
+# References
