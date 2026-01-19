@@ -803,7 +803,7 @@ fit <- dsem(
   estimate_delta0 = TRUE,
   control = dsem_control(
     quiet = TRUE,
-    gmrf_parameterization = "full",
+    gmrf_parameterization = "separable",
     newton_loops = 0,
     extra_convergence_checks = FALSE,
     getsd = TRUE
