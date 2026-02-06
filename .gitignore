@@ -6,7 +6,7 @@
 .Rproj.user/
 
 # Quarto
-/.quarto/
+.quarto/
 *_cache/
 *_files/
 
@@ -17,5 +17,6 @@
 # macOS
 .DS_Store
 
-# Editor
+# Editor / local tooling
 .vscode/
+doc/.claude/

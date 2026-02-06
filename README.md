@@ -6,13 +6,13 @@ This repository evaluates ABC (Allowable Biological Catch) and TAC (Total Allowa
 
 ## Repository Structure
 
-- `doc/` - Main analysis document (Quarto), bibliography, and rendered outputs
+- `doc/` - Quarto source document(s) and bibliography (rendered outputs are *generated*, not committed)
 - `R/` - Exploratory R scripts for data analysis and visualization
-- `data/` - Source data (BSAI_OFL_ABC_TAC.csv with OFL/ABC/TAC records 1986-2025)
+- `data/` - Source data (`BSAI_OFL_ABC_TAC.csv` with OFL/ABC/TAC records 1986–2025)
 
 ## Key Analysis Components
 
-The main analysis (`doc/evaluation-abc-tac-projections.qmd`) uses Quarto with R and covers:
+The main analysis (`doc/index.qmd`) uses Quarto with R and covers:
 - Interannual variability (CV) of ABC/TAC across species
 - Two-year vs final value comparisons (percent and absolute changes)
 - Rollover baseline comparison
@@ -21,18 +21,20 @@ The main analysis (`doc/evaluation-abc-tac-projections.qmd`) uses Quarto with R 
 
 ## Required R Packages
 
+The document loads packages as needed; the GitHub Actions workflow installs the core set.
+
 Core: `tidyverse`, `here`, `scales`, `GGally`
-Visualization: `ggthemes`, `ggdag`, `patchwork`, `viridis`, `wesanderson`
+Visualization / graphs: `ggthemes`, `ggdag`
 Modeling: `dsem`
-Tables: `gt`, `knitr`, `flextable`, `YesSiR`
+Tables: `gt`, `knitr`
 
 ## Rendering the Document
 
 ```bash
-quarto render doc/evaluation-abc-tac-projections.qmd
+quarto render doc/index.qmd
 ```
 
-Outputs both HTML (with embedded resources) and PDF formats.
+This produces HTML (with embedded resources) and PDF locally. Rendered `.html`/`.pdf` outputs are ignored via `.gitignore` (recommended) and are not committed.
 
 ## Data Structure
 
