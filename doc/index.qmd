@@ -239,8 +239,8 @@ where $\alpha_i$ is the stock-specific intercept for species $i$, $\beta_i$ is t
 ## GOA totals by year
 
 The GOA harvest specifications file was munged into the same long format as the BSAI data.
-Here we show very simple annual totals across all GOA species/areas for TAC, ABC, and OFL.
-Because the GOA spreadsheet contains some `n/a` fields (especially for OFL/ABC in early years and/or subtotal rows),
+Here we show very simple annual totals from the GOA **Area == "Total"** rows for TAC, ABC, and OFL.
+Because the GOA spreadsheet contains some `n/a` fields (especially for OFL/ABC in early years),
 we report totals as the sum of available numeric entries.
 
 ```{r}
@@ -250,7 +250,7 @@ we report totals as the sum of available numeric entries.
 #| fig-width: 7
 
 goayr <- goaraw %>%
-  filter(lag == 1, OY == 1) %>%
+  filter(lag == 1, OY == 1, Area == "Total") %>%
   group_by(Year = ProjYear) %>%
   summarise(
     TAC = sum(TAC, na.rm = TRUE),
