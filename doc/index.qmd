@@ -760,7 +760,10 @@ ggplot(dag_dynamic_tidy, aes(x = x, y = y, xend = xend, yend = yend)) +
 library(dsem)
 
 dsem_dep <- c("Pollock", "Pacific cod")
-dsem_indep <- setdiff(mainspp, dsem_dep)
+
+# Predict TAC from a full set of ABC inputs (including the focal stocks).
+# This is closer to the intended "replace ATTACH" use case.
+dsem_indep <- mainspp
 
 dsem_df <- dfOY %>%
   filter(lag == 1, Species %in% mainspp) %>%
@@ -803,7 +806,7 @@ fit <- dsem(
   estimate_delta0 = TRUE,
   control = dsem_control(
     quiet = TRUE,
-    gmrf_parameterization = "separable",
+    gmrf_parameterization = "full",
     newton_loops = 0,
     extra_convergence_checks = FALSE,
     getsd = TRUE
@@ -813,8 +816,35 @@ fit <- dsem(
 dsem_summary <- summary(fit)
 
 # Predict expected TACs given new ABC inputs (append future rows with TAC = NA).
+#
+# IMPORTANT: the DSEM forecast requires *assumed future ABCs* as inputs.
+# Below we create a simple demonstrator scenario by carrying forward the last
+# observed ABCs and applying small annual changes (edit these as needed).
+
 n_future <- 5
-new_abc_raw <- matrix(NA_real_, nrow = n_future, ncol = length(x_cols))
+set.seed(1)
+
+# Last observed ABC vector (lag 1, OY = 1) used as the baseline.
+last_abc <- as.numeric(dsem_df[nrow(dsem_df), x_cols])
+names(last_abc) <- x_cols
+
+# Scenario: modest annual increases for Pollock and Pacific cod ABC, slight
+# decline for others, plus small random noise.
+growth <- rep(0.00, length(x_cols))
+names(growth) <- x_cols
+if ("ABC_Pollock" %in% x_cols) growth["ABC_Pollock"] <- 0.02
+if ("ABC_Pacific_cod" %in% x_cols) growth["ABC_Pacific_cod"] <- 0.01
+
+other_cols <- setdiff(x_cols, c("ABC_Pollock", "ABC_Pacific_cod"))
+growth[other_cols] <- -0.005
+
+noise_sd <- 0.03
+
+new_abc_raw <- sapply(seq_len(n_future), function(h) {
+  eps <- rnorm(length(x_cols), mean = 0, sd = noise_sd)
+  pmax(last_abc * (1 + growth) ^ h * (1 + eps), 1)
+})
+new_abc_raw <- t(new_abc_raw)
 colnames(new_abc_raw) <- x_cols
 
 scale_with <- function(x, center, scale) {
@@ -834,13 +864,33 @@ pred_scaled <- predict(fit, newdata = newdata_ts, type = "response")
 colnames(pred_scaled) <- colnames(newdata_ts)
 pred <- sweep(pred_scaled, 2, ts_scale[colnames(pred_scaled)], "*")
 pred <- sweep(pred, 2, ts_center[colnames(pred)], "+")
+
+# Extract the forecast horizon.
 pred_tac_future <- tail(pred[, y_cols], n_future)
+
+# Combine assumed ABCs and predicted TACs for a compact forecast table.
+forecast_years <- max(dsem_df$Year) + seq_len(n_future)
+forecast_tbl <- as_tibble(new_abc_raw) %>%
+  mutate(Year = forecast_years) %>%
+  bind_cols(as_tibble(pred_tac_future))
 ```
 
 ## DSEM estimates
 This DSEM estimates TAC dynamics for Pollock and Pacific cod with two components: (1) AR(1) persistence in each 
-TAC time series and (2) contemporaneous influence of ABCs from the other species. The model is fit on scaled 
+TAC time series and (2) contemporaneous influence of ABC inputs (including both focal-stock ABC and cross-stock ABCs). The model is fit on scaled 
 inputs for stability, then predictions are transformed back to the original TAC units for interpretation.
+
+To make the forecasting intent concrete, the setup chunk above also constructs a simple example set of future ABC inputs and returns a `forecast_tbl` object containing assumed ABCs and the corresponding predicted TACs.
+
+```{r}
+#| label: tbl-dsem-forecast
+#| tbl-cap: "Example DSEM forecast: assumed future ABCs and predicted TACs (illustrative scenario)."
+forecast_tbl %>%
+  select(Year, starts_with("ABC_"), starts_with("TAC_")) %>%
+  gt::gt() %>%
+  gt::fmt_number(columns = starts_with("ABC_"), decimals = 0) %>%
+  gt::fmt_number(columns = starts_with("TAC_"), decimals = 0)
+```
 
 ```{r}
 #| label: tbl-dsem-summary
