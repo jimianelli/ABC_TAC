@@ -843,13 +843,33 @@ abc_lines <- unlist(lapply(y_cols, function(y) {
 
 sem <- paste(c(ar_lines, abc_lines), collapse = "\n")
 
+# dsem has changed allowed values for gmrf_parameterization across versions.
+# Choose a value that works for the installed package (GitHub Actions may differ
+# from local).
+choose_gmrf_param <- function() {
+  candidates <- c(
+    "full", "project", "gmrf_project", "mvn_project", # seen in newer versions
+    "separable", "projection"                           # seen in older versions
+  )
+  for (x in candidates) {
+    ok <- tryCatch({
+      dsem::dsem_control(gmrf_parameterization = x, quiet = TRUE)
+      TRUE
+    }, error = function(e) FALSE)
+    if (ok) return(x)
+  }
+  stop("Could not find a supported gmrf_parameterization value for dsem")
+}
+
+gmrf_param <- choose_gmrf_param()
+
 fit <- dsem(
   sem = sem,
   tsdata = tsdata,
   estimate_delta0 = TRUE,
   control = dsem_control(
     quiet = TRUE,
-    gmrf_parameterization = "full",
+    gmrf_parameterization = gmrf_param,
     newton_loops = 0,
     extra_convergence_checks = FALSE,
     getsd = TRUE
