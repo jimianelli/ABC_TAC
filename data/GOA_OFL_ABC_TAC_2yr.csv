@@ -1,0 +1,1483 @@
+AssmentYr,ProjYear,lag,Species,Area,OFL,ABC,TAC,Order,OY,IsTotal
+2018,2018,1,Pollock,Shumagin (610),n/a,"30,188","30,188",1.0,1,PollockShumagin610
+2018,2018,1,Pollock,Chirikof (620),n/a,"79,495","79,495",1.0,1,PollockChirikof620
+2018,2018,1,Pollock,Kodiak (630),n/a,"40,939","40,939",1.0,1,PollockKodiak630
+2018,2018,1,Pollock,WYK (640),n/a,"6,833","6,833",1.0,1,PollockWYK640
+2018,2018,1,Pollock,W/C/WYK (subtotal),"187,059","161,492","157,455",1.0,1,PollockWCWYKsubtotal
+2018,2018,1,Pollock,SEO (650),"11,697","8,773","8,773",1.0,1,PollockSEO650
+2018,2018,1,Pollock,Total,"198,756","170,265","166,228",1.0,1,PollockTotal
+2018,2018,1,Pacific cod,W,n/a,"8,082","5,657",2.0,1,Pacific codW
+2018,2018,1,Pacific cod,C,n/a,"8,118","6,089",2.0,1,Pacific codC
+2018,2018,1,Pacific cod,E,n/a,"1,800","1,350",2.0,1,Pacific codE
+2018,2018,1,Pacific cod,Total,"23,565","18,000","13,096",2.0,1,Pacific codTotal
+2018,2018,1,Sablefish,W,n/a,"1,544","1,544",3.0,1,SablefishW
+2018,2018,1,Sablefish,C,n/a,"5,158","5,158",3.0,1,SablefishC
+2018,2018,1,Sablefish,WYK,n/a,"1,829","1,829",3.0,1,SablefishWYK
+2018,2018,1,Sablefish,SEO,n/a,"2,974","2,974",3.0,1,SablefishSEO
+2018,2018,1,Sablefish,E (WYK and SEO) (subtotal),n/a,"4,803","4,803",3.0,1,SablefishEWYKandSEOsubtotal
+2018,2018,1,Sablefish,Total,"22,703","11,505","11,505",3.0,1,SablefishTotal
+2018,2018,1,Shallow-water flatfish,W,n/a,"25,206","13,250",,1,Shallow-water flatfishW
+2018,2018,1,Shallow-water flatfish,C,n/a,"25,315","25,315",,1,Shallow-water flatfishC
+2018,2018,1,Shallow-water flatfish,WYK,n/a,"2,242","2,242",,1,Shallow-water flatfishWYK
+2018,2018,1,Shallow-water flatfish,SEO,n/a,"1,925","1,925",,1,Shallow-water flatfishSEO
+2018,2018,1,Shallow-water flatfish,Total,"67,240","54,688","42,732",,1,Shallow-water flatfishTotal
+2018,2018,1,Deep-water flatfish,W,n/a,413,413,,1,Deep-water flatfishW
+2018,2018,1,Deep-water flatfish,C,n/a,"3,400","3,400",,1,Deep-water flatfishC
+2018,2018,1,Deep-water flatfish,WYK,n/a,"3,239","3,239",,1,Deep-water flatfishWYK
+2018,2018,1,Deep-water flatfish,SEO,n/a,"2,332","2,332",,1,Deep-water flatfishSEO
+2018,2018,1,Deep-water flatfish,Total,"11,294","9,385","9,385",,1,Deep-water flatfishTotal
+2018,2018,1,Rex sole,W,n/a,"3,086","3,086",,1,Rex soleW
+2018,2018,1,Rex sole,C,n/a,"8,739","8,739",,1,Rex soleC
+2018,2018,1,Rex sole,WYK,n/a,"1,737","1,737",,1,Rex soleWYK
+2018,2018,1,Rex sole,SEO,n/a,"1,811","1,811",,1,Rex soleSEO
+2018,2018,1,Rex sole,Total,"18,706","15,373","15,373",,1,Rex soleTotal
+2018,2018,1,Arrowtooth flounder,W,n/a,"37,253","14,500",,1,Arrowtooth flounderW
+2018,2018,1,Arrowtooth flounder,C,n/a,"73,480","48,000",,1,Arrowtooth flounderC
+2018,2018,1,Arrowtooth flounder,WYK,n/a,"16,468","6,900",,1,Arrowtooth flounderWYK
+2018,2018,1,Arrowtooth flounder,SEO,,"23,744","6,900",,1,Arrowtooth flounderSEO
+2018,2018,1,Arrowtooth flounder,Total,"180,697","150,945","76,300",,1,Arrowtooth flounderTotal
+2018,2018,1,Flathead sole,W,n/a,"12,690","8,650",,1,Flathead soleW
+2018,2018,1,Flathead sole,C,n/a,"20,238","15,400",,1,Flathead soleC
+2018,2018,1,Flathead sole,WYK,n/a,"1,932","1,932",,1,Flathead soleWYK
+2018,2018,1,Flathead sole,SEO,n/a,406,406,,1,Flathead soleSEO
+2018,2018,1,Flathead sole,Total,"43,011","35,266","26,388",,1,Flathead soleTotal
+2018,2018,1,Pacific ocean perch,W,n/a,"3,312","3,312",,1,Pacific ocean perchW
+2018,2018,1,Pacific ocean perch,C,n/a,"20,112","20,112",,1,Pacific ocean perchC
+2018,2018,1,Pacific ocean perch,WYK,n/a,"3,371","3,371",,1,Pacific ocean perchWYK
+2018,2018,1,Pacific ocean perch,W/C/WYK subtotal,"31,860","26,795","26,795",,1,Pacific ocean perchWCWYKsubtotal
+2018,2018,1,Pacific ocean perch,SEO,"2,902","2,441","2,441",,1,Pacific ocean perchSEO
+2018,2018,1,Pacific ocean perch,Total,"34,762","29,236","29,236",,1,Pacific ocean perchTotal
+2018,2018,1,Northern rockfish,W,n/a,420,420,,1,Northern rockfishW
+2018,2018,1,Northern rockfish,C,n/a,"3,261","3,261",,1,Northern rockfishC
+2018,2018,1,Northern rockfish,E,n/a,4,,,1,Northern rockfishE
+2018,2018,1,Northern rockfish,Total,"4,380","3,685","3,681",,1,Northern rockfishTotal
+2018,2018,1,Shortraker rockfish,W,n/a,44,44,,1,Shortraker rockfishW
+2018,2018,1,Shortraker rockfish,C,n/a,305,305,,1,Shortraker rockfishC
+2018,2018,1,Shortraker rockfish,E,n/a,514,514,,1,Shortraker rockfishE
+2018,2018,1,Shortraker rockfish,Total,"1,151",863,863,,1,Shortraker rockfishTotal
+2018,2018,1,Dusky rockfish,W,n/a,146,146,,1,Dusky rockfishW
+2018,2018,1,Dusky rockfish,C,n/a,"3,502","3,502",,1,Dusky rockfishC
+2018,2018,1,Dusky rockfish,WYK,n/a,232,232,,1,Dusky rockfishWYK
+2018,2018,1,Dusky rockfish,SEO,n/a,77,77,,1,Dusky rockfishSEO
+2018,2018,1,Dusky rockfish,Total,"4,841","3,957","3,957",,1,Dusky rockfishTotal
+2018,2018,1,Rougheye and Blackspotted rockfish,W,n/a,176,176,,1,Rougheye and Blackspotted rockfishW
+2018,2018,1,Rougheye and Blackspotted rockfish,C,n/a,556,556,,1,Rougheye and Blackspotted rockfishC
+2018,2018,1,Rougheye and Blackspotted rockfish,E,n/a,712,712,,1,Rougheye and Blackspotted rockfishE
+2018,2018,1,Rougheye and Blackspotted rockfish,Total,"1,735","1,444","1,444",,1,Rougheye and Blackspotted rockfishTotal
+2018,2018,1,Demersal shelf rockfish,SEO,394,250,250,,1,Demersal shelf rockfishSEO
+2018,2018,1,Thornyhead rockfish,W,n/a,344,344,,1,Thornyhead rockfishW
+2018,2018,1,Thornyhead rockfish,C,n/a,921,921,,1,Thornyhead rockfishC
+2018,2018,1,Thornyhead rockfish,E,n/a,773,773,,1,Thornyhead rockfishE
+2018,2018,1,Thornyhead rockfish,Total,"2,717","2,038","2,038",,1,Thornyhead rockfishTotal
+2018,2018,1,Other rockfish,W and C,n/a,"1,737","1,737",,1,Other rockfishWandC
+2018,2018,1,Other rockfish,WYK,n/a,368,368,,1,Other rockfishWYK
+2018,2018,1,Other rockfish,SEO,n/a,"3,489",200,,1,Other rockfishSEO
+2018,2018,1,Other rockfish,Total,"7,356","5,594","2,305",,1,Other rockfishTotal
+2018,2018,1,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2018,2018,1,Big skate,W,n/a,504,504,,1,Big skateW
+2018,2018,1,Big skate,C,n/a,"1,774","1,774",,1,Big skateC
+2018,2018,1,Big skate,E,n/a,570,570,,1,Big skateE
+2018,2018,1,Big skate,Total,"3,797","2,848","2,848",,1,Big skateTotal
+2018,2018,1,Longnose skate,W,n/a,149,149,,1,Longnose skateW
+2018,2018,1,Longnose skate,C,n/a,"2,804","2,804",,1,Longnose skateC
+2018,2018,1,Longnose skate,E,n/a,619,619,,1,Longnose skateE
+2018,2018,1,Longnose skate,Total,"4,763","3,572","3,572",,1,Longnose skateTotal
+2018,2018,1,Other skates,GW,"1,845","1,384","1,384",,1,Other skatesGW
+2018,2018,1,Sculpins,GW,"6,958","5,301","5,301",24.0,1,SculpinsGW
+2018,2018,1,Sharks,GW,"6,020","4,514","4,514",21.0,1,SharksGW
+2018,2018,1,Squids,GW,"1,516","1,137","1,137",25.0,1,SquidsGW
+2018,2018,1,Octopus,GW,"1,300",975,975,22.0,1,OctopusGW
+2018,2018,1,Total,GOA,"655,707","536,921","427,512",23.0,1,TotalGOA
+2018,2019,2,Pollock,Shumagin (610),n/a,"19,921","19,921",1.0,1,PollockShumagin610
+2018,2019,2,Pollock,Chirikof (620),n/a,"52,459","52,459",1.0,1,PollockChirikof620
+2018,2019,2,Pollock,Kodiak (630),n/a,"27,016","27,016",1.0,1,PollockKodiak630
+2018,2019,2,Pollock,WYK (640),n/a,"4,509","4,509",1.0,1,PollockWYK640
+2018,2019,2,Pollock,W/C/WYK (subtotal),"131,170","106,569","103,905",1.0,1,PollockWCWYKsubtotal
+2018,2019,2,Pollock,SEO (650),"11,697","8,773","8,773",1.0,1,PollockSEO650
+2018,2019,2,Pollock,Total,"142,867","115,341","112,678",1.0,1,PollockTotal
+2018,2019,2,Pacific cod,W,n/a,"7,633","5,343",2.0,1,Pacific codW
+2018,2019,2,Pacific cod,C,n/a,"7,667","5,750",2.0,1,Pacific codC
+2018,2019,2,Pacific cod,E,n/a,"1,700","1,275",2.0,1,Pacific codE
+2018,2019,2,Pacific cod,Total,"21,412","17,000","12,368",2.0,1,Pacific codTotal
+2018,2019,2,Sablefish,W,n/a,"2,174","2,174",3.0,1,SablefishW
+2018,2019,2,Sablefish,C,n/a,"7,260","7,260",3.0,1,SablefishC
+2018,2019,2,Sablefish,WYK,n/a,"2,573","2,573",3.0,1,SablefishWYK
+2018,2019,2,Sablefish,SEO,n/a,"4,187","4,187",3.0,1,SablefishSEO
+2018,2019,2,Sablefish,E (WYK and SEO) (subtotal),n/a,"6,760","6,760",3.0,1,SablefishEWYKandSEOsubtotal
+2018,2019,2,Sablefish,Total,"35,989","16,194","16,194",3.0,1,SablefishTotal
+2018,2019,2,Shallow-water flatfish,W,n/a,"25,544","13,250",,1,Shallow-water flatfishW
+2018,2019,2,Shallow-water flatfish,C,n/a,"25,655","25,655",,1,Shallow-water flatfishC
+2018,2019,2,Shallow-water flatfish,WYK,n/a,"2,272","2,272",,1,Shallow-water flatfishWYK
+2018,2019,2,Shallow-water flatfish,SEO,n/a,"1,951","1,951",,1,Shallow-water flatfishSEO
+2018,2019,2,Shallow-water flatfish,Total,"68,114","55,422","43,128",,1,Shallow-water flatfishTotal
+2018,2019,2,Deep-water flatfish,W,n/a,416,416,,1,Deep-water flatfishW
+2018,2019,2,Deep-water flatfish,C,n/a,"3,442","3,442",,1,Deep-water flatfishC
+2018,2019,2,Deep-water flatfish,WYK,n/a,"3,279","3,279",,1,Deep-water flatfishWYK
+2018,2019,2,Deep-water flatfish,SEO,n/a,"2,361","2,361",,1,Deep-water flatfishSEO
+2018,2019,2,Deep-water flatfish,Total,"11,431","9,499","9,499",,1,Deep-water flatfishTotal
+2018,2019,2,Rex sole,W,n/a,"2,909","2,909",,1,Rex soleW
+2018,2019,2,Rex sole,C,n/a,"8,236","8,236",,1,Rex soleC
+2018,2019,2,Rex sole,WYK,n/a,"1,657","1,657",,1,Rex soleWYK
+2018,2019,2,Rex sole,SEO,n/a,"1,727","1,727",,1,Rex soleSEO
+2018,2019,2,Rex sole,Total,"17,692","14,529","14,529",,1,Rex soleTotal
+2018,2019,2,Arrowtooth flounder,W,n/a,"35,844","14,500",,1,Arrowtooth flounderW
+2018,2019,2,Arrowtooth flounder,C,n/a,"70,700","48,000",,1,Arrowtooth flounderC
+2018,2019,2,Arrowtooth flounder,WYK,n/a,"15,845","6,900",,1,Arrowtooth flounderWYK
+2018,2019,2,Arrowtooth flounder,SEO,n/a,"22,845","6,900",,1,Arrowtooth flounderSEO
+2018,2019,2,Arrowtooth flounder,Total,"173,872","145,234","76,300",,1,Arrowtooth flounderTotal
+2018,2019,2,Flathead sole,W,n/a,"13,222","8,650",,1,Flathead soleW
+2018,2019,2,Flathead sole,C,n/a,"21,087","15,400",,1,Flathead soleC
+2018,2019,2,Flathead sole,WYK,n/a,"2,013","2,013",,1,Flathead soleWYK
+2018,2019,2,Flathead sole,SEO,n/a,424,424,,1,Flathead soleSEO
+2018,2019,2,Flathead sole,Total,"44,822","36,746","26,487",,1,Flathead soleTotal
+2018,2019,2,Pacific ocean perch,W,n/a,"3,240","3,240",,1,Pacific ocean perchW
+2018,2019,2,Pacific ocean perch,C,n/a,"19,678","19,678",,1,Pacific ocean perchC
+2018,2019,2,Pacific ocean perch,WYK,n/a,"3,298","3,298",,1,Pacific ocean perchWYK
+2018,2019,2,Pacific ocean perch,W/C/WYK,"31,170","26,216","26,216",,1,Pacific ocean perchWCWYK
+2018,2019,2,Pacific ocean perch,SEO,"2,840","2,389","2,389",,1,Pacific ocean perchSEO
+2018,2019,2,Pacific ocean perch,Total,"34,010","28,605","28,605",,1,Pacific ocean perchTotal
+2018,2019,2,Northern rockfish,W,n/a,382,382,,1,Northern rockfishW
+2018,2019,2,Northern rockfish,C,n/a,"2,965","2,965",,1,Northern rockfishC
+2018,2019,2,Northern rockfish,E,n/a,3,,,1,Northern rockfishE
+2018,2019,2,Northern rockfish,Total,"3,984","3,350","3,347",,1,Northern rockfishTotal
+2018,2019,2,Shortraker rockfish,W,n/a,44,44,,1,Shortraker rockfishW
+2018,2019,2,Shortraker rockfish,C,n/a,305,305,,1,Shortraker rockfishC
+2018,2019,2,Shortraker rockfish,E,n/a,514,514,,1,Shortraker rockfishE
+2018,2019,2,Shortraker rockfish,Total,"1,151",863,863,,1,Shortraker rockfishTotal
+2018,2019,2,Dusky rockfish,W,n/a,135,135,,1,Dusky rockfishW
+2018,2019,2,Dusky rockfish,C,n/a,"3,246","3,246",,1,Dusky rockfishC
+2018,2019,2,Dusky rockfish,WYK,n/a,215,215,,1,Dusky rockfishWYK
+2018,2019,2,Dusky rockfish,SEO,n/a,72,72,,1,Dusky rockfishSEO
+2018,2019,2,Dusky rockfish,Total,"4,488","3,668","3,668",,1,Dusky rockfishTotal
+2018,2019,2,Rougheye and Blackspotted rockfish,W,n/a,174,174,,1,Rougheye and Blackspotted rockfishW
+2018,2019,2,Rougheye and Blackspotted rockfish,C,n/a,550,550,,1,Rougheye and Blackspotted rockfishC
+2018,2019,2,Rougheye and Blackspotted rockfish,E,n/a,703,703,,1,Rougheye and Blackspotted rockfishE
+2018,2019,2,Rougheye and Blackspotted rockfish,Total,"1,715","1,427","1,427",,1,Rougheye and Blackspotted rockfishTotal
+2018,2019,2,Demersal shelf rockfish,SEO,394,250,250,,1,Demersal shelf rockfishSEO
+2018,2019,2,Thornyhead rockfish,W,n/a,344,344,,1,Thornyhead rockfishW
+2018,2019,2,Thornyhead rockfish,C,n/a,921,921,,1,Thornyhead rockfishC
+2018,2019,2,Thornyhead rockfish,E,n/a,773,773,,1,Thornyhead rockfishE
+2018,2019,2,Thornyhead rockfish,Total,"2,717","2,038","2,038",,1,Thornyhead rockfishTotal
+2018,2019,2,Other rockfish,W and C,n/a,"1,737","1,737",,1,Other rockfishWandC
+2018,2019,2,Other rockfish,WYK,n/a,368,368,,1,Other rockfishWYK
+2018,2019,2,Other rockfish,SEO,n/a,"3,488",200,,1,Other rockfishSEO
+2018,2019,2,Other rockfish,Total,"7,356","5,593","2,305",,1,Other rockfishTotal
+2018,2019,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2018,2019,2,Big skate,W,n/a,504,504,,1,Big skateW
+2018,2019,2,Big skate,C,n/a,"1,774","1,774",,1,Big skateC
+2018,2019,2,Big skate,E,n/a,570,570,,1,Big skateE
+2018,2019,2,Big skate,Total,"3,797","2,848","2,848",,1,Big skateTotal
+2018,2019,2,Longnose skate,W,n/a,149,149,,1,Longnose skateW
+2018,2019,2,Longnose skate,C,n/a,"2,804","2,804",,1,Longnose skateC
+2018,2019,2,Longnose skate,E,n/a,619,619,,1,Longnose skateE
+2018,2019,2,Longnose skate,Total,"4,763","3,572","3,572",,1,Longnose skateTotal
+2018,2019,2,Other skates,GW,"1,845","1,384","1,384",,1,Other skatesGW
+2018,2019,2,Sculpins,GW,"6,958","5,301","5,301",24.0,1,SculpinsGW
+2018,2019,2,Sharks,GW,"6,020","4,514","4,514",21.0,1,SharksGW
+2018,2019,2,Squids,GW,"1,516","1,137","1,137",25.0,1,SquidsGW
+2018,2019,2,Octopus,GW,"1,300",975,975,22.0,1,OctopusGW
+2018,2019,2,Total,GOA,"604,413","480,187","376,417",23.0,1,TotalGOA
+2018,2019,2,Pollock,Shumagin (610),n/a,"24,875","24,875",1.0,1,PollockShumagin610
+2018,2019,2,Pollock,Chirikof (620),n/a,"67,388","67,388",1.0,1,PollockChirikof620
+2018,2019,2,Pollock,Kodiak (630),n/a,"34,443","34,443",1.0,1,PollockKodiak630
+2018,2019,2,Pollock,WYK (640),n/a,"5,748","5,748",1.0,1,PollockWYK640
+2018,2019,2,Pollock,W/C/WYK (subtotal),"194,230","135,850","132,454",1.0,1,PollockWCWYKsubtotal
+2018,2019,2,Pollock,SEO (650),"11,697","8,773","8,773",1.0,1,PollockSEO650
+2018,2019,2,Pollock,Total,"205,927","144,623","141,227",1.0,1,PollockTotal
+2018,2019,2,Pacific cod,W,n/a,"7,633","5,343",2.0,1,Pacific codW
+2018,2019,2,Pacific cod,C,n/a,"7,667","5,750",2.0,1,Pacific codC
+2018,2019,2,Pacific cod,E,n/a,"1,700","1,275",2.0,1,Pacific codE
+2018,2019,2,Pacific cod,Total,"23,669","17,000","12,368",2.0,1,Pacific codTotal
+2018,2019,2,Sablefish,W,n/a,"1,581","1,581",3.0,1,SablefishW
+2018,2019,2,Sablefish,C,n/a,"5,178","5,178",3.0,1,SablefishC
+2018,2019,2,Sablefish,WYK,n/a,"1,828","1,828",3.0,1,SablefishWYK
+2018,2019,2,Sablefish,SEO,n/a,"2,984","2,984",3.0,1,SablefishSEO
+2018,2019,2,Sablefish,E (WYK and SEO) (subtotal),n/a,"4,812","4,812",3.0,1,SablefishEWYKandSEOsubtotal
+2018,2019,2,Sablefish,Total,"25,227","11,571","11,571",3.0,1,SablefishTotal
+2018,2019,2,Shallow-water flatfish,W,n/a,"25,620","13,250",,1,Shallow-water flatfishW
+2018,2019,2,Shallow-water flatfish,C,n/a,"25,731","25,731",,1,Shallow-water flatfishC
+2018,2019,2,Shallow-water flatfish,WYK,n/a,"2,279","2,279",,1,Shallow-water flatfishWYK
+2018,2019,2,Shallow-water flatfish,SEO,n/a,"1,957","1,957",,1,Shallow-water flatfishSEO
+2018,2019,2,Shallow-water flatfish,Total,"68,309","55,587","43,217",,1,Shallow-water flatfishTotal
+2018,2019,2,Deep-water flatfish,W,n/a,416,416,,1,Deep-water flatfishW
+2018,2019,2,Deep-water flatfish,C,n/a,"3,443","3,443",,1,Deep-water flatfishC
+2018,2019,2,Deep-water flatfish,WYK,n/a,"3,280","3,280",,1,Deep-water flatfishWYK
+2018,2019,2,Deep-water flatfish,SEO,n/a,"2,362","2,362",,1,Deep-water flatfishSEO
+2018,2019,2,Deep-water flatfish,Total,"11,434","9,501","9,501",,1,Deep-water flatfishTotal
+2018,2019,2,Rex sole,W,n/a,"2,951","2,951",,1,Rex soleW
+2018,2019,2,Rex sole,C,n/a,"8,357","8,357",,1,Rex soleC
+2018,2019,2,Rex sole,WYK,n/a,"1,657","1,657",,1,Rex soleWYK
+2018,2019,2,Rex sole,SEO,n/a,"1,727","1,727",,1,Rex soleSEO
+2018,2019,2,Rex sole,Total,"17,889","14,692","14,692",,1,Rex soleTotal
+2018,2019,2,Arrowtooth flounder,W,n/a,"35,994","14,500",,1,Arrowtooth flounderW
+2018,2019,2,Arrowtooth flounder,C,n/a,"70,995","70,995",,1,Arrowtooth flounderC
+2018,2019,2,Arrowtooth flounder,WYK,n/a,"15,911","6,900",,1,Arrowtooth flounderWYK
+2018,2019,2,Arrowtooth flounder,SEO,,"22,941","6,900",,1,Arrowtooth flounderSEO
+2018,2019,2,Arrowtooth flounder,Total,"174,598","145,841","99,295",,1,Arrowtooth flounderTotal
+2018,2019,2,Flathead sole,W,n/a,"13,234","8,650",,1,Flathead soleW
+2018,2019,2,Flathead sole,C,n/a,"20,238","15,400",,1,Flathead soleC
+2018,2019,2,Flathead sole,WYK,n/a,"1,932","1,932",,1,Flathead soleWYK
+2018,2019,2,Flathead sole,SEO,n/a,406,406,,1,Flathead soleSEO
+2018,2019,2,Flathead sole,Total,"44,865","21,109","15,400",,1,Flathead soleTotal
+2018,2019,2,Pacific ocean perch,W,n/a,"3,227","3,227",,1,Pacific ocean perchW
+2018,2019,2,Pacific ocean perch,C,n/a,"19,646","19,646",,1,Pacific ocean perchC
+2018,2019,2,Pacific ocean perch,WYK,n/a,"3,296","3,296",,1,Pacific ocean perchWYK
+2018,2019,2,Pacific ocean perch,W/C/WYK subtotal,"31,113","26,169","26,169",,1,Pacific ocean perchWCWYKsubtotal
+2018,2019,2,Pacific ocean perch,SEO,"2,838","2,386","2,386",,1,Pacific ocean perchSEO
+2018,2019,2,Pacific ocean perch,Total,"33,951","28,555","28,555",,1,Pacific ocean perchTotal
+2018,2019,2,Northern rockfish,W,n/a,"1,190","1,190",,1,Northern rockfishW
+2018,2019,2,Northern rockfish,C,n/a,"3,338","3,338",,1,Northern rockfishC
+2018,2019,2,Northern rockfish,E,n/a,1,,,1,Northern rockfishE
+2018,2019,2,Northern rockfish,Total,"5,402","4,529","4,528",,1,Northern rockfishTotal
+2018,2019,2,Shortraker rockfish,W,n/a,44,44,,1,Shortraker rockfishW
+2018,2019,2,Shortraker rockfish,C,n/a,305,305,,1,Shortraker rockfishC
+2018,2019,2,Shortraker rockfish,E,n/a,514,514,,1,Shortraker rockfishE
+2018,2019,2,Shortraker rockfish,Total,"1,151",863,863,,1,Shortraker rockfishTotal
+2018,2019,2,Dusky rockfish,W,n/a,781,781,,1,Dusky rockfishW
+2018,2019,2,Dusky rockfish,C,n/a,"2,764","2,764",,1,Dusky rockfishC
+2018,2019,2,Dusky rockfish,WYK,n/a,95,95,,1,Dusky rockfishWYK
+2018,2019,2,Dusky rockfish,SEO,n/a,60,60,,1,Dusky rockfishSEO
+2018,2019,2,Dusky rockfish,Total,"4,521","3,700","3,700",,1,Dusky rockfishTotal
+2018,2019,2,Rougheye and Blackspotted rockfish,W,n/a,174,174,,1,Rougheye and Blackspotted rockfishW
+2018,2019,2,Rougheye and Blackspotted rockfish,C,n/a,550,550,,1,Rougheye and Blackspotted rockfishC
+2018,2019,2,Rougheye and Blackspotted rockfish,E,n/a,704,704,,1,Rougheye and Blackspotted rockfishE
+2018,2019,2,Rougheye and Blackspotted rockfish,Total,"1,715","1,428","1,428",,1,Rougheye and Blackspotted rockfishTotal
+2018,2019,2,Demersal shelf rockfish,SEO,411,261,261,,1,Demersal shelf rockfishSEO
+2018,2019,2,Thornyhead rockfish,W,n/a,326,326,,1,Thornyhead rockfishW
+2018,2019,2,Thornyhead rockfish,C,n/a,911,911,,1,Thornyhead rockfishC
+2018,2019,2,Thornyhead rockfish,E,n/a,779,779,,1,Thornyhead rockfishE
+2018,2019,2,Thornyhead rockfish,Total,"2,688","2,016","2,016",,1,Thornyhead rockfishTotal
+2018,2019,2,Other rockfish,W and C,n/a,"1,737","1,737",,1,Other rockfishWandC
+2018,2019,2,Other rockfish,WYK,n/a,368,368,,1,Other rockfishWYK
+2018,2019,2,Other rockfish,SEO,n/a,"3,489","3,489",,1,Other rockfishSEO
+2018,2019,2,Other rockfish,Total,"7,356","5,594","5,594",,1,Other rockfishTotal
+2018,2019,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2018,2019,2,Big skate,W,n/a,504,504,,1,Big skateW
+2018,2019,2,Big skate,C,n/a,"1,774","1,774",,1,Big skateC
+2018,2019,2,Big skate,E,n/a,570,570,,1,Big skateE
+2018,2019,2,Big skate,Total,"3,797","2,848","2,848",,1,Big skateTotal
+2018,2019,2,Longnose skate,W,n/a,149,149,,1,Longnose skateW
+2018,2019,2,Longnose skate,C,n/a,"2,804","2,804",,1,Longnose skateC
+2018,2019,2,Longnose skate,E,n/a,619,619,,1,Longnose skateE
+2018,2019,2,Longnose skate,Total,"4,763","3,572","3,572",,1,Longnose skateTotal
+2018,2019,2,Other skates,GW,"1,845","1,384","1,384",,1,Other skatesGW
+2018,2019,2,Sculpins,GW,"6,958","5,301","5,301",24.0,1,SculpinsGW
+2018,2019,2,Sharks,GW,"10,913","8,184","8,184",21.0,1,SharksGW
+2018,2019,2,Octopus,GW,"1,300",975,975,22.0,1,OctopusGW
+2018,2019,2,Total,GOA,"664,889","509,507","430,569",23.0,1,TotalGOA
+2018,2020,2,Pollock,Shumagin (610),n/a,"19,939","19,939",1.0,1,PollockShumagin610
+2018,2020,2,Pollock,Chirikof (620),n/a,"57,279","57,279",1.0,1,PollockChirikof620
+2018,2020,2,Pollock,Kodiak (630),n/a,"24,345","24,345",1.0,1,PollockKodiak630
+2018,2020,2,Pollock,WYK (640),n/a,"4,607","4,607",1.0,1,PollockWYK640
+2018,2020,2,Pollock,W/C/WYK (subtotal),"148,968","108,892","106,170",1.0,1,PollockWCWYKsubtotal
+2018,2020,2,Pollock,SEO (650),"11,697","8,773","8,773",1.0,1,PollockSEO650
+2018,2020,2,Pollock,Total,"160,665","117,665","114,943",1.0,1,PollockTotal
+2018,2020,2,Pacific cod,W,n/a,"9,695","6,787",2.0,1,Pacific codW
+2018,2020,2,Pacific cod,C,n/a,"9,738","7,304",2.0,1,Pacific codC
+2018,2020,2,Pacific cod,E,n/a,"2,159","1,619",2.0,1,Pacific codE
+2018,2020,2,Pacific cod,Total,"26,078","21,592","15,709",2.0,1,Pacific codTotal
+2018,2020,2,Sablefish,W,n/a,"2,105","2,105",3.0,1,SablefishW
+2018,2020,2,Sablefish,C,n/a,"6,931","6,931",3.0,1,SablefishC
+2018,2020,2,Sablefish,WYK,n/a,"2,433","2,433",3.0,1,SablefishWYK
+2018,2020,2,Sablefish,SEO,n/a,"3,993","3,993",3.0,1,SablefishSEO
+2018,2020,2,Sablefish,E (WYK and SEO) (subtotal),n/a,"6,426","6,426",3.0,1,SablefishEWYKandSEOsubtotal
+2018,2020,2,Sablefish,Total,"34,872","15,462","15,462",3.0,1,SablefishTotal
+2018,2020,2,Shallow-water flatfish,W,n/a,"25,952","13,250",,1,Shallow-water flatfishW
+2018,2020,2,Shallow-water flatfish,C,n/a,"26,065","26,065",,1,Shallow-water flatfishC
+2018,2020,2,Shallow-water flatfish,WYK,n/a,"2,308","2,308",,1,Shallow-water flatfishWYK
+2018,2020,2,Shallow-water flatfish,SEO,n/a,"1,983","1,983",,1,Shallow-water flatfishSEO
+2018,2020,2,Shallow-water flatfish,Total,"69,167","56,308","43,606",,1,Shallow-water flatfishTotal
+2018,2020,2,Deep-water flatfish,W,n/a,420,420,,1,Deep-water flatfishW
+2018,2020,2,Deep-water flatfish,C,n/a,"3,488","3,488",,1,Deep-water flatfishC
+2018,2020,2,Deep-water flatfish,WYK,n/a,"3,323","3,323",,1,Deep-water flatfishWYK
+2018,2020,2,Deep-water flatfish,SEO,n/a,"2,393","2,393",,1,Deep-water flatfishSEO
+2018,2020,2,Deep-water flatfish,Total,"11,581","9,624","9,624",,1,Deep-water flatfishTotal
+2018,2020,2,Rex sole,W,n/a,"2,956","2,956",,1,Rex soleW
+2018,2020,2,Rex sole,C,n/a,"8,371","8,371",,1,Rex soleC
+2018,2020,2,Rex sole,WYK,n/a,"1,664","1,664",,1,Rex soleWYK
+2018,2020,2,Rex sole,SEO,n/a,"1,734","1,734",,1,Rex soleSEO
+2018,2020,2,Rex sole,Total,"17,942","14,725","14,725",,1,Rex soleTotal
+2018,2020,2,Arrowtooth flounder,W,n/a,"34,765","14,500",,1,Arrowtooth flounderW
+2018,2020,2,Arrowtooth flounder,C,n/a,"68,575","68,575",,1,Arrowtooth flounderC
+2018,2020,2,Arrowtooth flounder,WYK,n/a,"15,368","6,900",,1,Arrowtooth flounderWYK
+2018,2020,2,Arrowtooth flounder,SEO,n/a,"22,157","6,900",,1,Arrowtooth flounderSEO
+2018,2020,2,Arrowtooth flounder,Total,"168,634","140,865","96,875",,1,Arrowtooth flounderTotal
+2018,2020,2,Flathead sole,W,n/a,"13,771","8,650",,1,Flathead soleW
+2018,2020,2,Flathead sole,C,n/a,"21,965","15,400",,1,Flathead soleC
+2018,2020,2,Flathead sole,WYK,n/a,"2,097","2,097",,1,Flathead soleWYK
+2018,2020,2,Flathead sole,SEO,n/a,440,440,,1,Flathead soleSEO
+2018,2020,2,Flathead sole,Total,"46,666","38,273","26,587",,1,Flathead soleTotal
+2018,2020,2,Pacific ocean perch,W,n/a,"3,125","3,125",,1,Pacific ocean perchW
+2018,2020,2,Pacific ocean perch,C,n/a,"19,024","19,024",,1,Pacific ocean perchC
+2018,2020,2,Pacific ocean perch,WYK,n/a,"3,192","3,192",,1,Pacific ocean perchWYK
+2018,2020,2,Pacific ocean perch,W/C/WYK,"30,128","25,341","25,341",,1,Pacific ocean perchWCWYK
+2018,2020,2,Pacific ocean perch,SEO,"2,748","2,311","2,311",,1,Pacific ocean perchSEO
+2018,2020,2,Pacific ocean perch,Total,"32,876","27,652","27,652",,1,Pacific ocean perchTotal
+2018,2020,2,Northern rockfish,W,n/a,"1,122","1,122",,1,Northern rockfishW
+2018,2020,2,Northern rockfish,C,n/a,"3,147","3,147",,1,Northern rockfishC
+2018,2020,2,Northern rockfish,E,n/a,1,0,,1,Northern rockfishE
+2018,2020,2,Northern rockfish,Total,"5,093","4,270","4,269",,1,Northern rockfishTotal
+2018,2020,2,Shortraker rockfish,W,n/a,44,44,,1,Shortraker rockfishW
+2018,2020,2,Shortraker rockfish,C,n/a,305,305,,1,Shortraker rockfishC
+2018,2020,2,Shortraker rockfish,E,n/a,514,514,,1,Shortraker rockfishE
+2018,2020,2,Shortraker rockfish,Total,"1,151",863,863,,1,Shortraker rockfishTotal
+2018,2020,2,Dusky rockfish,W,n/a,774,774,,1,Dusky rockfishW
+2018,2020,2,Dusky rockfish,C,n/a,"2,742","2,742",,1,Dusky rockfishC
+2018,2020,2,Dusky rockfish,WYK,n/a,94,94,,1,Dusky rockfishWYK
+2018,2020,2,Dusky rockfish,SEO,n/a,60,60,,1,Dusky rockfishSEO
+2018,2020,2,Dusky rockfish,Total,"4,484","3,670","3,670",,1,Dusky rockfishTotal
+2018,2020,2,Rougheye and Blackspotted rockfish,W,n/a,172,172,,1,Rougheye and Blackspotted rockfishW
+2018,2020,2,Rougheye and Blackspotted rockfish,C,n/a,545,545,,1,Rougheye and Blackspotted rockfishC
+2018,2020,2,Rougheye and Blackspotted rockfish,E,n/a,697,697,,1,Rougheye and Blackspotted rockfishE
+2018,2020,2,Rougheye and Blackspotted rockfish,Total,"1,699","1,414","1,414",,1,Rougheye and Blackspotted rockfishTotal
+2018,2020,2,Demersal shelf rockfish,SEO,411,261,261,,1,Demersal shelf rockfishSEO
+2018,2020,2,Thornyhead rockfish,W,n/a,326,326,,1,Thornyhead rockfishW
+2018,2020,2,Thornyhead rockfish,C,n/a,911,911,,1,Thornyhead rockfishC
+2018,2020,2,Thornyhead rockfish,E,n/a,779,779,,1,Thornyhead rockfishE
+2018,2020,2,Thornyhead rockfish,Total,"2,688","2,016","2,016",,1,Thornyhead rockfishTotal
+2018,2020,2,Other rockfish,W and C,n/a,"1,737","1,737",,1,Other rockfishWandC
+2018,2020,2,Other rockfish,WYK,n/a,368,368,,1,Other rockfishWYK
+2018,2020,2,Other rockfish,SEO,n/a,"3,489","3,489",,1,Other rockfishSEO
+2018,2020,2,Other rockfish,Total,"7,356","5,594","5,594",,1,Other rockfishTotal
+2018,2020,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2018,2020,2,Big skate,W,n/a,504,504,,1,Big skateW
+2018,2020,2,Big skate,C,n/a,"1,774","1,774",,1,Big skateC
+2018,2020,2,Big skate,E,n/a,570,570,,1,Big skateE
+2018,2020,2,Big skate,Total,"3,797","2,848","2,848",,1,Big skateTotal
+2018,2020,2,Longnose skate,W,n/a,149,149,,1,Longnose skateW
+2018,2020,2,Longnose skate,C,n/a,"2,804","2,804",,1,Longnose skateC
+2018,2020,2,Longnose skate,E,n/a,619,619,,1,Longnose skateE
+2018,2020,2,Longnose skate,Total,"4,763","3,572","3,572",,1,Longnose skateTotal
+2018,2020,2,Other skates,GW,"1,845","1,384","1,384",,1,Other skatesGW
+2018,2020,2,Sculpins,GW,"6,958","5,301","5,301",24.0,1,SculpinsGW
+2018,2020,2,Sharks,GW,"10,913","8,184","8,184",21.0,1,SharksGW
+2018,2020,2,Octopus,GW,"1,300",975,975,22.0,1,OctopusGW
+2018,2020,2,Total,GOA,"627,049","487,218","408,534",23.0,1,TotalGOA
+2019,2019,1,Pollock,Shumagin (610),n/a,"24,875","24,875",1.0,1,PollockShumagin610
+2019,2019,1,Pollock,Chirikof (620),n/a,"67,388","67,388",1.0,1,PollockChirikof620
+2019,2019,1,Pollock,Kodiak (630),n/a,"34,443","34,443",1.0,1,PollockKodiak630
+2019,2019,1,Pollock,WYK (640),n/a,"5,748","5,748",1.0,1,PollockWYK640
+2019,2019,1,Pollock,W/C/WYK (subtotal),"194,230","135,850","132,454",1.0,1,PollockWCWYKsubtotal
+2019,2019,1,Pollock,SEO (650),"11,697","8,773","8,773",1.0,1,PollockSEO650
+2019,2019,1,Pollock,Total,"205,927","144,623","141,227",1.0,1,PollockTotal
+2019,2019,1,Pacific cod,W,n/a,"7,633","5,343",2.0,1,Pacific codW
+2019,2019,1,Pacific cod,C,n/a,"7,667","5,750",2.0,1,Pacific codC
+2019,2019,1,Pacific cod,E,n/a,"1,700","1,275",2.0,1,Pacific codE
+2019,2019,1,Pacific cod,Total,"23,669","17,000","12,368",2.0,1,Pacific codTotal
+2019,2019,1,Sablefish,W,n/a,"1,581","1,581",3.0,1,SablefishW
+2019,2019,1,Sablefish,C,n/a,"5,178","5,178",3.0,1,SablefishC
+2019,2019,1,Sablefish,WYK,n/a,"1,828","1,828",3.0,1,SablefishWYK
+2019,2019,1,Sablefish,SEO,n/a,"2,984","2,984",3.0,1,SablefishSEO
+2019,2019,1,Sablefish,E (WYK and SEO) (subtotal),n/a,"4,812","4,812",3.0,1,SablefishEWYKandSEOsubtotal
+2019,2019,1,Sablefish,Total,"25,227","11,571","11,571",3.0,1,SablefishTotal
+2019,2019,1,Shallow-water flatfish,W,n/a,"25,620","13,250",,1,Shallow-water flatfishW
+2019,2019,1,Shallow-water flatfish,C,n/a,"25,731","25,731",,1,Shallow-water flatfishC
+2019,2019,1,Shallow-water flatfish,WYK,n/a,"2,279","2,279",,1,Shallow-water flatfishWYK
+2019,2019,1,Shallow-water flatfish,SEO,n/a,"1,957","1,957",,1,Shallow-water flatfishSEO
+2019,2019,1,Shallow-water flatfish,Total,"68,309","55,587","43,217",,1,Shallow-water flatfishTotal
+2019,2019,1,Deep-water flatfish,W,n/a,416,416,,1,Deep-water flatfishW
+2019,2019,1,Deep-water flatfish,C,n/a,"3,443","3,443",,1,Deep-water flatfishC
+2019,2019,1,Deep-water flatfish,WYK,n/a,"3,280","3,280",,1,Deep-water flatfishWYK
+2019,2019,1,Deep-water flatfish,SEO,n/a,"2,362","2,362",,1,Deep-water flatfishSEO
+2019,2019,1,Deep-water flatfish,Total,"11,434","9,501","9,501",,1,Deep-water flatfishTotal
+2019,2019,1,Rex sole,W,n/a,"2,951","2,951",,1,Rex soleW
+2019,2019,1,Rex sole,C,n/a,"8,357","8,357",,1,Rex soleC
+2019,2019,1,Rex sole,WYK,n/a,"1,657","1,657",,1,Rex soleWYK
+2019,2019,1,Rex sole,SEO,n/a,"1,727","1,727",,1,Rex soleSEO
+2019,2019,1,Rex sole,Total,"17,889","14,692","14,692",,1,Rex soleTotal
+2019,2019,1,Arrowtooth flounder,W,n/a,"35,994","14,500",,1,Arrowtooth flounderW
+2019,2019,1,Arrowtooth flounder,C,n/a,"70,995","70,995",,1,Arrowtooth flounderC
+2019,2019,1,Arrowtooth flounder,WYK,n/a,"15,911","6,900",,1,Arrowtooth flounderWYK
+2019,2019,1,Arrowtooth flounder,SEO,,"22,941","6,900",,1,Arrowtooth flounderSEO
+2019,2019,1,Arrowtooth flounder,Total,"174,598","145,841","99,295",,1,Arrowtooth flounderTotal
+2019,2019,1,Flathead sole,W,n/a,"13,234","8,650",,1,Flathead soleW
+2019,2019,1,Flathead sole,C,n/a,"21,109","15,400",,1,Flathead soleC
+2019,2019,1,Flathead sole,WYK,n/a,"2,016","2,016",,1,Flathead soleWYK
+2019,2019,1,Flathead sole,SEO,n/a,423,423,,1,Flathead soleSEO
+2019,2019,1,Flathead sole,Total,"44,865","36,782","26,489",,1,Flathead soleTotal
+2019,2019,1,Pacific ocean perch,W,n/a,"3,227","3,227",,1,Pacific ocean perchW
+2019,2019,1,Pacific ocean perch,C,n/a,"19,646","19,646",,1,Pacific ocean perchC
+2019,2019,1,Pacific ocean perch,WYK,n/a,"3,296","3,296",,1,Pacific ocean perchWYK
+2019,2019,1,Pacific ocean perch,W/C/WYK subtotal,"31,113","26,169","26,169",,1,Pacific ocean perchWCWYKsubtotal
+2019,2019,1,Pacific ocean perch,SEO,"2,838","2,386","2,386",,1,Pacific ocean perchSEO
+2019,2019,1,Pacific ocean perch,Total,"33,951","28,555","28,555",,1,Pacific ocean perchTotal
+2019,2019,1,Northern rockfish,W,n/a,"1,190","1,190",,1,Northern rockfishW
+2019,2019,1,Northern rockfish,C,n/a,"3,338","3,338",,1,Northern rockfishC
+2019,2019,1,Northern rockfish,E,n/a,1,,,1,Northern rockfishE
+2019,2019,1,Northern rockfish,Total,"5,402","4,529","4,528",,1,Northern rockfishTotal
+2019,2019,1,Shortraker rockfish,W,n/a,44,44,,1,Shortraker rockfishW
+2019,2019,1,Shortraker rockfish,C,n/a,305,305,,1,Shortraker rockfishC
+2019,2019,1,Shortraker rockfish,E,n/a,514,514,,1,Shortraker rockfishE
+2019,2019,1,Shortraker rockfish,Total,"1,151",863,863,,1,Shortraker rockfishTotal
+2019,2019,1,Dusky rockfish,W,n/a,781,781,,1,Dusky rockfishW
+2019,2019,1,Dusky rockfish,C,n/a,"2,764","2,764",,1,Dusky rockfishC
+2019,2019,1,Dusky rockfish,WYK,n/a,95,95,,1,Dusky rockfishWYK
+2019,2019,1,Dusky rockfish,SEO,n/a,60,60,,1,Dusky rockfishSEO
+2019,2019,1,Dusky rockfish,Total,"4,521","3,700","3,700",,1,Dusky rockfishTotal
+2019,2019,1,Rougheye and Blackspotted rockfish,W,n/a,174,174,,1,Rougheye and Blackspotted rockfishW
+2019,2019,1,Rougheye and Blackspotted rockfish,C,n/a,550,550,,1,Rougheye and Blackspotted rockfishC
+2019,2019,1,Rougheye and Blackspotted rockfish,E,n/a,704,704,,1,Rougheye and Blackspotted rockfishE
+2019,2019,1,Rougheye and Blackspotted rockfish,Total,"1,715","1,428","1,428",,1,Rougheye and Blackspotted rockfishTotal
+2019,2019,1,Demersal shelf rockfish,SEO,411,261,261,,1,Demersal shelf rockfishSEO
+2019,2019,1,Thornyhead rockfish,W,n/a,326,326,,1,Thornyhead rockfishW
+2019,2019,1,Thornyhead rockfish,C,n/a,911,911,,1,Thornyhead rockfishC
+2019,2019,1,Thornyhead rockfish,E,n/a,779,779,,1,Thornyhead rockfishE
+2019,2019,1,Thornyhead rockfish,Total,"2,688","2,016","2,016",,1,Thornyhead rockfishTotal
+2019,2019,1,Other rockfish,W and C,n/a,"1,737","1,737",,1,Other rockfishWandC
+2019,2019,1,Other rockfish,WYK,n/a,368,368,,1,Other rockfishWYK
+2019,2019,1,Other rockfish,SEO,n/a,"3,489","3,489",,1,Other rockfishSEO
+2019,2019,1,Other rockfish,Total,"7,356","5,594","5,594",,1,Other rockfishTotal
+2019,2019,1,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2019,2019,1,Big skate,W,n/a,504,504,,1,Big skateW
+2019,2019,1,Big skate,C,n/a,"1,774","1,774",,1,Big skateC
+2019,2019,1,Big skate,E,n/a,570,570,,1,Big skateE
+2019,2019,1,Big skate,Total,"3,797","2,848","2,848",,1,Big skateTotal
+2019,2019,1,Longnose skate,W,n/a,149,149,,1,Longnose skateW
+2019,2019,1,Longnose skate,C,n/a,"2,804","2,804",,1,Longnose skateC
+2019,2019,1,Longnose skate,E,n/a,619,619,,1,Longnose skateE
+2019,2019,1,Longnose skate,Total,"4,763","3,572","3,572",,1,Longnose skateTotal
+2019,2019,1,Other skates,GW,"1,845","1,384","1,384",,1,Other skatesGW
+2019,2019,1,Sculpins,GW,"6,958","5,301","5,301",24.0,1,SculpinsGW
+2019,2019,1,Sharks,GW,"10,913","8,184","8,184",21.0,1,SharksGW
+2019,2019,1,Octopus,GW,"1,300",975,975,22.0,1,OctopusGW
+2019,2019,1,Total,GOA,"664,889","509,507","430,569",23.0,1,TotalGOA
+2019,2020,2,Pollock,Shumagin (610),n/a,"19,175","19,175",1.0,1,PollockShumagin610
+2019,2020,2,Pollock,Chirikof (620),n/a,"54,456","54,456",1.0,1,PollockChirikof620
+2019,2020,2,Pollock,Kodiak (630),n/a,"26,597","26,597",1.0,1,PollockKodiak630
+2019,2020,2,Pollock,WYK (640),n/a,"5,554","5,554",1.0,1,PollockWYK640
+2019,2020,2,Pollock,W/C/WYK (subtotal),"140,674","108,494","105,782",1.0,1,PollockWCWYKsubtotal
+2019,2020,2,Pollock,SEO (650),"13,531","10,148","10,148",1.0,1,PollockSEO650
+2019,2020,2,Pollock,Total,"154,205","118,642","115,930",1.0,1,PollockTotal
+2019,2020,2,Pacific cod,W,n/a,"4,942","2,076",2.0,1,Pacific codW
+2019,2020,2,Pacific cod,C,n/a,"8,458","3,806",2.0,1,Pacific codC
+2019,2020,2,Pacific cod,E,n/a,"1,221",549,2.0,1,Pacific codE
+2019,2020,2,Pacific cod,Total,"17,794","14,621","6,431",2.0,1,Pacific codTotal
+2019,2020,2,Sablefish,W,n/a,"2,278","1,942",3.0,1,SablefishW
+2019,2020,2,Sablefish,C,n/a,"7,560","6,445",3.0,1,SablefishC
+2019,2020,2,Sablefish,WYK,n/a,"2,521","2,343",3.0,1,SablefishWYK
+2019,2020,2,Sablefish,SEO,n/a,"4,524","3,663",3.0,1,SablefishSEO
+2019,2020,2,Sablefish,E (WYK and SEO) (subtotal),n/a,"7,045","6,006",3.0,1,SablefishEWYKandSEOsubtotal
+2019,2020,2,Sablefish,Total,"50,481","16,883","14,393",3.0,1,SablefishTotal
+2019,2020,2,Shallow-water flatfish,W,n/a,"23,849","13,250",,1,Shallow-water flatfishW
+2019,2020,2,Shallow-water flatfish,C,n/a,"27,732","27,732",,1,Shallow-water flatfishC
+2019,2020,2,Shallow-water flatfish,WYK,n/a,"2,773","2,773",,1,Shallow-water flatfishWYK
+2019,2020,2,Shallow-water flatfish,SEO,n/a,"1,109","1,109",,1,Shallow-water flatfishSEO
+2019,2020,2,Shallow-water flatfish,Total,"68,010","55,463","44,864",,1,Shallow-water flatfishTotal
+2019,2020,2,Deep-water flatfish,W,n/a,226,226,,1,Deep-water flatfishW
+2019,2020,2,Deep-water flatfish,C,n/a,"1,948","1,948",,1,Deep-water flatfishC
+2019,2020,2,Deep-water flatfish,WYK,n/a,"2,105","2,105",,1,Deep-water flatfishWYK
+2019,2020,2,Deep-water flatfish,SEO,n/a,"1,751","1,751",,1,Deep-water flatfishSEO
+2019,2020,2,Deep-water flatfish,Total,"7,163","6,030","6,030",,1,Deep-water flatfishTotal
+2019,2020,2,Rex sole,W,n/a,"2,901","2,901",,1,Rex soleW
+2019,2020,2,Rex sole,C,n/a,"8,579","8,579",,1,Rex soleC
+2019,2020,2,Rex sole,WYK,n/a,"1,174","1,174",,1,Rex soleWYK
+2019,2020,2,Rex sole,SEO,n/a,"2,224","2,224",,1,Rex soleSEO
+2019,2020,2,Rex sole,Total,"18,127","14,878","14,878",,1,Rex soleTotal
+2019,2020,2,Arrowtooth flounder,W,n/a,"31,455","14,500",,1,Arrowtooth flounderW
+2019,2020,2,Arrowtooth flounder,C,n/a,"68,669","68,669",,1,Arrowtooth flounderC
+2019,2020,2,Arrowtooth flounder,WYK,n/a,"10,242","6,900",,1,Arrowtooth flounderWYK
+2019,2020,2,Arrowtooth flounder,SEO,,"17,694","6,900",,1,Arrowtooth flounderSEO
+2019,2020,2,Arrowtooth flounder,Total,"153,017","128,060","96,969",,1,Arrowtooth flounderTotal
+2019,2020,2,Flathead sole,W,n/a,"13,783","8,650",,1,Flathead soleW
+2019,2020,2,Flathead sole,C,n/a,"20,201","15,400",,1,Flathead soleC
+2019,2020,2,Flathead sole,WYK,n/a,"2,354","2,354",,1,Flathead soleWYK
+2019,2020,2,Flathead sole,SEO,n/a,"1,858","1,858",,1,Flathead soleSEO
+2019,2020,2,Flathead sole,Total,"46,572","38,196","28,262",,1,Flathead soleTotal
+2019,2020,2,Pacific ocean perch,W,n/a,"1,437","1,437",,1,Pacific ocean perchW
+2019,2020,2,Pacific ocean perch,C,n/a,"23,678","23,678",,1,Pacific ocean perchC
+2019,2020,2,Pacific ocean perch,WYK,n/a,"1,470","1,470",,1,Pacific ocean perchWYK
+2019,2020,2,Pacific ocean perch,W/C/WYK subtotal,"31,567","26,585","26,585",,1,Pacific ocean perchWCWYKsubtotal
+2019,2020,2,Pacific ocean perch,SEO,"5,525","4,653","4,653",,1,Pacific ocean perchSEO
+2019,2020,2,Pacific ocean perch,Total,"37,092","31,238","31,238",,1,Pacific ocean perchTotal
+2019,2020,2,Northern rockfish,W,n/a,"1,133","1,133",,1,Northern rockfishW
+2019,2020,2,Northern rockfish,C,n/a,"3,178","3,178",,1,Northern rockfishC
+2019,2020,2,Northern rockfish,E,n/a,1,,,1,Northern rockfishE
+2019,2020,2,Northern rockfish,Total,"5,143","4,312","4,311",,1,Northern rockfishTotal
+2019,2020,2,Shortraker rockfish,W,n/a,52,52,,1,Shortraker rockfishW
+2019,2020,2,Shortraker rockfish,C,n/a,284,284,,1,Shortraker rockfishC
+2019,2020,2,Shortraker rockfish,E,n/a,372,372,,1,Shortraker rockfishE
+2019,2020,2,Shortraker rockfish,Total,944,708,708,,1,Shortraker rockfishTotal
+2019,2020,2,Dusky rockfish,W,n/a,776,776,,1,Dusky rockfishW
+2019,2020,2,Dusky rockfish,C,n/a,"2,746","2,746",,1,Dusky rockfishC
+2019,2020,2,Dusky rockfish,WYK,n/a,115,115,,1,Dusky rockfishWYK
+2019,2020,2,Dusky rockfish,SEO,n/a,39,39,,1,Dusky rockfishSEO
+2019,2020,2,Dusky rockfish,Total,"4,492","3,676","3,676",,1,Dusky rockfishTotal
+2019,2020,2,Rougheye and Blackspotted rockfish,W,n/a,168,168,,1,Rougheye and Blackspotted rockfishW
+2019,2020,2,Rougheye and Blackspotted rockfish,C,n/a,455,455,,1,Rougheye and Blackspotted rockfishC
+2019,2020,2,Rougheye and Blackspotted rockfish,E,n/a,586,586,,1,Rougheye and Blackspotted rockfishE
+2019,2020,2,Rougheye and Blackspotted rockfish,Total,"1,452","1,209","1,209",,1,Rougheye and Blackspotted rockfishTotal
+2019,2020,2,Demersal shelf rockfish,SEO,375,238,238,,1,Demersal shelf rockfishSEO
+2019,2020,2,Thornyhead rockfish,W,n/a,326,326,,1,Thornyhead rockfishW
+2019,2020,2,Thornyhead rockfish,C,n/a,911,911,,1,Thornyhead rockfishC
+2019,2020,2,Thornyhead rockfish,E,n/a,779,779,,1,Thornyhead rockfishE
+2019,2020,2,Thornyhead rockfish,Total,"2,688","2,016","2,016",,1,Thornyhead rockfishTotal
+2019,2020,2,Other rockfish,W and C,n/a,940,940,,1,Other rockfishWandC
+2019,2020,2,Other rockfish,WYK,n/a,369,369,,1,Other rockfishWYK
+2019,2020,2,Other rockfish,SEO,n/a,"2,744","2,744",,1,Other rockfishSEO
+2019,2020,2,Other rockfish,Total,"5,320","4,053","4,053",,1,Other rockfishTotal
+2019,2020,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2019,2020,2,Big skate,W,n/a,758,758,,1,Big skateW
+2019,2020,2,Big skate,C,n/a,"1,560","1,560",,1,Big skateC
+2019,2020,2,Big skate,E,n/a,890,890,,1,Big skateE
+2019,2020,2,Big skate,Total,"4,278","3,208","3,208",,1,Big skateTotal
+2019,2020,2,Longnose skate,W,n/a,158,158,,1,Longnose skateW
+2019,2020,2,Longnose skate,C,n/a,"1,875","1,875",,1,Longnose skateC
+2019,2020,2,Longnose skate,E,n/a,554,554,,1,Longnose skateE
+2019,2020,2,Longnose skate,Total,"3,449","2,587","2,587",,1,Longnose skateTotal
+2019,2020,2,Other skates,GW,"1,166",875,875,,1,Other skatesGW
+2019,2020,2,Sculpins,GW,"6,932","5,199","5,199",24.0,1,SculpinsGW
+2019,2020,2,Sharks,GW,"10,913","8,184","8,184",21.0,1,SharksGW
+2019,2020,2,Octopus,GW,"1,307",980,980,22.0,1,OctopusGW
+2019,2020,2,Total,GOA,"607,120","465,956","399,239",23.0,1,TotalGOA
+2019,2021,2,Pollock,Shumagin (610),n/a,"19,775","19,775",1.0,1,PollockShumagin610
+2019,2021,2,Pollock,Chirikof (620),n/a,"56,159","56,159",1.0,1,PollockChirikof620
+2019,2021,2,Pollock,Kodiak (630),n/a,"27,429","27,429",1.0,1,PollockKodiak630
+2019,2021,2,Pollock,WYK (640),n/a,"5,728","5,728",1.0,1,PollockWYK640
+2019,2021,2,Pollock,W/C/WYK (subtotal),"149,988","111,888","109,091",1.0,1,PollockWCWYKsubtotal
+2019,2021,2,Pollock,SEO (650),"13,531","10,148","10,148",1.0,1,PollockSEO650
+2019,2021,2,Pollock,Total,"163,519","122,036","119,239",1.0,1,PollockTotal
+2019,2021,2,Pacific cod,W,n/a,"4,942","2,076",2.0,1,Pacific codW
+2019,2021,2,Pacific cod,C,n/a,"8,458","3,806",2.0,1,Pacific codC
+2019,2021,2,Pacific cod,E,n/a,"1,221",549,2.0,1,Pacific codE
+2019,2021,2,Pacific cod,Total,"30,099","14,621","6,431",2.0,1,Pacific codTotal
+2019,2021,2,Sablefish,W,n/a,"3,003","3,003",3.0,1,SablefishW
+2019,2021,2,Sablefish,C,n/a,"9,963","9,963",3.0,1,SablefishC
+2019,2021,2,Sablefish,WYK,n/a,"3,323","3,323",3.0,1,SablefishWYK
+2019,2021,2,Sablefish,SEO,n/a,"5,963","5,963",3.0,1,SablefishSEO
+2019,2021,2,Sablefish,E (WYK and SEO) (subtotal),n/a,"9,286","9,286",3.0,1,SablefishEWYKandSEOsubtotal
+2019,2021,2,Sablefish,Total,"64,765","22,252","22,252",3.0,1,SablefishTotal
+2019,2021,2,Shallow-water flatfish,W,n/a,"24,256","13,250",,1,Shallow-water flatfishW
+2019,2021,2,Shallow-water flatfish,C,n/a,"28,205","28,205",,1,Shallow-water flatfishC
+2019,2021,2,Shallow-water flatfish,WYK,n/a,"2,820","2,820",,1,Shallow-water flatfishWYK
+2019,2021,2,Shallow-water flatfish,SEO,n/a,"1,128","1,128",,1,Shallow-water flatfishSEO
+2019,2021,2,Shallow-water flatfish,Total,"69,129","56,409","45,403",,1,Shallow-water flatfishTotal
+2019,2021,2,Deep-water flatfish,W,n/a,225,225,,1,Deep-water flatfishW
+2019,2021,2,Deep-water flatfish,C,n/a,"1,914","1,914",,1,Deep-water flatfishC
+2019,2021,2,Deep-water flatfish,WYK,n/a,"2,068","2,068",,1,Deep-water flatfishWYK
+2019,2021,2,Deep-water flatfish,SEO,n/a,"1,719","1,719",,1,Deep-water flatfishSEO
+2019,2021,2,Deep-water flatfish,Total,"7,040","5,926","5,926",,1,Deep-water flatfishTotal
+2019,2021,2,Rex sole,W,n/a,"3,013","3,013",,1,Rex soleW
+2019,2021,2,Rex sole,C,n/a,"8,912","8,912",,1,Rex soleC
+2019,2021,2,Rex sole,WYK,n/a,"1,206","1,206",,1,Rex soleWYK
+2019,2021,2,Rex sole,SEO,n/a,"2,285","2,285",,1,Rex soleSEO
+2019,2021,2,Rex sole,Total,"18,779","15,416","15,416",,1,Rex soleTotal
+2019,2021,2,Arrowtooth flounder,W,n/a,"30,545","14,500",,1,Arrowtooth flounderW
+2019,2021,2,Arrowtooth flounder,C,n/a,"66,683","66,683",,1,Arrowtooth flounderC
+2019,2021,2,Arrowtooth flounder,WYK,n/a,"9,946","6,900",,1,Arrowtooth flounderWYK
+2019,2021,2,Arrowtooth flounder,SEO,n/a,"17,183","6,900",,1,Arrowtooth flounderSEO
+2019,2021,2,Arrowtooth flounder,Total,"148,597","124,357","94,983",,1,Arrowtooth flounderTotal
+2019,2021,2,Flathead sole,W,n/a,"14,191","8,650",,1,Flathead soleW
+2019,2021,2,Flathead sole,C,n/a,"20,799","15,400",,1,Flathead soleC
+2019,2021,2,Flathead sole,WYK,n/a,"2,424","2,424",,1,Flathead soleWYK
+2019,2021,2,Flathead sole,SEO,n/a,"1,912","1,912",,1,Flathead soleSEO
+2019,2021,2,Flathead sole,Total,"47,919","39,326","28,386",,1,Flathead soleTotal
+2019,2021,2,Pacific ocean perch,W,n/a,"1,379","1,379",,1,Pacific ocean perchW
+2019,2021,2,Pacific ocean perch,C,n/a,"22,727","22,727",,1,Pacific ocean perchC
+2019,2021,2,Pacific ocean perch,WYK,n/a,"1,410","1,410",,1,Pacific ocean perchWYK
+2019,2021,2,Pacific ocean perch,W/C/WYK,"30,297","25,516","25,516",,1,Pacific ocean perchWCWYK
+2019,2021,2,Pacific ocean perch,SEO,"5,303","4,467","4,467",,1,Pacific ocean perchSEO
+2019,2021,2,Pacific ocean perch,Total,"35,600","29,983","29,983",,1,Pacific ocean perchTotal
+2019,2021,2,Northern rockfish,W,n/a,"1,079","1,079",,1,Northern rockfishW
+2019,2021,2,Northern rockfish,C,n/a,"3,027","3,027",,1,Northern rockfishC
+2019,2021,2,Northern rockfish,E,n/a,1,,,1,Northern rockfishE
+2019,2021,2,Northern rockfish,Total,"4,898","4,107","4,106",,1,Northern rockfishTotal
+2019,2021,2,Shortraker rockfish,W,n/a,52,52,,1,Shortraker rockfishW
+2019,2021,2,Shortraker rockfish,C,n/a,284,284,,1,Shortraker rockfishC
+2019,2021,2,Shortraker rockfish,E,n/a,372,372,,1,Shortraker rockfishE
+2019,2021,2,Shortraker rockfish,Total,944,708,708,,1,Shortraker rockfishTotal
+2019,2021,2,Dusky rockfish,W,n/a,759,759,,1,Dusky rockfishW
+2019,2021,2,Dusky rockfish,C,n/a,"2,688","2,688",,1,Dusky rockfishC
+2019,2021,2,Dusky rockfish,WYK,n/a,113,113,,1,Dusky rockfishWYK
+2019,2021,2,Dusky rockfish,SEO,n/a,38,38,,1,Dusky rockfishSEO
+2019,2021,2,Dusky rockfish,Total,"4,396","3,598","3,598",,1,Dusky rockfishTotal
+2019,2021,2,Rougheye and Blackspotted rockfish,W,n/a,169,169,,1,Rougheye and Blackspotted rockfishW
+2019,2021,2,Rougheye and Blackspotted rockfish,C,n/a,455,455,,1,Rougheye and Blackspotted rockfishC
+2019,2021,2,Rougheye and Blackspotted rockfish,E,n/a,587,587,,1,Rougheye and Blackspotted rockfishE
+2019,2021,2,Rougheye and Blackspotted rockfish,Total,"1,455","1,211","1,211",,1,Rougheye and Blackspotted rockfishTotal
+2019,2021,2,Demersal shelf rockfish,SEO,375,238,238,,1,Demersal shelf rockfishSEO
+2019,2021,2,Thornyhead rockfish,W,n/a,326,326,,1,Thornyhead rockfishW
+2019,2021,2,Thornyhead rockfish,C,n/a,911,911,,1,Thornyhead rockfishC
+2019,2021,2,Thornyhead rockfish,E,n/a,779,779,,1,Thornyhead rockfishE
+2019,2021,2,Thornyhead rockfish,Total,"2,688","2,016","2,016",,1,Thornyhead rockfishTotal
+2019,2021,2,Thornyhead rockfish,W and C,n/a,940,940,,1,Thornyhead rockfishWandC
+2019,2021,2,Other rockfish,WYK,n/a,369,369,,1,Other rockfishWYK
+2019,2021,2,Other rockfish,SEO,n/a,"2,744","2,744",,1,Other rockfishSEO
+2019,2021,2,Other rockfish,Total,"5,320","4,053","4,053",,1,Other rockfishTotal
+2019,2021,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2019,2021,2,Big skate,W,n/a,758,758,,1,Big skateW
+2019,2021,2,Big skate,C,n/a,"1,560","1,560",,1,Big skateC
+2019,2021,2,Big skate,E,n/a,890,890,,1,Big skateE
+2019,2021,2,Big skate,Total,"4,278","3,208","3,208",,1,Big skateTotal
+2019,2021,2,Longnose skate,W,n/a,158,158,,1,Longnose skateW
+2019,2021,2,Longnose skate,C,n/a,"1,875","1,875",,1,Longnose skateC
+2019,2021,2,Longnose skate,E,n/a,554,554,,1,Longnose skateE
+2019,2021,2,Longnose skate,Total,"3,449","2,587","2,587",,1,Longnose skateTotal
+2019,2021,2,Other skates,GW,"1,166",875,875,,1,Other skatesGW
+2019,2021,2,Sculpins,GW,"6,932","5,199","5,199",24.0,1,SculpinsGW
+2019,2021,2,Sharks,GW,"10,913","8,184","8,184",21.0,1,SharksGW
+2019,2021,2,Octopus,GW,"1,307",980,980,22.0,1,OctopusGW
+2019,2021,2,Total,GOA,"639,768","471,990","407,982",23.0,1,TotalGOA
+2020,2021,2,Pollock,Shumagin (610),n/a,"18,477","18,477",1.0,1,PollockShumagin610
+2020,2021,2,Pollock,Chirikof (620),n/a,"54,870","54,870",1.0,1,PollockChirikof620
+2020,2021,2,Pollock,Kodiak (630),n/a,"24,320","24,320",1.0,1,PollockKodiak630
+2020,2021,2,Pollock,WYK (640),n/a,"5,412","5,412",1.0,1,PollockWYK640
+2020,2021,2,Pollock,W/C/WYK (subtotal),"123,455","105,722","103,079",1.0,1,PollockWCWYKsubtotal
+2020,2021,2,Pollock,SEO (650),"13,531","10,148","10,148",1.0,1,PollockSEO650
+2020,2021,2,Pollock,Total,"136,986","115,870","113,227",1.0,1,PollockTotal
+2020,2021,2,Pacific cod,W,n/a,"7,986","5,590",2.0,1,Pacific codW
+2020,2021,2,Pacific cod,C,n/a,"13,656","10,242",2.0,1,Pacific codC
+2020,2021,2,Pacific cod,E,n/a,"1,985","1,489",2.0,1,Pacific codE
+2020,2021,2,Pacific cod,Total,"28,977","23,627","17,321",2.0,1,Pacific codTotal
+2020,2021,2,Sablefish,W,n/a,"3,224","2,428",3.0,1,SablefishW
+2020,2021,2,Sablefish,C,n/a,"9,527","8,056",3.0,1,SablefishC
+2020,2021,2,Sablefish,WYK,n/a,"3,451","2,929",3.0,1,SablefishWYK
+2020,2021,2,Sablefish,SEO,n/a,"5,273","4,579",3.0,1,SablefishSEO
+2020,2021,2,Sablefish,E (WYK and SEO) (subtotal),n/a,"8,724","7,508",3.0,1,SablefishEWYKandSEOsubtotal
+2020,2021,2,Sablefish,Total,"60,426","21,475","17,991",3.0,1,SablefishTotal
+2020,2021,2,Shallow-water flatfish,W,n/a,"24,151","13,250",,1,Shallow-water flatfishW
+2020,2021,2,Shallow-water flatfish,C,n/a,"28,082","28,082",,1,Shallow-water flatfishC
+2020,2021,2,Shallow-water flatfish,WYK,n/a,"2,808","2,808",,1,Shallow-water flatfishWYK
+2020,2021,2,Shallow-water flatfish,SEO,n/a,"1,123","1,123",,1,Shallow-water flatfishSEO
+2020,2021,2,Shallow-water flatfish,Total,"68,841","56,164","45,263",,1,Shallow-water flatfishTotal
+2020,2021,2,Deep-water flatfish,W,n/a,225,225,,1,Deep-water flatfishW
+2020,2021,2,Deep-water flatfish,C,n/a,"1,914","1,914",,1,Deep-water flatfishC
+2020,2021,2,Deep-water flatfish,WYK,n/a,"2,068","2,068",,1,Deep-water flatfishWYK
+2020,2021,2,Deep-water flatfish,SEO,n/a,"1,719","1,719",,1,Deep-water flatfishSEO
+2020,2021,2,Deep-water flatfish,Total,"7,040","5,926","5,926",,1,Deep-water flatfishTotal
+2020,2021,2,Rex sole,W,n/a,"3,013","3,013",,1,Rex soleW
+2020,2021,2,Rex sole,C,n/a,"8,912","8,912",,1,Rex soleC
+2020,2021,2,Rex sole,WYK,n/a,"1,206","1,206",,1,Rex soleWYK
+2020,2021,2,Rex sole,SEO,n/a,"2,285","2,285",,1,Rex soleSEO
+2020,2021,2,Rex sole,Total,"18,779","15,416","15,416",,1,Rex soleTotal
+2020,2021,2,Arrowtooth flounder,W,n/a,"32,377","14,500",,1,Arrowtooth flounderW
+2020,2021,2,Arrowtooth flounder,C,n/a,"69,072","69,072",,1,Arrowtooth flounderC
+2020,2021,2,Arrowtooth flounder,WYK,n/a,"8,380","6,900",,1,Arrowtooth flounderWYK
+2020,2021,2,Arrowtooth flounder,SEO,n/a,"17,141","6,900",,1,Arrowtooth flounderSEO
+2020,2021,2,Arrowtooth flounder,Total,"151,723","126,970","97,372",,1,Arrowtooth flounderTotal
+2020,2021,2,Flathead sole,W,n/a,"14,209","8,650",,1,Flathead soleW
+2020,2021,2,Flathead sole,C,n/a,"20,826","15,400",,1,Flathead soleC
+2020,2021,2,Flathead sole,WYK,n/a,"2,427","2,427",,1,Flathead soleWYK
+2020,2021,2,Flathead sole,SEO,n/a,"1,915","1,915",,1,Flathead soleSEO
+2020,2021,2,Flathead sole,Total,"47,982","39,377","28,392",,1,Flathead soleTotal
+2020,2021,2,Pacific ocean perch,W,n/a,"1,643","1,643",,1,Pacific ocean perchW
+2020,2021,2,Pacific ocean perch,C,n/a,"27,429","27,429",,1,Pacific ocean perchC
+2020,2021,2,Pacific ocean perch,WYK,n/a,"1,705","1,705",,1,Pacific ocean perchWYK
+2020,2021,2,Pacific ocean perch,W/C/WYK subtotal,"36,563","30,777","30,777",,1,Pacific ocean perchWCWYKsubtotal
+2020,2021,2,Pacific ocean perch,SEO,"6,414","5,400","5,400",,1,Pacific ocean perchSEO
+2020,2021,2,Pacific ocean perch,Total,"42,977","36,177","36,177",,1,Pacific ocean perchTotal
+2020,2021,2,Northern rockfish,W,n/a,"2,023","2,023",,1,Northern rockfishW
+2020,2021,2,Northern rockfish,C,n/a,"3,334","3,334",,1,Northern rockfishC
+2020,2021,2,Northern rockfish,E,n/a,1,,,1,Northern rockfishE
+2020,2021,2,Northern rockfish,Total,"6,396","5,358","5,357",,1,Northern rockfishTotal
+2020,2021,2,Shortraker rockfish,W,n/a,52,52,,1,Shortraker rockfishW
+2020,2021,2,Shortraker rockfish,C,n/a,284,284,,1,Shortraker rockfishC
+2020,2021,2,Shortraker rockfish,E,n/a,372,372,,1,Shortraker rockfishE
+2020,2021,2,Shortraker rockfish,Total,944,708,708,,1,Shortraker rockfishTotal
+2020,2021,2,Dusky rockfish,W,n/a,270,270,,1,Dusky rockfishW
+2020,2021,2,Dusky rockfish,C,n/a,"4,548","4,548",,1,Dusky rockfishC
+2020,2021,2,Dusky rockfish,WYK,n/a,468,468,,1,Dusky rockfishWYK
+2020,2021,2,Dusky rockfish,SEO,n/a,103,103,,1,Dusky rockfishSEO
+2020,2021,2,Dusky rockfish,Total,"8,655","5,389","5,389",,1,Dusky rockfishTotal
+2020,2021,2,Rougheye and Blackspotted rockfish,W,n/a,168,168,,1,Rougheye and Blackspotted rockfishW
+2020,2021,2,Rougheye and Blackspotted rockfish,C,n/a,456,456,,1,Rougheye and Blackspotted rockfishC
+2020,2021,2,Rougheye and Blackspotted rockfish,E,n/a,588,588,,1,Rougheye and Blackspotted rockfishE
+2020,2021,2,Rougheye and Blackspotted rockfish,Total,"1,456","1,212","1,212",,1,Rougheye and Blackspotted rockfishTotal
+2020,2021,2,Demersal shelf rockfish,SEO,405,257,257,,1,Demersal shelf rockfishSEO
+2020,2021,2,Thornyhead rockfish,W,n/a,352,352,,1,Thornyhead rockfishW
+2020,2021,2,Thornyhead rockfish,C,n/a,910,910,,1,Thornyhead rockfishC
+2020,2021,2,Thornyhead rockfish,E,n/a,691,691,,1,Thornyhead rockfishE
+2020,2021,2,Thornyhead rockfish,Total,"2,604","1,953","1,953",,1,Thornyhead rockfishTotal
+2020,2021,2,Other rockfish,W and C,n/a,940,940,,1,Other rockfishWandC
+2020,2021,2,Other rockfish,WYK,n/a,369,369,,1,Other rockfishWYK
+2020,2021,2,Other rockfish,SEO,n/a,"2,744",300,,1,Other rockfishSEO
+2020,2021,2,Other rockfish,Total,"5,320","4,053","1,609",,1,Other rockfishTotal
+2020,2021,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2020,2021,2,Big skate,W,n/a,758,758,,1,Big skateW
+2020,2021,2,Big skate,C,n/a,"1,560","1,560",,1,Big skateC
+2020,2021,2,Big skate,E,n/a,890,890,,1,Big skateE
+2020,2021,2,Big skate,Total,"4,278","3,208","3,208",,1,Big skateTotal
+2020,2021,2,Longnose skate,W,n/a,158,158,,1,Longnose skateW
+2020,2021,2,Longnose skate,C,n/a,"1,875","1,875",,1,Longnose skateC
+2020,2021,2,Longnose skate,E,n/a,554,554,,1,Longnose skateE
+2020,2021,2,Longnose skate,Total,"3,449","2,587","2,587",,1,Longnose skateTotal
+2020,2021,2,Other skates,GW,"1,166",875,875,,1,Other skatesGW
+2020,2021,2,Sharks,GW,"5,006","3,755","3,755",21.0,1,SharksGW
+2020,2021,2,Octopus,GW,"1,307",980,980,22.0,1,OctopusGW
+2020,2021,2,Total,GOA,"610,917","476,037","407,975",23.0,1,TotalGOA
+2020,2022,2,Pollock,Shumagin (610),n/a,"16,067","16,067",1.0,1,PollockShumagin610
+2020,2022,2,Pollock,Chirikof (620),n/a,"47,714","47,714",1.0,1,PollockChirikof620
+2020,2022,2,Pollock,Kodiak (630),n/a,"21,149","21,149",1.0,1,PollockKodiak630
+2020,2022,2,Pollock,WYK (640),n/a,"4,706","4,706",1.0,1,PollockWYK640
+2020,2022,2,Pollock,W/C/WYK (subtotal),"106,767","91,934","89,636",1.0,1,PollockWCWYKsubtotal
+2020,2022,2,Pollock,SEO (650),"13,531","10,148","10,148",1.0,1,PollockSEO650
+2020,2022,2,Pollock,Total,"120,298","102,082","99,784",1.0,1,PollockTotal
+2020,2022,2,Pacific cod,W,n/a,"12,892","9,024",2.0,1,Pacific codW
+2020,2022,2,Pacific cod,C,n/a,"22,045","16,534",2.0,1,Pacific codC
+2020,2022,2,Pacific cod,E,n/a,"3,204","2,403",2.0,1,Pacific codE
+2020,2022,2,Pacific cod,Total,"46, 587","38,141","27,961",2.0,1,Pacific codTotal
+2020,2022,2,Sablefish,W,n/a,"4,165","4,165",3.0,1,SablefishW
+2020,2022,2,Sablefish,C,n/a,"11,111","11,111",3.0,1,SablefishC
+2020,2022,2,Sablefish,WYK,n/a,"4,009","4,009",3.0,1,SablefishWYK
+2020,2022,2,Sablefish,SEO,n/a,"5,946","5,946",3.0,1,SablefishSEO
+2020,2022,2,Sablefish,E (WYK and SEO) (subtotal),n/a,"9,955","9,955",3.0,1,SablefishEWYKandSEOsubtotal
+2020,2022,2,Sablefish,Total,"70,710","25,231","25,231",3.0,1,SablefishTotal
+2020,2022,2,Shallow-water flatfish,W,n/a,"24,460","13,250",,1,Shallow-water flatfishW
+2020,2022,2,Shallow-water flatfish,C,n/a,"28,442","28,442",,1,Shallow-water flatfishC
+2020,2022,2,Shallow-water flatfish,WYK,n/a,"2,844","2,844",,1,Shallow-water flatfishWYK
+2020,2022,2,Shallow-water flatfish,SEO,n/a,"1,137","1,137",,1,Shallow-water flatfishSEO
+2020,2022,2,Shallow-water flatfish,Total,"69,061","56,883","45,673",,1,Shallow-water flatfishTotal
+2020,2022,2,Deep-water flatfish,W,n/a,225,225,,1,Deep-water flatfishW
+2020,2022,2,Deep-water flatfish,C,n/a,"1,914","1,914",,1,Deep-water flatfishC
+2020,2022,2,Deep-water flatfish,WYK,n/a,"2,068","2,068",,1,Deep-water flatfishWYK
+2020,2022,2,Deep-water flatfish,SEO,n/a,"1,719","1,719",,1,Deep-water flatfishSEO
+2020,2022,2,Deep-water flatfish,Total,"7,040","5,926","5,926",,1,Deep-water flatfishTotal
+2020,2022,2,Rex sole,W,n/a,"3,013","3,013",,1,Rex soleW
+2020,2022,2,Rex sole,C,n/a,"8,912","8,912",,1,Rex soleC
+2020,2022,2,Rex sole,WYK,n/a,"1,206","1,206",,1,Rex soleWYK
+2020,2022,2,Rex sole,SEO,n/a,"2,285","2,285",,1,Rex soleSEO
+2020,2022,2,Rex sole,Total,"18,779","15,416","15,416",,1,Rex soleTotal
+2020,2022,2,Arrowtooth flounder,W,n/a,"31,479","14,500",,1,Arrowtooth flounderW
+2020,2022,2,Arrowtooth flounder,C,n/a,"67,154","67,154",,1,Arrowtooth flounderC
+2020,2022,2,Arrowtooth flounder,WYK,n/a,"8,147","6,900",,1,Arrowtooth flounderWYK
+2020,2022,2,Arrowtooth flounder,SEO,n/a,"16,665","6,900",,1,Arrowtooth flounderSEO
+2020,2022,2,Arrowtooth flounder,Total,"147,515","123,445","95,454",,1,Arrowtooth flounderTotal
+2020,2022,2,Flathead sole,W,n/a,"14,380","8,650",,1,Flathead soleW
+2020,2022,2,Flathead sole,C,n/a,"21,076","15,400",,1,Flathead soleC
+2020,2022,2,Flathead sole,WYK,n/a,"2,456","2,456",,1,Flathead soleWYK
+2020,2022,2,Flathead sole,SEO,n/a,"1,939","1,939",,1,Flathead soleSEO
+2020,2022,2,Flathead sole,Total,"48,534","39,851","28,445",,1,Flathead soleTotal
+2020,2022,2,Pacific ocean perch,W,n/a,"1,572","1,572",,1,Pacific ocean perchW
+2020,2022,2,Pacific ocean perch,C,n/a,"26,234","26,234",,1,Pacific ocean perchC
+2020,2022,2,Pacific ocean perch,WYK,n/a,"1,631","1,631",,1,Pacific ocean perchWYK
+2020,2022,2,Pacific ocean perch,W/C/WYK,"34,974","29,437","29,437",,1,Pacific ocean perchWCWYK
+2020,2022,2,Pacific ocean perch,SEO,"6,136","5,165","5,165",,1,Pacific ocean perchSEO
+2020,2022,2,Pacific ocean perch,Total,"41,110","34,602","34,602",,1,Pacific ocean perchTotal
+2020,2022,2,Northern rockfish,W,n/a,"1,926","1,926",,1,Northern rockfishW
+2020,2022,2,Northern rockfish,C,n/a,"3,173","3,173",,1,Northern rockfishC
+2020,2022,2,Northern rockfish,E,n/a,1,,,1,Northern rockfishE
+2020,2022,2,Northern rockfish,Total,"6,088","5,100","5,099",,1,Northern rockfishTotal
+2020,2022,2,Shortraker rockfish,W,n/a,52,52,,1,Shortraker rockfishW
+2020,2022,2,Shortraker rockfish,C,n/a,284,284,,1,Shortraker rockfishC
+2020,2022,2,Shortraker rockfish,E,n/a,372,372,,1,Shortraker rockfishE
+2020,2022,2,Shortraker rockfish,Total,944,708,708,,1,Shortraker rockfishTotal
+2020,2022,2,Dusky rockfish,W,n/a,265,265,,1,Dusky rockfishW
+2020,2022,2,Dusky rockfish,C,n/a,"4,469","4,469",,1,Dusky rockfishC
+2020,2022,2,Dusky rockfish,WYK,n/a,460,460,,1,Dusky rockfishWYK
+2020,2022,2,Dusky rockfish,SEO,n/a,101,101,,1,Dusky rockfishSEO
+2020,2022,2,Dusky rockfish,Total,"8,423","5,295","5,295",,1,Dusky rockfishTotal
+2020,2022,2,Rougheye and Blackspotted rockfish,W,n/a,170,170,,1,Rougheye and Blackspotted rockfishW
+2020,2022,2,Rougheye and Blackspotted rockfish,C,n/a,459,459,,1,Rougheye and Blackspotted rockfishC
+2020,2022,2,Rougheye and Blackspotted rockfish,n/a,592,592,,,1,Rougheye and Blackspotted rockfishna
+2020,2022,2,Rougheye and Blackspotted rockfish,Total,"1,467","1,221","1,221",,1,Rougheye and Blackspotted rockfishTotal
+2020,2022,2,Demersal shelf rockfish,SEO,405,257,257,,1,Demersal shelf rockfishSEO
+2020,2022,2,Thornyhead rockfish,W,n/a,352,352,,1,Thornyhead rockfishW
+2020,2022,2,Thornyhead rockfish,C,n/a,910,910,,1,Thornyhead rockfishC
+2020,2022,2,Thornyhead rockfish,E,n/a,691,691,,1,Thornyhead rockfishE
+2020,2022,2,Thornyhead rockfish,Total,"2, 604","1,953","1,953",,1,Thornyhead rockfishTotal
+2020,2022,2,Other rockfish,W and C,n/a,940,940,,1,Other rockfishWandC
+2020,2022,2,Other rockfish,WYK,n/a,369,369,,1,Other rockfishWYK
+2020,2022,2,Other rockfish,SEO,n/a,"2,744",300,,1,Other rockfishSEO
+2020,2022,2,Other rockfish,Total,"5,320","4,053","1,609",,1,Other rockfishTotal
+2020,2022,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2020,2022,2,Big skate,W,n/a,758,758,,1,Big skateW
+2020,2022,2,Big skate,C,n/a,"1,560","1,560",,1,Big skateC
+2020,2022,2,Big skate,E,n/a,890,890,,1,Big skateE
+2020,2022,2,Big skate,Total,"4, 278","3,208","3,208",,1,Big skateTotal
+2020,2022,2,Longnose skate,W,n/a,158,158,,1,Longnose skateW
+2020,2022,2,Longnose skate,C,n/a,"1,875","1,875",,1,Longnose skateC
+2020,2022,2,Longnose skate,E,n/a,554,554,,1,Longnose skateE
+2020,2022,2,Longnose skate,Total,"3,449","2,587","2,587",,1,Longnose skateTotal
+2020,2022,2,Other skates,GW,"1,166",875,875,,1,Other skatesGW
+2020,2022,2,Sharks,GW,"5,006","3,755","3,755",21.0,1,SharksGW
+2020,2022,2,Octopus,GW,"1,307",980,980,22.0,1,OctopusGW
+2020,2022,2,Total,GOA,"616,921","476,269","409,039",23.0,1,TotalGOA
+2021,2022,2,Pollock,Shumagin (610),n/a,"23,714","23,714",1.0,1,PollockShumagin610
+2021,2022,2,Pollock,Chirikof (620),n/a,"69,250","69,250",1.0,1,PollockChirikof620
+2021,2022,2,Pollock,Kodiak (630),n/a,"30,068","30,068",1.0,1,PollockKodiak630
+2021,2022,2,Pollock,WYK (640),n/a,"6,722","6,722",1.0,1,PollockWYK640
+2021,2022,2,Pollock,W/C/WYK (subtotal),"154,983","133,081","129,754",1.0,1,PollockWCWYKsubtotal
+2021,2022,2,Pollock,SEO (650),"15,150","11,363","11,363",1.0,1,PollockSEO650
+2021,2022,2,Pollock,Total,"170,133","144,444","141,117",1.0,1,PollockTotal
+2021,2022,2,Pacific cod,W,n/a,"9,942","6,959",2.0,1,Pacific codW
+2021,2022,2,Pacific cod,C,n/a,"19,752","14,814",2.0,1,Pacific codC
+2021,2022,2,Pacific cod,E,n/a,"3,117","2,338",2.0,1,Pacific codE
+2021,2022,2,Pacific cod,Total,"39,555","32,811","24,111",2.0,1,Pacific codTotal
+2021,2022,2,Sablefish,W,n/a,"3,727","3,727",3.0,1,SablefishW
+2021,2022,2,Sablefish,C,n/a,"9,965","9,965",3.0,1,SablefishC
+2021,2022,2,Sablefish,WYK,n/a,"3,437","3,437",3.0,1,SablefishWYK
+2021,2022,2,Sablefish,SEO,n/a,"5,665","5,665",3.0,1,SablefishSEO
+2021,2022,2,Sablefish,Subtotal TAC,n/a,n/a,"22,794",3.0,1,SablefishSubtotalTAC
+2021,2022,2,Sablefish,Total,"40,432","34,521",n/a,3.0,1,SablefishTotal
+2021,2022,2,Shallow-water flatfish,W,n/a,"21,256","13,250",,1,Shallow-water flatfishW
+2021,2022,2,Shallow-water flatfish,C,n/a,"25,305","25,305",,1,Shallow-water flatfishC
+2021,2022,2,Shallow-water flatfish,WYK,n/a,"2,531","2,531",,1,Shallow-water flatfishWYK
+2021,2022,2,Shallow-water flatfish,SEO,n/a,"1,518","1,518",,1,Shallow-water flatfishSEO
+2021,2022,2,Shallow-water flatfish,Total,"62,273","50,610","42,604",,1,Shallow-water flatfishTotal
+2021,2022,2,Deep-water flatfish,W,n/a,256,256,,1,Deep-water flatfishW
+2021,2022,2,Deep-water flatfish,C,n/a,"2,139","2,139",,1,Deep-water flatfishC
+2021,2022,2,Deep-water flatfish,WYK,n/a,"1,431","1,431",,1,Deep-water flatfishWYK
+2021,2022,2,Deep-water flatfish,SEO,n/a,"2,082","2,082",,1,Deep-water flatfishSEO
+2021,2022,2,Deep-water flatfish,Total,"7,026","5,908","5,908",,1,Deep-water flatfishTotal
+2021,2022,2,Rex sole,W,n/a,"2,981","2,981",,1,Rex soleW
+2021,2022,2,Rex sole,C,n/a,"12,076","12,076",,1,Rex soleC
+2021,2022,2,Rex sole,WYK,n/a,"1,361","1,361",,1,Rex soleWYK
+2021,2022,2,Rex sole,SEO,n/a,"2,723","2,723",,1,Rex soleSEO
+2021,2022,2,Rex sole,Total,"23,302","19,141","19,141",,1,Rex soleTotal
+2021,2022,2,Arrowtooth flounder,W,n/a,"33,658","14,500",,1,Arrowtooth flounderW
+2021,2022,2,Arrowtooth flounder,C,n/a,"68,394","68,394",,1,Arrowtooth flounderC
+2021,2022,2,Arrowtooth flounder,WYK,n/a,"6,707","6,707",,1,Arrowtooth flounderWYK
+2021,2022,2,Arrowtooth flounder,SEO,n/a,"11,020","6,900",,1,Arrowtooth flounderSEO
+2021,2022,2,Arrowtooth flounder,Total,"143,100","119,779","96,501",,1,Arrowtooth flounderTotal
+2021,2022,2,Flathead sole,W,n/a,"14,755","8,650",,1,Flathead soleW
+2021,2022,2,Flathead sole,C,n/a,"22,033","15,400",,1,Flathead soleC
+2021,2022,2,Flathead sole,WYK,n/a,"1,511","1,511",,1,Flathead soleWYK
+2021,2022,2,Flathead sole,SEO,n/a,"1,876","1,876",,1,Flathead soleSEO
+2021,2022,2,Flathead sole,Total,"48,928","40,175","27,437",,1,Flathead soleTotal
+2021,2022,2,Pacific ocean perch,W,n/a,"2,602","2,602",,1,Pacific ocean perchW
+2021,2022,2,Pacific ocean perch,C,n/a,"30,806","30,806",,1,Pacific ocean perchC
+2021,2022,2,Pacific ocean perch,WYK,n/a,"1,409","1,409",,1,Pacific ocean perchWYK
+2021,2022,2,Pacific ocean perch,W/C/WYK subtotal,"41,470","34,817","34,817",,1,Pacific ocean perchWCWYKsubtotal
+2021,2022,2,Pacific ocean perch,SEO,"4,110","3,451","3,451",,1,Pacific ocean perchSEO
+2021,2022,2,Pacific ocean perch,Total,"45,580","38,268","38,268",,1,Pacific ocean perchTotal
+2021,2022,2,Northern rockfish,W,n/a,"1,944","1,944",,1,Northern rockfishW
+2021,2022,2,Northern rockfish,C,n/a,"3,202","3,202",,1,Northern rockfishC
+2021,2022,2,Northern rockfish,E,n/a,,,,1,Northern rockfishE
+2021,2022,2,Northern rockfish,Total,"6,143","5,146","5,146",,1,Northern rockfishTotal
+2021,2022,2,Shortraker rockfish,W,n/a,51,51,,1,Shortraker rockfishW
+2021,2022,2,Shortraker rockfish,C,n/a,280,280,,1,Shortraker rockfishC
+2021,2022,2,Shortraker rockfish,E,n/a,374,374,,1,Shortraker rockfishE
+2021,2022,2,Shortraker rockfish,Total,940,705,705,,1,Shortraker rockfishTotal
+2021,2022,2,Dusky rockfish,W,n/a,269,269,,1,Dusky rockfishW
+2021,2022,2,Dusky rockfish,C,n/a,"4,534","4,534",,1,Dusky rockfishC
+2021,2022,2,Dusky rockfish,WYK,n/a,427,427,,1,Dusky rockfishWYK
+2021,2022,2,Dusky rockfish,SEO,n/a,142,142,,1,Dusky rockfishSEO
+2021,2022,2,Dusky rockfish,Total,"8,614","5,372","5,372",,1,Dusky rockfishTotal
+2021,2022,2,Rougheye and Blackspotted rockfish,W,n/a,184,184,,1,Rougheye and Blackspotted rockfishW
+2021,2022,2,Rougheye and Blackspotted rockfish,C,n/a,235,235,,1,Rougheye and Blackspotted rockfishC
+2021,2022,2,Rougheye and Blackspotted rockfish,E,n/a,369,369,,1,Rougheye and Blackspotted rockfishE
+2021,2022,2,Rougheye and Blackspotted rockfish,Total,947,788,788,,1,Rougheye and Blackspotted rockfishTotal
+2021,2022,2,Demersal shelf rockfish,SEO,579,365,365,,1,Demersal shelf rockfishSEO
+2021,2022,2,Thornyhead rockfish,W,n/a,352,352,,1,Thornyhead rockfishW
+2021,2022,2,Thornyhead rockfish,C,n/a,910,910,,1,Thornyhead rockfishC
+2021,2022,2,Thornyhead rockfish,E,n/a,691,691,,1,Thornyhead rockfishE
+2021,2022,2,Thornyhead rockfish,Total,"2,604","1,953","1,953",,1,Thornyhead rockfishTotal
+2021,2022,2,Other rockfish,W and C,n/a,940,940,,1,Other rockfishWandC
+2021,2022,2,Other rockfish,WYK,n/a,370,370,,1,Other rockfishWYK
+2021,2022,2,Other rockfish,SEO,n/a,"2,744",300,,1,Other rockfishSEO
+2021,2022,2,Other rockfish,Total,"5,320","4,054","1,610",,1,Other rockfishTotal
+2021,2022,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2021,2022,2,Big skate,W,n/a,591,591,,1,Big skateW
+2021,2022,2,Big skate,C,n/a,"1,482","1,482",,1,Big skateC
+2021,2022,2,Big skate,E,n/a,794,794,,1,Big skateE
+2021,2022,2,Big skate,Total,"3,822","2,867","2,867",,1,Big skateTotal
+2021,2022,2,Longnose skate,W,n/a,151,151,,1,Longnose skateW
+2021,2022,2,Longnose skate,C,n/a,"2,044","2,044",,1,Longnose skateC
+2021,2022,2,Longnose skate,E,n/a,517,517,,1,Longnose skateE
+2021,2022,2,Longnose skate,Total,"3,616","2,712","2,712",,1,Longnose skateTotal
+2021,2022,2,Other skates,GW,"1,311",984,984,,1,Other skatesGW
+2021,2022,2,Sharks,GW,"5,006","3,755","3,755",21.0,1,SharksGW
+2021,2022,2,Octopus,GW,"1,307",980,980,22.0,1,OctopusGW
+2021,2022,2,Total,GOA,"626,738","520,038","448,118",23.0,1,TotalGOA
+2021,2023,2,Pollock,Shumagin (610),n/a,"23,506","23,506",1.0,1,PollockShumagin610
+2021,2023,2,Pollock,Chirikof (620),n/a,"68,642","68,642",1.0,1,PollockChirikof620
+2021,2023,2,Pollock,Kodiak (630),n/a,"29,803","29,803",1.0,1,PollockKodiak630
+2021,2023,2,Pollock,WYK (640),n/a,"6,663","6,663",1.0,1,PollockWYK640
+2021,2023,2,Pollock,W/C/WYK (subtotal),"153,097","131,912","128,614",1.0,1,PollockWCWYKsubtotal
+2021,2023,2,Pollock,SEO (650),"15,150","11,363","11,363",1.0,1,PollockSEO650
+2021,2023,2,Pollock,Total,"168,247","143,275","139,977",1.0,1,PollockTotal
+2021,2023,2,Pacific cod,W,n/a,"8,699","6,089",2.0,1,Pacific codW
+2021,2023,2,Pacific cod,C,n/a,"17,282","12,962",2.0,1,Pacific codC
+2021,2023,2,Pacific cod,E,n/a,"2,727","2,045",2.0,1,Pacific codE
+2021,2023,2,Pacific cod,Total,"34,673","28,708","21,096",2.0,1,Pacific codTotal
+2021,2023,2,Sablefish,W,n/a,"3,951","3,951",3.0,1,SablefishW
+2021,2023,2,Sablefish,C,n/a,"9,495","9,495",3.0,1,SablefishC
+2021,2023,2,Sablefish,WYK,n/a,"3,159","3,159",3.0,1,SablefishWYK
+2021,2023,2,Sablefish,SEO,n/a,"5,398","5,398",3.0,1,SablefishSEO
+2021,2023,2,Sablefish,Subtotal TAC,n/a,n/a,"22,003",3.0,1,SablefishSubtotalTAC
+2021,2023,2,Sablefish,Total,"42,520","36,318",n/a,3.0,1,SablefishTotal
+2021,2023,2,Shallow-water flatfish,W,n/a,"22,464","13,250",,1,Shallow-water flatfishW
+2021,2023,2,Shallow-water flatfish,C,n/a,"26,743","26,743",,1,Shallow-water flatfishC
+2021,2023,2,Shallow-water flatfish,WYK,n/a,"2,674","2,674",,1,Shallow-water flatfishWYK
+2021,2023,2,Shallow-water flatfish,SEO,n/a,"1,605","1,605",,1,Shallow-water flatfishSEO
+2021,2023,2,Shallow-water flatfish,Total,"65,676","53,486","44,272",,1,Shallow-water flatfishTotal
+2021,2023,2,Deep-water flatfish,W,n/a,256,256,,1,Deep-water flatfishW
+2021,2023,2,Deep-water flatfish,C,n/a,"2,105","2,105",,1,Deep-water flatfishC
+2021,2023,2,Deep-water flatfish,WYK,n/a,"1,408","1,408",,1,Deep-water flatfishWYK
+2021,2023,2,Deep-water flatfish,SEO,n/a,"2,049","2,049",,1,Deep-water flatfishSEO
+2021,2023,2,Deep-water flatfish,Total,"6,920","5,818","5,818",,1,Deep-water flatfishTotal
+2021,2023,2,Rex sole,W,n/a,"3,222","3,222",,1,Rex soleW
+2021,2023,2,Rex sole,C,n/a,"13,054","13,054",,1,Rex soleC
+2021,2023,2,Rex sole,WYK,n/a,"1,439","1,439",,1,Rex soleWYK
+2021,2023,2,Rex sole,SEO,n/a,"2,879","2,879",,1,Rex soleSEO
+2021,2023,2,Rex sole,Total,"25,049","20,594","20,594",,1,Rex soleTotal
+2021,2023,2,Arrowtooth flounder,W,n/a,"33,214","14,500",,1,Arrowtooth flounderW
+2021,2023,2,Arrowtooth flounder,C,n/a,"67,493","67,493",,1,Arrowtooth flounderC
+2021,2023,2,Arrowtooth flounder,WYK,n/a,"6,619","6,619",,1,Arrowtooth flounderWYK
+2021,2023,2,Arrowtooth flounder,SEO,n/a,"10,875","6,900",,1,Arrowtooth flounderSEO
+2021,2023,2,Arrowtooth flounder,Total,"141,231","118,201","95,512",,1,Arrowtooth flounderTotal
+2021,2023,2,Flathead sole,W,n/a,"14,708","8,650",,1,Flathead soleW
+2021,2023,2,Flathead sole,C,n/a,"21,962","15,400",,1,Flathead soleC
+2021,2023,2,Flathead sole,WYK,n/a,"1,506","1,506",,1,Flathead soleWYK
+2021,2023,2,Flathead sole,SEO,n/a,"1,870","1,870",,1,Flathead soleSEO
+2021,2023,2,Flathead sole,Total,"48,757","40,046","27,426",,1,Flathead soleTotal
+2021,2023,2,Pacific ocean perch,W,n/a,"2,523","2,523",,1,Pacific ocean perchW
+2021,2023,2,Pacific ocean perch,C,n/a,"29,869","29,869",,1,Pacific ocean perchC
+2021,2023,2,Pacific ocean perch,WYK,n/a,"1,366","1,366",,1,Pacific ocean perchWYK
+2021,2023,2,Pacific ocean perch,W/C/WYK,"40,211","33,758","33,758",,1,Pacific ocean perchWCWYK
+2021,2023,2,Pacific ocean perch,SEO,"3,985","3,346","3,346",,1,Pacific ocean perchSEO
+2021,2023,2,Pacific ocean perch,Total,"44,196","37,104","37,104",,1,Pacific ocean perchTotal
+2021,2023,2,Northern rockfish,W,n/a,"1,859","1,859",,1,Northern rockfishW
+2021,2023,2,Northern rockfish,C,n/a,"3,061","3,061",,1,Northern rockfishC
+2021,2023,2,Northern rockfish,E,n/a,,,,1,Northern rockfishE
+2021,2023,2,Northern rockfish,Total,"5,874","4,920","4,920",,1,Northern rockfishTotal
+2021,2023,2,Shortraker rockfish,W,n/a,51,51,,1,Shortraker rockfishW
+2021,2023,2,Shortraker rockfish,C,n/a,280,280,,1,Shortraker rockfishC
+2021,2023,2,Shortraker rockfish,E,n/a,374,374,,1,Shortraker rockfishE
+2021,2023,2,Shortraker rockfish,Total,940,705,705,,1,Shortraker rockfishTotal
+2021,2023,2,Dusky rockfish,W,n/a,259,259,,1,Dusky rockfishW
+2021,2023,2,Dusky rockfish,C,n/a,"4,373","4,373",,1,Dusky rockfishC
+2021,2023,2,Dusky rockfish,WYK,n/a,412,412,,1,Dusky rockfishWYK
+2021,2023,2,Dusky rockfish,SEO,n/a,137,137,,1,Dusky rockfishSEO
+2021,2023,2,Dusky rockfish,Total,"8,146","5,181","5,181",,1,Dusky rockfishTotal
+2021,2023,2,Rougheye and Blackspotted rockfish,W,n/a,182,182,,1,Rougheye and Blackspotted rockfishW
+2021,2023,2,Rougheye and Blackspotted rockfish,C,n/a,234,234,,1,Rougheye and Blackspotted rockfishC
+2021,2023,2,Rougheye and Blackspotted rockfish,E,n/a,365,365,,1,Rougheye and Blackspotted rockfishE
+2021,2023,2,Rougheye and Blackspotted rockfish,Total,937,781,781,,1,Rougheye and Blackspotted rockfishTotal
+2021,2023,2,Demersal shelf rockfish,SEO,579,365,365,,1,Demersal shelf rockfishSEO
+2021,2023,2,Thornyhead rockfish,W,n/a,352,352,,1,Thornyhead rockfishW
+2021,2023,2,Thornyhead rockfish,C,n/a,910,910,,1,Thornyhead rockfishC
+2021,2023,2,Thornyhead rockfish,E,n/a,691,691,,1,Thornyhead rockfishE
+2021,2023,2,Thornyhead rockfish,Total,"2,604","1,953","1,953",,1,Thornyhead rockfishTotal
+2021,2023,2,Other rockfish,W and C,n/a,940,940,,1,Other rockfishWandC
+2021,2023,2,Other rockfish,WYK,n/a,370,370,,1,Other rockfishWYK
+2021,2023,2,Other rockfish,SEO,n/a,"2,744",300,,1,Other rockfishSEO
+2021,2023,2,Other rockfish,Total,"5,320","4,054","1,610",,1,Other rockfishTotal
+2021,2023,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2021,2023,2,Big skate,W,n/a,591,591,,1,Big skateW
+2021,2023,2,Big skate,C,n/a,"1,482","1,482",,1,Big skateC
+2021,2023,2,Big skate,E,n/a,794,794,,1,Big skateE
+2021,2023,2,Big skate,Total,"3,822","2,867","2,867",,1,Big skateTotal
+2021,2023,2,Longnose skate,W,n/a,151,151,,1,Longnose skateW
+2021,2023,2,Longnose skate,C,n/a,"2,044","2,044",,1,Longnose skateC
+2021,2023,2,Longnose skate,E,n/a,517,517,,1,Longnose skateE
+2021,2023,2,Longnose skate,Total,"3,616","2,712","2,712",,1,Longnose skateTotal
+2021,2023,2,Other skates,GW,"1,311",984,984,,1,Other skatesGW
+2021,2023,2,Sharks,GW,"5,006","3,755","3,755",21.0,1,SharksGW
+2021,2023,2,Octopus,GW,"1,307",980,980,22.0,1,OctopusGW
+2021,2023,2,Total,GOA,"622,931","517,507","443,615",23.0,1,TotalGOA
+2022,2023,2,Pollock,Shumagin (610),n/a,"26,958","26,958",1.0,1,PollockShumagin610
+2022,2023,2,Pollock,Chirikof (620),n/a,"77,005","77,005",1.0,1,PollockChirikof620
+2022,2023,2,Pollock,Kodiak (630),n/a,"33,729","33,729",1.0,1,PollockKodiak630
+2022,2023,2,Pollock,WYK (640),n/a,"7,523","7,523",1.0,1,PollockWYK640
+2022,2023,2,Pollock,W/C/WYK (subtotal),"173,470","148,938","145,215",1.0,1,PollockWCWYKsubtotal
+2022,2023,2,Pollock,SEO (650),"15,150","11,363","11,363",1.0,1,PollockSEO650
+2022,2023,2,Pollock,Total,"188,620","160,301","156,578",1.0,1,PollockTotal
+2022,2023,2,Pacific cod,W,n/a,"7,464","5,225",2.0,1,Pacific codW
+2022,2023,2,Pacific cod,C,n/a,"14,830","11,123",2.0,1,Pacific codC
+2022,2023,2,Pacific cod,E,n/a,"2,340","1,755",2.0,1,Pacific codE
+2022,2023,2,Pacific cod,Total,"29,737","24,634","18,103",2.0,1,Pacific codTotal
+2022,2023,2,Sablefish,W,n/a,"4,473","4,473",3.0,1,SablefishW
+2022,2023,2,Sablefish,C,n/a,"9,921","9,921",3.0,1,SablefishC
+2022,2023,2,Sablefish,WYK,n/a,"3,205","3,205",3.0,1,SablefishWYK
+2022,2023,2,Sablefish,SEO,n/a,"5,602","5,602",3.0,1,SablefishSEO
+2022,2023,2,Sablefish,Subtotal TAC,n/a,,"23,201",3.0,1,SablefishSubtotalTAC
+2022,2023,2,Sablefish,Total,"47,390","40,502",n/a,3.0,1,SablefishTotal
+2022,2023,2,Shallow-water flatfish,W,n/a,"22,485","13,250",,1,Shallow-water flatfishW
+2022,2023,2,Shallow-water flatfish,C,n/a,"26,769","26,769",,1,Shallow-water flatfishC
+2022,2023,2,Shallow-water flatfish,WYK,n/a,"2,677","2,677",,1,Shallow-water flatfishWYK
+2022,2023,2,Shallow-water flatfish,SEO,n/a,"1,606","1,606",,1,Shallow-water flatfishSEO
+2022,2023,2,Shallow-water flatfish,Total,"65,736","53,537","44,302",,1,Shallow-water flatfishTotal
+2022,2023,2,Deep-water flatfish,W,n/a,256,256,,1,Deep-water flatfishW
+2022,2023,2,Deep-water flatfish,C,n/a,"2,105","2,105",,1,Deep-water flatfishC
+2022,2023,2,Deep-water flatfish,WYK,n/a,"1,407","1,407",,1,Deep-water flatfishWYK
+2022,2023,2,Deep-water flatfish,SEO,n/a,"2,048","2,048",,1,Deep-water flatfishSEO
+2022,2023,2,Deep-water flatfish,Total,"6,918","5,816","5,816",,1,Deep-water flatfishTotal
+2022,2023,2,Rex sole,W,n/a,"3,236","3,236",,1,Rex soleW
+2022,2023,2,Rex sole,C,n/a,"13,110","13,110",,1,Rex soleC
+2022,2023,2,Rex sole,WYK,n/a,"1,439","1,439",,1,Rex soleWYK
+2022,2023,2,Rex sole,SEO,n/a,"2,879","2,879",,1,Rex soleSEO
+2022,2023,2,Rex sole,Total,"25,135","20,664","20,664",,1,Rex soleTotal
+2022,2023,2,Arrowtooth flounder,W,n/a,"30,469","14,500",,1,Arrowtooth flounderW
+2022,2023,2,Arrowtooth flounder,C,n/a,"65,000","65,000",,1,Arrowtooth flounderC
+2022,2023,2,Arrowtooth flounder,WYK,n/a,"7,886","7,886",,1,Arrowtooth flounderWYK
+2022,2023,2,Arrowtooth flounder,SEO,n/a,"16,130","6,900",,1,Arrowtooth flounderSEO
+2022,2023,2,Arrowtooth flounder,Total,"142,749","119,485","94,286",,1,Arrowtooth flounderTotal
+2022,2023,2,Flathead sole,W,n/a,"12,793","8,650",,1,Flathead soleW
+2022,2023,2,Flathead sole,C,n/a,"21,487","21,487",,1,Flathead soleC
+2022,2023,2,Flathead sole,WYK,n/a,"2,320","2,320",,1,Flathead soleWYK
+2022,2023,2,Flathead sole,SEO,n/a,"2,880","2,880",,1,Flathead soleSEO
+2022,2023,2,Flathead sole,Total,"48,161","39,480","35,337",,1,Flathead soleTotal
+2022,2023,2,Pacific ocean perch,W,n/a,"2,529","2,529",,1,Pacific ocean perchW
+2022,2023,2,Pacific ocean perch,C,n/a,"29,940","29,940",,1,Pacific ocean perchC
+2022,2023,2,Pacific ocean perch,WYK,n/a,"1,370","1,370",,1,Pacific ocean perchWYK
+2022,2023,2,Pacific ocean perch,W/C/WYK subtotal,"40,308","33,839","33,839",,1,Pacific ocean perchWCWYKsubtotal
+2022,2023,2,Pacific ocean perch,SEO,"3,994","3,354","3,354",,1,Pacific ocean perchSEO
+2022,2023,2,Pacific ocean perch,Total,"44,302","37,193","37,193",,1,Pacific ocean perchTotal
+2022,2023,2,Northern rockfish,W,n/a,"2,614","2,614",,1,Northern rockfishW
+2022,2023,2,Northern rockfish,C,n/a,"2,350","2,350",,1,Northern rockfishC
+2022,2023,2,Northern rockfish,E,n/a,,,,1,Northern rockfishE
+2022,2023,2,Northern rockfish,Total,"5,927","4,964","4,964",,1,Northern rockfishTotal
+2022,2023,2,Shortraker rockfish,W,n/a,51,51,,1,Shortraker rockfishW
+2022,2023,2,Shortraker rockfish,C,n/a,280,280,,1,Shortraker rockfishC
+2022,2023,2,Shortraker rockfish,E,n/a,374,374,,1,Shortraker rockfishE
+2022,2023,2,Shortraker rockfish,Total,940,705,705,,1,Shortraker rockfishTotal
+2022,2023,2,Dusky rockfish,W,n/a,149,149,,1,Dusky rockfishW
+2022,2023,2,Dusky rockfish,C,n/a,"7,647","7,647",,1,Dusky rockfishC
+2022,2023,2,Dusky rockfish,WYK,n/a,90,90,,1,Dusky rockfishWYK
+2022,2023,2,Dusky rockfish,SEO,n/a,31,31,,1,Dusky rockfishSEO
+2022,2023,2,Dusky rockfish,Total,"9,638","7,917","7,917",,1,Dusky rockfishTotal
+2022,2023,2,Rougheye and Blackspotted rockfish,W,n/a,180,180,,1,Rougheye and Blackspotted rockfishW
+2022,2023,2,Rougheye and Blackspotted rockfish,C,n/a,232,232,,1,Rougheye and Blackspotted rockfishC
+2022,2023,2,Rougheye and Blackspotted rockfish,E,n/a,363,363,,1,Rougheye and Blackspotted rockfishE
+2022,2023,2,Rougheye and Blackspotted rockfish,Total,930,775,775,,1,Rougheye and Blackspotted rockfishTotal
+2022,2023,2,Demersal shelf rockfish,SEO,376,283,283,,1,Demersal shelf rockfishSEO
+2022,2023,2,Thornyhead rockfish,W,n/a,314,314,,1,Thornyhead rockfishW
+2022,2023,2,Thornyhead rockfish,C,n/a,693,693,,1,Thornyhead rockfishC
+2022,2023,2,Thornyhead rockfish,E,n/a,621,621,,1,Thornyhead rockfishE
+2022,2023,2,Thornyhead rockfish,Total,"2,170","1,628","1,628",,1,Thornyhead rockfishTotal
+2022,2023,2,Other rockfish,W and C,n/a,940,940,,1,Other rockfishWandC
+2022,2023,2,Other rockfish,WYK,n/a,370,370,,1,Other rockfishWYK
+2022,2023,2,Other rockfish,SEO,n/a,"2,744",300,,1,Other rockfishSEO
+2022,2023,2,Other rockfish,Total,"5,320","4,054","1,610",,1,Other rockfishTotal
+2022,2023,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2022,2023,2,Big skate,W,n/a,591,591,,1,Big skateW
+2022,2023,2,Big skate,C,n/a,"1,482","1,482",,1,Big skateC
+2022,2023,2,Big skate,E,n/a,794,794,,1,Big skateE
+2022,2023,2,Big skate,Total,"3,822","2,867","2,867",,1,Big skateTotal
+2022,2023,2,Longnose skate,W,n/a,151,151,,1,Longnose skateW
+2022,2023,2,Longnose skate,C,n/a,"2,044","2,044",,1,Longnose skateC
+2022,2023,2,Longnose skate,E,n/a,517,517,,1,Longnose skateE
+2022,2023,2,Longnose skate,Total,"3,616","2,712","2,712",,1,Longnose skateTotal
+2022,2023,2,Other skates,GW,"1,311",984,984,,1,Other skatesGW
+2022,2023,2,Sharks,GW,"6,521","4,891","4,891",21.0,1,SharksGW
+2022,2023,2,Octopus,GW,"1,307",980,980,22.0,1,OctopusGW
+2022,2023,2,Octopus,Total,"646,826","539,072","468,796",22.0,1,OctopusTotal
+2022,2024,2,Pollock,Shumagin (610),n/a,"29,156","29,156",1.0,1,PollockShumagin610
+2022,2024,2,Pollock,Chirikof (620),n/a,"83,283","83,283",1.0,1,PollockChirikof620
+2022,2024,2,Pollock,Kodiak (630),n/a,"36,478","36,478",1.0,1,PollockKodiak630
+2022,2024,2,Pollock,WYK (640),n/a,"8,136","8,136",1.0,1,PollockWYK640
+2022,2024,2,Pollock,W/C/WYK (subtotal),"186,101","161,080","157,053",1.0,1,PollockWCWYKsubtotal
+2022,2024,2,Pollock,SEO (650),"15,150","11,363","11,363",1.0,1,PollockSEO650
+2022,2024,2,Pollock,Total,"201,251","172,443","168,416",1.0,1,PollockTotal
+2022,2024,2,Pacific cod,W,n/a,"6,873","4,811",2.0,1,Pacific codW
+2022,2024,2,Pacific cod,C,n/a,"13,655","10,241",2.0,1,Pacific codC
+2022,2024,2,Pacific cod,E,n/a,"2,155","1,616",2.0,1,Pacific codE
+2022,2024,2,Pacific cod,Total,"27,507","22,683","16,668",2.0,1,Pacific codTotal
+2022,2024,2,Sablefish,W,n/a,"4,626","4,626",3.0,1,SablefishW
+2022,2024,2,Sablefish,C,n/a,"8,819","8,819",3.0,1,SablefishC
+2022,2024,2,Sablefish,WYK,n/a,"2,669","2,669",3.0,1,SablefishWYK
+2022,2024,2,Sablefish,SEO,n/a,"4,981","4,981",3.0,1,SablefishSEO
+2022,2024,2,Sablefish,Subtotal TAC,n/a,n/a,"21,095",3.0,1,SablefishSubtotalTAC
+2022,2024,2,Sablefish,Total,"48,561","41,539",n/a,3.0,1,SablefishTotal
+2022,2024,2,Shallow-water flatfish,W,n/a,"23,299","13,250",,1,Shallow-water flatfishW
+2022,2024,2,Shallow-water flatfish,C,n/a,"27,737","27,737",,1,Shallow-water flatfishC
+2022,2024,2,Shallow-water flatfish,WYK,n/a,"2,774","2,774",,1,Shallow-water flatfishWYK
+2022,2024,2,Shallow-water flatfish,SEO,n/a,"1,664","1,664",,1,Shallow-water flatfishSEO
+2022,2024,2,Shallow-water flatfish,Total,"68,015","55,474","45,425",,1,Shallow-water flatfishTotal
+2022,2024,2,Deep-water flatfish,W,n/a,255,255,,1,Deep-water flatfishW
+2022,2024,2,Deep-water flatfish,C,n/a,"2,068","2,068",,1,Deep-water flatfishC
+2022,2024,2,Deep-water flatfish,WYK,n/a,"1,383","1,383",,1,Deep-water flatfishWYK
+2022,2024,2,Deep-water flatfish,SEO,n/a,"2,013","2,013",,1,Deep-water flatfishSEO
+2022,2024,2,Deep-water flatfish,Total,"6,802","5,719","5,719",,1,Deep-water flatfishTotal
+2022,2024,2,Rex sole,W,n/a,"3,314","3,314",,1,Rex soleW
+2022,2024,2,Rex sole,C,n/a,"13,425","13,425",,1,Rex soleC
+2022,2024,2,Rex sole,WYK,n/a,"1,453","1,453",,1,Rex soleWYK
+2022,2024,2,Rex sole,SEO,n/a,"2,905","2,905",,1,Rex soleSEO
+2022,2024,2,Rex sole,Total,"25,652","21,097","21,097",,1,Rex soleTotal
+2022,2024,2,Arrowtooth flounder,W,n/a,"30,093","14,500",,1,Arrowtooth flounderW
+2022,2024,2,Arrowtooth flounder,C,n/a,"64,200","64,200",,1,Arrowtooth flounderC
+2022,2024,2,Arrowtooth flounder,WYK,n/a,"7,789","7,789",,1,Arrowtooth flounderWYK
+2022,2024,2,Arrowtooth flounder,SEO,n/a,"15,932","6,900",,1,Arrowtooth flounderSEO
+2022,2024,2,Arrowtooth flounder,Total,"141,008","118,014","93,389",,1,Arrowtooth flounderTotal
+2022,2024,2,Flathead sole,W,n/a,"13,033","8,650",,1,Flathead soleW
+2022,2024,2,Flathead sole,C,n/a,"21,892","21,892",,1,Flathead soleC
+2022,2024,2,Flathead sole,WYK,n/a,"2,363","2,363",,1,Flathead soleWYK
+2022,2024,2,Flathead sole,SEO,n/a,"2,934","2,934",,1,Flathead soleSEO
+2022,2024,2,Flathead sole,Total,"49,073","40,222","35,839",,1,Flathead soleTotal
+2022,2024,2,Pacific ocean perch,W,n/a,"2,461","2,461",,1,Pacific ocean perchW
+2022,2024,2,Pacific ocean perch,C,n/a,"29,138","29,138",,1,Pacific ocean perchC
+2022,2024,2,Pacific ocean perch,WYK,n/a,"1,333","1,333",,1,Pacific ocean perchWYK
+2022,2024,2,Pacific ocean perch,W/C/WYK,"39,229","32,932","32,932",,1,Pacific ocean perchWCWYK
+2022,2024,2,Pacific ocean perch,SEO,"3,888","3,264","3,264",,1,Pacific ocean perchSEO
+2022,2024,2,Pacific ocean perch,Total,"43,117","36,196","36,196",,1,Pacific ocean perchTotal
+2022,2024,2,Northern rockfish,W,n/a,"2,497","2,497",,1,Northern rockfishW
+2022,2024,2,Northern rockfish,C,n/a,"2,244","2,244",,1,Northern rockfishC
+2022,2024,2,Northern rockfish,E,n/a,,,,1,Northern rockfishE
+2022,2024,2,Northern rockfish,Total,"5,661","4,741","4,741",,1,Northern rockfishTotal
+2022,2024,2,Shortraker rockfish,W,n/a,51,51,,1,Shortraker rockfishW
+2022,2024,2,Shortraker rockfish,C,n/a,280,280,,1,Shortraker rockfishC
+2022,2024,2,Shortraker rockfish,E,n/a,374,374,,1,Shortraker rockfishE
+2022,2024,2,Shortraker rockfish,Total,940,705,705,,1,Shortraker rockfishTotal
+2022,2024,2,Dusky rockfish,W,n/a,141,141,,1,Dusky rockfishW
+2022,2024,2,Dusky rockfish,C,n/a,"7,264","7,264",,1,Dusky rockfishC
+2022,2024,2,Dusky rockfish,WYK,n/a,85,85,,1,Dusky rockfishWYK
+2022,2024,2,Dusky rockfish,SEO,n/a,30,30,,1,Dusky rockfishSEO
+2022,2024,2,Dusky rockfish,Total,"9,154","7,520","7,520",,1,Dusky rockfishTotal
+2022,2024,2,Rougheye and Blackspotted rockfish,W,n/a,180,180,,1,Rougheye and Blackspotted rockfishW
+2022,2024,2,Rougheye and Blackspotted rockfish,C,n/a,231,231,,1,Rougheye and Blackspotted rockfishC
+2022,2024,2,Rougheye and Blackspotted rockfish,E,n/a,361,361,,1,Rougheye and Blackspotted rockfishE
+2022,2024,2,Rougheye and Blackspotted rockfish,Total,927,772,772,,1,Rougheye and Blackspotted rockfishTotal
+2022,2024,2,Demersal shelf rockfish,SEO,376,283,283,,1,Demersal shelf rockfishSEO
+2022,2024,2,Thornyhead rockfish,W,n/a,314,314,,1,Thornyhead rockfishW
+2022,2024,2,Thornyhead rockfish,C,n/a,693,693,,1,Thornyhead rockfishC
+2022,2024,2,Thornyhead rockfish,E,n/a,621,621,,1,Thornyhead rockfishE
+2022,2024,2,Thornyhead rockfish,Total,"2,170","1,628","1,628",,1,Thornyhead rockfishTotal
+2022,2024,2,Other rockfish,W and C,n/a,940,940,,1,Other rockfishWandC
+2022,2024,2,Other rockfish,WYK,n/a,370,370,,1,Other rockfishWYK
+2022,2024,2,Other rockfish,SEO,n/a,"2,744",300,,1,Other rockfishSEO
+2022,2024,2,Other rockfish,Total,"5,320","4,054","1,610",,1,Other rockfishTotal
+2022,2024,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2022,2024,2,Big skate,W,n/a,591,591,,1,Big skateW
+2022,2024,2,Big skate,C,n/a,"1,482","1,482",,1,Big skateC
+2022,2024,2,Big skate,E,n/a,794,794,,1,Big skateE
+2022,2024,2,Big skate,Total,"3,822","2,867","2,867",,1,Big skateTotal
+2022,2024,2,Longnose skate,W,n/a,151,151,,1,Longnose skateW
+2022,2024,2,Longnose skate,C,n/a,"2,044","2,044",,1,Longnose skateC
+2022,2024,2,Longnose skate,E,n/a,517,517,,1,Longnose skateE
+2022,2024,2,Longnose skate,Total,"3,616","2,712","2,712",,1,Longnose skateTotal
+2022,2024,2,Other skates,GW,"1,311",984,984,,1,Other skatesGW
+2022,2024,2,Sharks,GW,"6,521","4,891","4,891",21.0,1,SharksGW
+2022,2024,2,Octopus,GW,"1,307",980,980,22.0,1,OctopusGW
+2022,2024,2,Octopus,Total,"658,311","550,224","476,537",22.0,1,OctopusTotal
+2023,2024,2,Pollock,Shumagin (610),n/a,"38,882","38,882",1.0,1,PollockShumagin610
+2023,2024,2,Pollock,Chirikof (620),n/a,"90,937","90,937",1.0,1,PollockChirikof620
+2023,2024,2,Pollock,Kodiak (630),n/a,"50,587","50,587",1.0,1,PollockKodiak630
+2023,2024,2,Pollock,WYK (640),n/a,"5,565","5,565",1.0,1,PollockWYK640
+2023,2024,2,Pollock,W/C/WYK (subtotal),"269,916","190,740","185,971",1.0,1,PollockWCWYKsubtotal
+2023,2024,2,Pollock,SEO (650),"12,998","9,749","9,749",1.0,1,PollockSEO650
+2023,2024,2,Pollock,Total,"282,914","200,489","195,720",1.0,1,PollockTotal
+2023,2024,2,Pacific cod,W,n/a,"8,745","6,121",2.0,1,Pacific codW
+2023,2024,2,Pacific cod,C,n/a,"20,590","15,442",2.0,1,Pacific codC
+2023,2024,2,Pacific cod,E,n/a,"2,937","2,203",2.0,1,Pacific codE
+2023,2024,2,Pacific cod,Total,"38,712","32,272","23,766",2.0,1,Pacific codTotal
+2023,2024,2,Sablefish,W,n/a,"4,699","4,699",3.0,1,SablefishW
+2023,2024,2,Sablefish,C,n/a,"9,651","9,651",3.0,1,SablefishC
+2023,2024,2,Sablefish,WYK,n/a,"2,926","2,926",3.0,1,SablefishWYK
+2023,2024,2,Sablefish,SEO,n/a,"5,320","5,320",3.0,1,SablefishSEO
+2023,2024,2,Sablefish,Subtotal TAC,n/a,n/a,"22,596",3.0,1,SablefishSubtotalTAC
+2023,2024,2,Sablefish,Total,"55,084","47,146",n/a,3.0,1,SablefishTotal
+2023,2024,2,Shallow-water flatfish,W,n/a,"23,337","13,250",,1,Shallow-water flatfishW
+2023,2024,2,Shallow-water flatfish,C,n/a,"27,783","27,783",,1,Shallow-water flatfishC
+2023,2024,2,Shallow-water flatfish,WYK,n/a,"2,778","2,778",,1,Shallow-water flatfishWYK
+2023,2024,2,Shallow-water flatfish,SEO,n/a,"1,667","1,667",,1,Shallow-water flatfishSEO
+2023,2024,2,Shallow-water flatfish,Total,"68,121","55,565","45,478",,1,Shallow-water flatfishTotal
+2023,2024,2,Deep-water flatfish,W,n/a,237,237,,1,Deep-water flatfishW
+2023,2024,2,Deep-water flatfish,C,n/a,"2,655","2,655",,1,Deep-water flatfishC
+2023,2024,2,Deep-water flatfish,WYK,n/a,"1,856","1,856",,1,Deep-water flatfishWYK
+2023,2024,2,Deep-water flatfish,SEO,n/a,"2,314","2,314",,1,Deep-water flatfishSEO
+2023,2024,2,Deep-water flatfish,Total,"8,387","7,062","7,062",,1,Deep-water flatfishTotal
+2023,2024,2,Rex sole,W,n/a,"3,367","3,367",,1,Rex soleW
+2023,2024,2,Rex sole,C,n/a,"13,639","13,639",,1,Rex soleC
+2023,2024,2,Rex sole,WYK,n/a,"1,453","1,453",,1,Rex soleWYK
+2023,2024,2,Rex sole,SEO,n/a,"2,905","2,905",,1,Rex soleSEO
+2023,2024,2,Rex sole,Total,"25,978","21,364","21,364",,1,Rex soleTotal
+2023,2024,2,Arrowtooth flounder,W,n/a,"30,409","14,500",,1,Arrowtooth flounderW
+2023,2024,2,Arrowtooth flounder,C,n/a,"64,871","64,871",,1,Arrowtooth flounderC
+2023,2024,2,Arrowtooth flounder,WYK,n/a,"7,870","7,870",,1,Arrowtooth flounderWYK
+2023,2024,2,Arrowtooth flounder,SEO,n/a,"16,099","6,900",,1,Arrowtooth flounderSEO
+2023,2024,2,Arrowtooth flounder,Total,"142,485","119,249","94,141",,1,Arrowtooth flounderTotal
+2023,2024,2,Flathead sole,W,n/a,"13,273","8,650",,1,Flathead soleW
+2023,2024,2,Flathead sole,C,n/a,"21,307","21,307",,1,Flathead soleC
+2023,2024,2,Flathead sole,WYK,n/a,"3,876","3,876",,1,Flathead soleWYK
+2023,2024,2,Flathead sole,SEO,n/a,"2,047","2,047",,1,Flathead soleSEO
+2023,2024,2,Flathead sole,Total,"49,414","40,503","35,880",,1,Flathead soleTotal
+2023,2024,2,Pacific ocean perch,W,n/a,"1,787","1,787",,1,Pacific ocean perchW
+2023,2024,2,Pacific ocean perch,C,n/a,"28,757","28,757",,1,Pacific ocean perchC
+2023,2024,2,Pacific ocean perch,WYK,n/a,"2,110","2,110",,1,Pacific ocean perchWYK
+2023,2024,2,Pacific ocean perch,SEO,n/a,"7,065","7,065",,1,Pacific ocean perchSEO
+2023,2024,2,Pacific ocean perch,Total,"47,466","39,719","39,719",,1,Pacific ocean perchTotal
+2023,2024,2,Northern rockfish,W,n/a,"2,535","2,535",,1,Northern rockfishW
+2023,2024,2,Northern rockfish,C,n/a,"2,280","2,280",,1,Northern rockfishC
+2023,2024,2,Northern rockfish,E,n/a,0,0,,1,Northern rockfishE
+2023,2024,2,Northern rockfish,Total,"5,750","4,815","4,815",,1,Northern rockfishTotal
+2023,2024,2,Shortraker rockfish,W,n/a,34,34,,1,Shortraker rockfishW
+2023,2024,2,Shortraker rockfish,C,n/a,189,189,,1,Shortraker rockfishC
+2023,2024,2,Shortraker rockfish,E,n/a,424,424,,1,Shortraker rockfishE
+2023,2024,2,Shortraker rockfish,Total,863,647,647,,1,Shortraker rockfishTotal
+2023,2024,2,Dusky rockfish,W,n/a,145,145,,1,Dusky rockfishW
+2023,2024,2,Dusky rockfish,C,n/a,"7,365","7,365",,1,Dusky rockfishC
+2023,2024,2,Dusky rockfish,WYK,n/a,84,84,,1,Dusky rockfishWYK
+2023,2024,2,Dusky rockfish,SEO,n/a,30,30,,1,Dusky rockfishSEO
+2023,2024,2,Dusky rockfish,Total,"9,281","7,624","7,624",,1,Dusky rockfishTotal
+2023,2024,2,Rougheye and Blackspotted rockfish,W,n/a,197,197,,1,Rougheye and Blackspotted rockfishW
+2023,2024,2,Rougheye and Blackspotted rockfish,C,n/a,315,315,,1,Rougheye and Blackspotted rockfishC
+2023,2024,2,Rougheye and Blackspotted rockfish,E,n/a,525,525,,1,Rougheye and Blackspotted rockfishE
+2023,2024,2,Rougheye and Blackspotted rockfish,Total,"1,555","1,037","1,037",,1,Rougheye and Blackspotted rockfishTotal
+2023,2024,2,Demersal shelf rockfish,SEO,376,283,283,,1,Demersal shelf rockfishSEO
+2023,2024,2,Thornyhead rockfish,W,n/a,314,314,,1,Thornyhead rockfishW
+2023,2024,2,Thornyhead rockfish,C,n/a,693,693,,1,Thornyhead rockfishC
+2023,2024,2,Thornyhead rockfish,E,n/a,621,621,,1,Thornyhead rockfishE
+2023,2024,2,Thornyhead rockfish,Total,"2,170","1,628","1,628",,1,Thornyhead rockfishTotal
+2023,2024,2,Other rockfish,W/C/WYK,n/a,"1,353","1,353",,1,Other rockfishWCWYK
+2023,2024,2,Other rockfish,SEO,n/a,"2,421",300,,1,Other rockfishSEO
+2023,2024,2,Other rockfish,Total,"4,977","3,774","1,653",,1,Other rockfishTotal
+2023,2024,2,Atka mackerel,GW,"6,200","4,700","4,700",,1,Atka mackerelGW
+2023,2024,2,Big skate,W,n/a,745,745,,1,Big skateW
+2023,2024,2,Big skate,C,n/a,"1,749","1,749",,1,Big skateC
+2023,2024,2,Big skate,E,n/a,341,341,,1,Big skateE
+2023,2024,2,Big skate,Total,"3,780","2,835","2,835",,1,Big skateTotal
+2023,2024,2,Longnose skate,W,n/a,104,104,,1,Longnose skateW
+2023,2024,2,Longnose skate,C,n/a,"1,894","1,894",,1,Longnose skateC
+2023,2024,2,Longnose skate,E,n/a,538,538,,1,Longnose skateE
+2023,2024,2,Longnose skate,Total,"3,380","2,536","2,536",,1,Longnose skateTotal
+2023,2024,2,Other skates,GW,887,665,665,,1,Other skatesGW
+2023,2024,2,Other skates,GW,"6,521","4,891","4,891",,1,Other skatesGW
+2023,2024,2,Other skates,GW,"1,307",980,980,,1,Other skatesGW
+2023,2024,2,Total,GOA,"765,608","599,784","520,020",23.0,1,TotalGOA
+2023,2025,2,Pollock,Shumagin (610),n/a,"32,144","32,144",1.0,1,PollockShumagin610
+2023,2025,2,Pollock,Chirikof (620),n/a,"75,179","75,179",1.0,1,PollockChirikof620
+2023,2025,2,Pollock,Kodiak (630),n/a,"41,821","41,821",1.0,1,PollockKodiak630
+2023,2025,2,Pollock,WYK (640),n/a,"4,601","4,601",1.0,1,PollockWYK640
+2023,2025,2,Pollock,W/C/WYK (subtotal),"182,891","157,687","153,745",1.0,1,PollockWCWYKsubtotal
+2023,2025,2,Pollock,SEO (650),"12,998","9,749","9,749",1.0,1,PollockSEO650
+2023,2025,2,Pollock,Total,"195,889","167,436","163,494",1.0,1,PollockTotal
+2023,2025,2,Pacific cod,W,n/a,"7,638","5,347",2.0,1,Pacific codW
+2023,2025,2,Pacific cod,C,n/a,"17,981","13,486",2.0,1,Pacific codC
+2023,2025,2,Pacific cod,E,n/a,"2,565","1,924",2.0,1,Pacific codE
+2023,2025,2,Pacific cod,Total,"33,970","28,184","20,757",2.0,1,Pacific codTotal
+2023,2025,2,Sablefish,W,n/a,"4,719","4,719",3.0,1,SablefishW
+2023,2025,2,Sablefish,C,n/a,"9,693","9,693",3.0,1,SablefishC
+2023,2025,2,Sablefish,WYK,n/a,"2,940","2,940",3.0,1,SablefishWYK
+2023,2025,2,Sablefish,SEO,n/a,"5,343","5,343",3.0,1,SablefishSEO
+2023,2025,2,Sablefish,Subtotal TAC,n/a,n/a,"22,695",3.0,1,SablefishSubtotalTAC
+2023,2025,2,Sablefish,Total,"55,317","47,350",n/a,3.0,1,SablefishTotal
+2023,2025,2,Shallow-water flatfish,W,n/a,"23,782","13,250",,1,Shallow-water flatfishW
+2023,2025,2,Shallow-water flatfish,C,n/a,"28,311","28,311",,1,Shallow-water flatfishC
+2023,2025,2,Shallow-water flatfish,WYK,n/a,"2,831","2,831",,1,Shallow-water flatfishWYK
+2023,2025,2,Shallow-water flatfish,SEO,n/a,"1,699","1,699",,1,Shallow-water flatfishSEO
+2023,2025,2,Shallow-water flatfish,Total,"69,354","56,623","46,091",,1,Shallow-water flatfishTotal
+2023,2025,2,Deep-water flatfish,W,n/a,234,234,,1,Deep-water flatfishW
+2023,2025,2,Deep-water flatfish,C,n/a,"2,614","2,614",,1,Deep-water flatfishC
+2023,2025,2,Deep-water flatfish,WYK,n/a,"1,827","1,827",,1,Deep-water flatfishWYK
+2023,2025,2,Deep-water flatfish,SEO,n/a,"2,278","2,278",,1,Deep-water flatfishSEO
+2023,2025,2,Deep-water flatfish,Total,"8,257","6,953","6,953",,1,Deep-water flatfishTotal
+2023,2025,2,Rex sole,W,n/a,"3,363","3,363",,1,Rex soleW
+2023,2025,2,Rex sole,C,n/a,"13,624","13,624",,1,Rex soleC
+2023,2025,2,Rex sole,WYK,n/a,"1,439","1,439",,1,Rex soleWYK
+2023,2025,2,Rex sole,SEO,n/a,"2,877","2,877",,1,Rex soleSEO
+2023,2025,2,Rex sole,Total,"25,900","21,303","21,303",,1,Rex soleTotal
+2023,2025,2,Arrowtooth flounder,W,n/a,"30,323","14,500",,1,Arrowtooth flounderW
+2023,2025,2,Arrowtooth flounder,C,n/a,"64,688","64,688",,1,Arrowtooth flounderC
+2023,2025,2,Arrowtooth flounder,WYK,n/a,"7,848","7,848",,1,Arrowtooth flounderWYK
+2023,2025,2,Arrowtooth flounder,SEO,n/a,"16,053","6,900",,1,Arrowtooth flounderSEO
+2023,2025,2,Arrowtooth flounder,Total,"142,074","118,912","93,936",,1,Arrowtooth flounderTotal
+2023,2025,2,Flathead sole,W,n/a,"13,521","8,650",,1,Flathead soleW
+2023,2025,2,Flathead sole,C,n/a,"21,702","21,702",,1,Flathead soleC
+2023,2025,2,Flathead sole,WYK,n/a,"3,949","3,949",,1,Flathead soleWYK
+2023,2025,2,Flathead sole,SEO,n/a,"2,086","2,086",,1,Flathead soleSEO
+2023,2025,2,Flathead sole,Total,"50,322","41,258","36,387",,1,Flathead soleTotal
+2023,2025,2,Pacific ocean perch,W,n/a,"1,726","1,726",,1,Pacific ocean perchW
+2023,2025,2,Pacific ocean perch,C,n/a,"27,768","27,768",,1,Pacific ocean perchC
+2023,2025,2,Pacific ocean perch,WYK,n/a,"2,038","2,038",,1,Pacific ocean perchWYK
+2023,2025,2,Pacific ocean perch,SEO,,"6,822","6,822",,1,Pacific ocean perchSEO
+2023,2025,2,Pacific ocean perch,Total,"45,835","38,354","38,354",,1,Pacific ocean perchTotal
+2023,2025,2,Northern rockfish,W,n/a,"2,446","2,446",,1,Northern rockfishW
+2023,2025,2,Northern rockfish,C,n/a,"2,200","2,200",,1,Northern rockfishC
+2023,2025,2,Northern rockfish,E,n/a,,,,1,Northern rockfishE
+2023,2025,2,Northern rockfish,Total,"5,548","4,646","4,646",,1,Northern rockfishTotal
+2023,2025,2,Shortraker rockfish,W,n/a,34,34,,1,Shortraker rockfishW
+2023,2025,2,Shortraker rockfish,C,n/a,189,189,,1,Shortraker rockfishC
+2023,2025,2,Shortraker rockfish,E,n/a,424,424,,1,Shortraker rockfishE
+2023,2025,2,Shortraker rockfish,Total,863,647,647,,1,Shortraker rockfishTotal
+2023,2025,2,Dusky rockfish,W,n/a,137,137,,1,Dusky rockfishW
+2023,2025,2,Dusky rockfish,C,n/a,"6,979","6,979",,1,Dusky rockfishC
+2023,2025,2,Dusky rockfish,WYK,n/a,81,81,,1,Dusky rockfishWYK
+2023,2025,2,Dusky rockfish,SEO,n/a,28,28,,1,Dusky rockfishSEO
+2023,2025,2,Dusky rockfish,Total,"8,796","7,225","7,225",,1,Dusky rockfishTotal
+2023,2025,2,Rougheye and Blackspotted rockfish,W,n/a,198,198,,1,Rougheye and Blackspotted rockfishW
+2023,2025,2,Rougheye and Blackspotted rockfish,C,n/a,317,317,,1,Rougheye and Blackspotted rockfishC
+2023,2025,2,Rougheye and Blackspotted rockfish,E,n/a,526,526,,1,Rougheye and Blackspotted rockfishE
+2023,2025,2,Rougheye and Blackspotted rockfish,Total,"1,566","1,041","1,041",,1,Rougheye and Blackspotted rockfishTotal
+2023,2025,2,Demersal shelf rockfish,SEO,376,283,283,,1,Demersal shelf rockfishSEO
+2023,2025,2,Thornyhead rockfish,W,n/a,314,314,,1,Thornyhead rockfishW
+2023,2025,2,Thornyhead rockfish,C,n/a,693,693,,1,Thornyhead rockfishC
+2023,2025,2,Thornyhead rockfish,E,n/a,621,621,,1,Thornyhead rockfishE
+2023,2025,2,Thornyhead rockfish,Total,"2,170","1,628","1,628",,1,Thornyhead rockfishTotal
+2023,2025,2,Other rockfish,W/C/WYK,n/a,"1,353","1,353",,1,Other rockfishWCWYK
+2023,2025,2,Other rockfish,SEO,n/a,"2,421",300,,1,Other rockfishSEO
+2023,2025,2,Other rockfish,Total,"4,977","3,774","1,653",,1,Other rockfishTotal
+2023,2025,2,Atka mackerel,GW,"6,200","4,700","4,700",,1,Atka mackerelGW
+2023,2025,2,Big skate,W,n/a,745,745,,1,Big skateW
+2023,2025,2,Big skate,C,n/a,"1,749","1,749",,1,Big skateC
+2023,2025,2,Big skate,E,n/a,341,341,,1,Big skateE
+2023,2025,2,Big skate,Total,"3,780","2,835","2,835",,1,Big skateTotal
+2023,2025,2,Longnose skate,W,n/a,104,104,,1,Longnose skateW
+2023,2025,2,Longnose skate,C,n/a,"1,894","1,894",,1,Longnose skateC
+2023,2025,2,Longnose skate,E,n/a,538,538,,1,Longnose skateE
+2023,2025,2,Longnose skate,Total,"3,380","2,536","2,536",,1,Longnose skateTotal
+2023,2025,2,Other skates,GW,887,665,665,,1,Other skatesGW
+2023,2025,2,Sharks,GW,"6,521","4,891","4,891",21.0,1,SharksGW
+2023,2025,2,Octopus,GW,"1,307",980,980,22.0,1,OctopusGW
+2023,2025,2,Total,GOA,"673,289","562,224","483,700",23.0,1,TotalGOA
+2025,2025,1,Pollock,Shumagin (610),n/a,"37,344","37,344",1.0,1,PollockShumagin610
+2025,2025,1,Pollock,Chirikof (620),n/a,"82,265","82,265",1.0,1,PollockChirikof620
+2025,2025,1,Pollock,Kodiak (630),n/a,"51,605","51,605",1.0,1,PollockKodiak630
+2025,2025,1,Pollock,WYK (640),n/a,"5,282","5,282",1.0,1,PollockWYK640
+2025,2025,1,Pollock,W/C/WYK (subtotal),"210,111","181,022","176,496",1.0,1,PollockWCWYKsubtotal
+2025,2025,1,Pollock,SEO (650),"12,998","9,749","9,749",1.0,1,PollockSEO650
+2025,2025,1,Pollock,Total,"223,109","190,771","186,245",1.0,1,PollockTotal
+2025,2025,1,Pacific cod,W,n/a,"8,710","6,097",2.0,1,Pacific codW
+2025,2025,1,Pacific cod,C,n/a,"20,506","15,379",2.0,1,Pacific codC
+2025,2025,1,Pacific cod,E,n/a,"2,925","2,194",2.0,1,Pacific codE
+2025,2025,1,Pacific cod,Total,"38,688","32,141","23,670",2.0,1,Pacific codTotal
+2025,2025,1,Sablefish,W,n/a,"4,746","4,746",3.0,1,SablefishW
+2025,2025,1,Sablefish,C,n/a,"9,744","9,744",3.0,1,SablefishC
+2025,2025,1,Sablefish,WYK,n/a,"2,686","2,686",3.0,1,SablefishWYK
+2025,2025,1,Sablefish,SEO,n/a,"5,660","5,660",3.0,1,SablefishSEO
+2025,2025,1,Sablefish,Subtotal TAC,n/a,n/a,"22,836",3.0,1,SablefishSubtotalTAC
+2025,2025,1,Sablefish,Total,"58,532","47,605",n/a,3.0,1,SablefishTotal
+2025,2025,1,Shallow-water flatfish,W,n/a,"23,755","13,250",,1,Shallow-water flatfishW
+2025,2025,1,Shallow-water flatfish,C,n/a,"28,279","28,279",,1,Shallow-water flatfishC
+2025,2025,1,Shallow-water flatfish,WYK,n/a,"2,828","2,828",,1,Shallow-water flatfishWYK
+2025,2025,1,Shallow-water flatfish,SEO,n/a,"1,697","1,697",,1,Shallow-water flatfishSEO
+2025,2025,1,Shallow-water flatfish,Total,"69,277","56,559","46,054",,1,Shallow-water flatfishTotal
+2025,2025,1,Deep-water flatfish,W,n/a,234,234,,1,Deep-water flatfishW
+2025,2025,1,Deep-water flatfish,C,n/a,"2,616","2,616",,1,Deep-water flatfishC
+2025,2025,1,Deep-water flatfish,WYK,n/a,"1,828","1,828",,1,Deep-water flatfishWYK
+2025,2025,1,Deep-water flatfish,SEO,n/a,"2,280","2,280",,1,Deep-water flatfishSEO
+2025,2025,1,Deep-water flatfish,Total,"8,263","6,958","6,958",,1,Deep-water flatfishTotal
+2025,2025,1,Rex sole,W,n/a,"3,382","3,382",,1,Rex soleW
+2025,2025,1,Rex sole,C,n/a,"13,698","13,698",,1,Rex soleC
+2025,2025,1,Rex sole,WYK,n/a,"1,436","1,436",,1,Rex soleWYK
+2025,2025,1,Rex sole,SEO,n/a,"2,871","2,871",,1,Rex soleSEO
+2025,2025,1,Rex sole,Total,"26,002","21,387","21,387",,1,Rex soleTotal
+2025,2025,1,Arrowtooth flounder,W,n/a,"33,593","14,500",,1,Arrowtooth flounderW
+2025,2025,1,Arrowtooth flounder,C,n/a,"68,261","68,261",,1,Arrowtooth flounderC
+2025,2025,1,Arrowtooth flounder,WYK,n/a,"6,695","6,695",,1,Arrowtooth flounderWYK
+2025,2025,1,Arrowtooth flounder,SEO,n/a,"10,998","10,998",,1,Arrowtooth flounderSEO
+2025,2025,1,Arrowtooth flounder,Total,"142,832","119,547","100,454",,1,Arrowtooth flounderTotal
+2025,2025,1,Flathead sole,W,n/a,"13,592","8,650",,1,Flathead soleW
+2025,2025,1,Flathead sole,C,n/a,"21,817","21,817",,1,Flathead soleC
+2025,2025,1,Flathead sole,WYK,n/a,"3,970","3,970",,1,Flathead soleWYK
+2025,2025,1,Flathead sole,SEO,n/a,"2,097","2,097",,1,Flathead soleSEO
+2025,2025,1,Flathead sole,Total,"50,587","41,476","36,534",,1,Flathead soleTotal
+2025,2025,1,Pacific ocean perch,W,n/a,"1,753","1,753",,1,Pacific ocean perchW
+2025,2025,1,Pacific ocean perch,C,n/a,"28,209","28,209",,1,Pacific ocean perchC
+2025,2025,1,Pacific ocean perch,WYK,n/a,"2,070","2,070",,1,Pacific ocean perchWYK
+2025,2025,1,Pacific ocean perch,SEO,n/a,"6,930","6,930",,1,Pacific ocean perchSEO
+2025,2025,1,Pacific ocean perch,Total,"46,562","38,962","38,962",,1,Pacific ocean perchTotal
+2025,2025,1,Northern rockfish,W,n/a,"1,396","1,396",,1,Northern rockfishW
+2025,2025,1,Northern rockfish,C,n/a,"3,680","3,680",,1,Northern rockfishC
+2025,2025,1,Northern rockfish,E,n/a,,,,1,Northern rockfishE
+2025,2025,1,Northern rockfish,Total,"6,064","5,076","5,076",,1,Northern rockfishTotal
+2025,2025,1,Shortraker rockfish,W,n/a,34,34,,1,Shortraker rockfishW
+2025,2025,1,Shortraker rockfish,C,n/a,189,189,,1,Shortraker rockfishC
+2025,2025,1,Shortraker rockfish,E,n/a,424,424,,1,Shortraker rockfishE
+2025,2025,1,Shortraker rockfish,Total,863,647,647,,1,Shortraker rockfishTotal
+2025,2025,1,Dusky rockfish,W,n/a,209,209,,1,Dusky rockfishW
+2025,2025,1,Dusky rockfish,C,n/a,"5,818","5,818",,1,Dusky rockfishC
+2025,2025,1,Dusky rockfish,WYK,n/a,215,215,,1,Dusky rockfishWYK
+2025,2025,1,Dusky rockfish,SEO,n/a,96,96,,1,Dusky rockfishSEO
+2025,2025,1,Dusky rockfish,Total,"7,705","6,338","6,338",,1,Dusky rockfishTotal
+2025,2025,1,Rougheye and Blackspotted rockfish,W,n/a,224,224,,1,Rougheye and Blackspotted rockfishW
+2025,2025,1,Rougheye and Blackspotted rockfish,C,n/a,359,359,,1,Rougheye and Blackspotted rockfishC
+2025,2025,1,Rougheye and Blackspotted rockfish,E,n/a,597,597,,1,Rougheye and Blackspotted rockfishE
+2025,2025,1,Rougheye and Blackspotted rockfish,Total,"1,576","1,180","1,180",,1,Rougheye and Blackspotted rockfishTotal
+2025,2025,1,Demersal shelf rockfish,W/C/WYK,361,271,271,,1,Demersal shelf rockfishWCWYK
+2025,2025,1,Demersal shelf rockfish,SEO,524,394,394,,1,Demersal shelf rockfishSEO
+2025,2025,1,Thornyhead rockfish,W,n/a,206,206,,1,Thornyhead rockfishW
+2025,2025,1,Thornyhead rockfish,C,n/a,590,590,,1,Thornyhead rockfishC
+2025,2025,1,Thornyhead rockfish,E,n/a,542,542,,1,Thornyhead rockfishE
+2025,2025,1,Thornyhead rockfish,Total,"1,784","1,338","1,338",,1,Thornyhead rockfishTotal
+2025,2025,1,Other rockfish,W/C/WYK,n/a,"1,084","1,084",,1,Other rockfishWCWYK
+2025,2025,1,Other rockfish,SEO,n/a,"2,421",300,,1,Other rockfishSEO
+2025,2025,1,Other rockfish,Total,"4,618","3,505","1,384",,1,Other rockfishTotal
+2025,2025,1,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2025,2025,1,Big skate,W,n/a,745,745,,1,Big skateW
+2025,2025,1,Big skate,C,n/a,"1,749","1,749",,1,Big skateC
+2025,2025,1,Big skate,E,n/a,341,341,,1,Big skateE
+2025,2025,1,Big skate,Total,"3,780","2,835","2,835",,1,Big skateTotal
+2025,2025,1,Longnose skate,W,n/a,104,104,,1,Longnose skateW
+2025,2025,1,Longnose skate,C,n/a,"1,894","1,894",,1,Longnose skateC
+2025,2025,1,Longnose skate,E,n/a,538,538,,1,Longnose skateE
+2025,2025,1,Longnose skate,Total,"3,380","2,536","2,536",,1,Longnose skateTotal
+2025,2025,1,Other skates,GW,887,665,665,,1,Other skatesGW
+2025,2025,1,Sharks,GW,"6,521","4,891","4,891",21.0,1,SharksGW
+2025,2025,1,Octopus,GW,"1,307",980,964,22.0,1,OctopusGW
+2025,2025,1,Total,GOA,"709,422","590,762","514,619",23.0,1,TotalGOA
+2025,2026,2,Pollock,Shumagin (610),n/a,"27,453","27,453",1.0,1,PollockShumagin610
+2025,2026,2,Pollock,Chirikof (620),n/a,"60,477","60,477",1.0,1,PollockChirikof620
+2025,2026,2,Pollock,Kodiak (630),n/a,"37,936","37,936",1.0,1,PollockKodiak630
+2025,2026,2,Pollock,WYK (640),n/a,"3,883","3,883",1.0,1,PollockWYK640
+2025,2026,2,Pollock,W/C/WYK (subtotal),"153,971","133,075","129,749",1.0,1,PollockWCWYKsubtotal
+2025,2026,2,Pollock,SEO (650),"12,998","9,749","9,749",1.0,1,PollockSEO650
+2025,2026,2,Pollock,Total,"166,969","142,824","139,498",1.0,1,PollockTotal
+2025,2026,2,Pacific cod,W,n/a,"8,182","5,727",2.0,1,Pacific codW
+2025,2026,2,Pacific cod,C,n/a,"19,263","14,447",2.0,1,Pacific codC
+2025,2026,2,Pacific cod,E,n/a,"2,748","2,061",2.0,1,Pacific codE
+2025,2026,2,Pacific cod,Total,"36,459","30,193","22,235",2.0,1,Pacific codTotal
+2025,2026,2,Sablefish,W,n/a,"4,687","4,687",3.0,1,SablefishW
+2025,2026,2,Sablefish,C,n/a,"9,622","9,622",3.0,1,SablefishC
+2025,2026,2,Sablefish,WYK,n/a,"2,652","2,652",3.0,1,SablefishWYK
+2025,2026,2,Sablefish,SEO,n/a,"5,589","5,589",3.0,1,SablefishSEO
+2025,2026,2,Sablefish,Subtotal TAC,n/a,n/a,"22,550",3.0,1,SablefishSubtotalTAC
+2025,2026,2,Sablefish,Total,"57,797","47,008",n/a,3.0,1,SablefishTotal
+2025,2026,2,Shallow-water flatfish,W,n/a,"23,902","13,250",,1,Shallow-water flatfishW
+2025,2026,2,Shallow-water flatfish,C,n/a,"28,455","28,455",,1,Shallow-water flatfishC
+2025,2026,2,Shallow-water flatfish,WYK,n/a,"2,846","2,846",,1,Shallow-water flatfishWYK
+2025,2026,2,Shallow-water flatfish,SEO,n/a,"1,707","1,707",,1,Shallow-water flatfishSEO
+2025,2026,2,Shallow-water flatfish,Total,"69,610","56,910","46,258",,1,Shallow-water flatfishTotal
+2025,2026,2,Deep-water flatfish,W,n/a,231,231,,1,Deep-water flatfishW
+2025,2026,2,Deep-water flatfish,C,n/a,"2,568","2,568",,1,Deep-water flatfishC
+2025,2026,2,Deep-water flatfish,WYK,n/a,"1,795","1,795",,1,Deep-water flatfishWYK
+2025,2026,2,Deep-water flatfish,SEO,n/a,"2,238","2,238",,1,Deep-water flatfishSEO
+2025,2026,2,Deep-water flatfish,Total,"8,114","6,832","6,832",,1,Deep-water flatfishTotal
+2025,2026,2,Rex sole,W,n/a,"3,353","3,353",,1,Rex soleW
+2025,2026,2,Rex sole,C,n/a,"13,582","13,582",,1,Rex soleC
+2025,2026,2,Rex sole,WYK,n/a,"1,413","1,413",,1,Rex soleWYK
+2025,2026,2,Rex sole,SEO,n/a,"2,825","2,825",,1,Rex soleSEO
+2025,2026,2,Rex sole,Total,"25,743","21,173","21,173",,1,Rex soleTotal
+2025,2026,2,Arrowtooth flounder,W,n/a,"33,716","14,500",,1,Arrowtooth flounderW
+2025,2026,2,Arrowtooth flounder,C,n/a,"68,511","68,511",,1,Arrowtooth flounderC
+2025,2026,2,Arrowtooth flounder,WYK,n/a,"6,719","6,719",,1,Arrowtooth flounderWYK
+2025,2026,2,Arrowtooth flounder,SEO,n/a,"11,039","11,039",,1,Arrowtooth flounderSEO
+2025,2026,2,Arrowtooth flounder,Total,"143,347","119,985","100,769",,1,Arrowtooth flounderTotal
+2025,2026,2,Flathead sole,W,n/a,"13,757","8,650",,1,Flathead soleW
+2025,2026,2,Flathead sole,C,n/a,"22,083","22,083",,1,Flathead soleC
+2025,2026,2,Flathead sole,WYK,n/a,"4,018","4,018",,1,Flathead soleWYK
+2025,2026,2,Flathead sole,SEO,n/a,"2,122","2,122",,1,Flathead soleSEO
+2025,2026,2,Flathead sole,Total,"51,176","41,980","36,873",,1,Flathead soleTotal
+2025,2026,2,Pacific ocean perch,W,n/a,"1,688","1,688",,1,Pacific ocean perchW
+2025,2026,2,Pacific ocean perch,C,n/a,"27,156","27,156",,1,Pacific ocean perchC
+2025,2026,2,Pacific ocean perch,WYK,n/a,"1,993","1,993",,1,Pacific ocean perchWYK
+2025,2026,2,Pacific ocean perch,SEO,n/a,"6,672","6,672",,1,Pacific ocean perchSEO
+2025,2026,2,Pacific ocean perch,Total,"44,826","37,509","37,509",,1,Pacific ocean perchTotal
+2025,2026,2,Northern rockfish,W,n/a,"1,346","1,346",,1,Northern rockfishW
+2025,2026,2,Northern rockfish,C,n/a,"3,549","3,549",,1,Northern rockfishC
+2025,2026,2,Northern rockfish,E,n/a,,,,1,Northern rockfishE
+2025,2026,2,Northern rockfish,Total,"5,848","4,895","4,895",,1,Northern rockfishTotal
+2025,2026,2,Shortraker rockfish,W,n/a,34,34,,1,Shortraker rockfishW
+2025,2026,2,Shortraker rockfish,C,n/a,189,189,,1,Shortraker rockfishC
+2025,2026,2,Shortraker rockfish,E,n/a,424,424,,1,Shortraker rockfishE
+2025,2026,2,Shortraker rockfish,Total,863,647,647,,1,Shortraker rockfishTotal
+2025,2026,2,Dusky rockfish,W,n/a,199,199,,1,Dusky rockfishW
+2025,2026,2,Dusky rockfish,C,n/a,"5,527","5,527",,1,Dusky rockfishC
+2025,2026,2,Dusky rockfish,WYK,n/a,204,204,,1,Dusky rockfishWYK
+2025,2026,2,Dusky rockfish,SEO,n/a,91,91,,1,Dusky rockfishSEO
+2025,2026,2,Dusky rockfish,Total,"7,319","6,021","6,021",,1,Dusky rockfishTotal
+2025,2026,2,Rougheye and Blackspotted rockfish,W,n/a,229,229,,1,Rougheye and Blackspotted rockfishW
+2025,2026,2,Rougheye and Blackspotted rockfish,C,n/a,366,366,,1,Rougheye and Blackspotted rockfishC
+2025,2026,2,Rougheye and Blackspotted rockfish,E,n/a,608,608,,1,Rougheye and Blackspotted rockfishE
+2025,2026,2,Rougheye and Blackspotted rockfish,Total,"1,631","1,203","1,203",,1,Rougheye and Blackspotted rockfishTotal
+2025,2026,2,Demersal shelf rockfish,W/C/WYK,361,271,271,,1,Demersal shelf rockfishWCWYK
+2025,2026,2,Demersal shelf rockfish,SEO,524,394,394,,1,Demersal shelf rockfishSEO
+2025,2026,2,Thornyhead rockfish,W,n/a,206,206,,1,Thornyhead rockfishW
+2025,2026,2,Thornyhead rockfish,C,n/a,590,590,,1,Thornyhead rockfishC
+2025,2026,2,Thornyhead rockfish,E,n/a,542,542,,1,Thornyhead rockfishE
+2025,2026,2,Thornyhead rockfish,Total,"1,784","1,338","1,338",,1,Thornyhead rockfishTotal
+2025,2026,2,Other rockfish,W/C/WYK,n/a,"1,084","1,084",,1,Other rockfishWCWYK
+2025,2026,2,Other rockfish,SEO,n/a,"2,421",300,,1,Other rockfishSEO
+2025,2026,2,Other rockfish,Total,"4,618","3,505","1,384",,1,Other rockfishTotal
+2025,2026,2,Atka mackerel,GW,"6,200","4,700","3,000",,1,Atka mackerelGW
+2025,2026,2,Big skate,W,n/a,745,745,,1,Big skateW
+2025,2026,2,Big skate,C,n/a,"1,749","1,749",,1,Big skateC
+2025,2026,2,Big skate,E,n/a,341,341,,1,Big skateE
+2025,2026,2,Big skate,Total,"3,780","2,835","2,835",,1,Big skateTotal
+2025,2026,2,Longnose skate,W,n/a,104,104,,1,Longnose skateW
+2025,2026,2,Longnose skate,C,n/a,"1,894","1,894",,1,Longnose skateC
+2025,2026,2,Longnose skate,E,n/a,538,538,,1,Longnose skateE
+2025,2026,2,Longnose skate,Total,"3,380","2,536","2,536",,1,Longnose skateTotal
+2025,2026,2,Other skates,GW,887,665,665,,1,Other skatesGW
+2025,2026,2,Sharks,GW,"6,521","4,891","4,891",21.0,1,SharksGW
+2025,2026,2,Octopus,GW,"1,307",980,964,22.0,1,OctopusGW
+2025,2026,2,Total,GOA,"649,064","539,295","464,741",23.0,1,TotalGOA
