@@ -60,7 +60,7 @@ def extract_years(text):
         if len(years) >= 2:
             return years[0], years[1]
     if len(years) == 1:
-        return years[0], years[0] + 1
+        return years[0], years[0]
     return None, None
 
 
@@ -217,7 +217,7 @@ def parse_xml_tables(xml_text, year1, year2, require_goa=True):
                     })
                 rows.extend(tmp_rows)
             else:
-                rows.extend(parse_table(df, year1, year2))
+                rows.extend(parse_table(df, year1, year2, allow_single_year=True))
     return rows
 
 
@@ -249,6 +249,58 @@ def parse_xml_tables_alt(xml_text, year1, year2, require_goa=True):
     return rows
 
 
+def parse_pdf_text_tables(pdf, year1):
+    rows = []
+    in_table = False
+    current_species = None
+
+    for page in pdf.pages:
+        text = page.extract_text(layout=True) or ""
+        lines = [l.strip() for l in text.split("\n") if l.strip()]
+        for line in lines:
+            if "TABLE 1" in line.upper() or "TABLE 2" in line.upper():
+                in_table = True
+                current_species = None
+                continue
+
+            if not in_table:
+                continue
+
+            if line.upper().startswith("TABLE"):
+                continue
+
+            nums = re.findall(r"\b\d{1,3}(?:,\d{3})*\b", line)
+            if not nums:
+                # species header line
+                if re.search(r"[A-Za-z]", line):
+                    current_species = clean_text(re.sub(r"\.{2,}.*", "", line))
+                continue
+
+            # probable data line
+            area = re.sub(r"\.{2,}.*", "", line)
+            area = re.sub(r"\s+\(\d+\)$", "", area)
+            area = clean_text(area)
+
+            vals = [int(n.replace(",", "")) for n in nums]
+            abc = tac = ofl = None
+            if len(vals) >= 3:
+                abc, tac, ofl = vals[-3], vals[-2], vals[-1]
+            elif len(vals) == 2:
+                abc, tac = vals[-2], vals[-1]
+
+            if current_species and (abc is not None or tac is not None or ofl is not None):
+                rows.append({
+                    "ProjYear": year1,
+                    "Species": current_species,
+                    "Area": area or "GOA",
+                    "OFL": ofl,
+                    "ABC": abc,
+                    "TAC": tac,
+                })
+
+    return rows
+
+
 def parse_pdf_tables(pdf_url, year1, year2, require_goa=True):
     if pdfplumber is None:
         return []
@@ -271,6 +323,9 @@ def parse_pdf_tables(pdf_url, year1, year2, require_goa=True):
                     data = table[1:]
                     df = pd.DataFrame(data, columns=header)
                     rows.extend(parse_table(df, year1, year2, allow_single_year=True))
+
+            if not rows:
+                rows = parse_pdf_text_tables(pdf, year1)
     except Exception:
         return rows
 
@@ -367,7 +422,7 @@ def main():
                     if "Request Access" not in html_text:
                         tables = pd.read_html(html_text)
                         for tbl in tables:
-                            rows.extend(parse_table(tbl, y1, y2))
+                            rows.extend(parse_table(tbl, y1, y2, allow_single_year=True))
                         if rows:
                             parsed = True
                             source_url = html_url
