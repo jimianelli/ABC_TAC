@@ -296,6 +296,7 @@ def parse_pdf_text_tables(pdf, year1):
                     "OFL": ofl,
                     "ABC": abc,
                     "TAC": tac,
+                    "FromPDFText": True,
                 })
 
     return rows
@@ -468,6 +469,7 @@ def main():
                     r["IsTotal"] = f"{r['Species']}{re.sub(r'[^A-Za-z0-9]+', '', str(r['Area']))}"
                     r["SourceURL"] = html_url or source_url
                     r["SourceType"] = source_type
+                    r["FromPDFText"] = bool(r.get("FromPDFText", False))
                     all_rows.append(r)
             time.sleep(0.2)
 
@@ -476,7 +478,7 @@ def main():
         sys.exit(1)
 
     out_df = pd.DataFrame(all_rows)
-    cols = ["AssmentYr", "ProjYear", "lag", "Species", "Area", "OFL", "ABC", "TAC", "Order", "OY", "IsTotal", "SourceURL", "SourceType"]
+    cols = ["AssmentYr", "ProjYear", "lag", "Species", "Area", "OFL", "ABC", "TAC", "Order", "OY", "IsTotal", "SourceURL", "SourceType", "FromPDFText"]
     out_df = out_df[cols]
 
     out_df.to_csv(OUT_PATH, index=False)
