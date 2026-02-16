@@ -2,6 +2,7 @@ import re
 import sys
 import json
 import time
+import io
 from datetime import datetime
 from urllib.parse import urlencode
 
@@ -9,9 +10,14 @@ import requests
 import pandas as pd
 from lxml import etree
 
+try:
+    import pdfplumber
+except Exception:
+    pdfplumber = None
+
 BASE = "https://www.federalregister.gov/api/v1/documents.json"
 
-START_YEAR = 1997
+START_YEAR = 1986
 END_YEAR = datetime.utcnow().year + 1
 PILOT_START = 2018
 PILOT_END = 2026
@@ -74,7 +80,7 @@ def clean_text(x):
     return s
 
 
-def parse_table(df, year1, year2):
+def parse_table(df, year1, year2, allow_single_year=False):
     df = normalize_columns(df)
     col_map = {}
     for col in df.columns:
@@ -91,6 +97,19 @@ def parse_table(df, year1, year2):
             tag = "TAC"
         if tag and yr in (year1, year2):
             col_map.setdefault(yr, {})[tag] = col
+
+    if not col_map and allow_single_year:
+        # Try headers without explicit year; map OFL/ABC/TAC to year1.
+        for col in df.columns:
+            tag = None
+            if "OFL" in str(col).upper():
+                tag = "OFL"
+            elif "ABC" in str(col).upper():
+                tag = "ABC"
+            elif "TAC" in str(col).upper():
+                tag = "TAC"
+            if tag:
+                col_map.setdefault(year1, {})[tag] = col
 
     if not col_map:
         return []
@@ -202,6 +221,62 @@ def parse_xml_tables(xml_text, year1, year2, require_goa=True):
     return rows
 
 
+def parse_xml_tables_alt(xml_text, year1, year2, require_goa=True):
+    rows = []
+    try:
+        root = etree.fromstring(xml_text.encode("utf-8"))
+    except Exception:
+        return rows
+
+    for table in root.findall(".//TABLE"):
+        title_el = table.find("TITLE")
+        title = "".join(title_el.itertext()).strip() if title_el is not None else ""
+        title_l = title.lower()
+        if title and not any(x in title_l for x in ["ofl", "abc", "tac"]):
+            continue
+        if require_goa and title and ("gulf of alaska" not in title_l and "goa" not in title_l):
+            continue
+
+        try:
+            html_str = etree.tostring(table, encoding="unicode", method="html")
+            tables = pd.read_html(html_str)
+        except Exception:
+            tables = []
+
+        for tbl in tables:
+            rows.extend(parse_table(tbl, year1, year2, allow_single_year=True))
+
+    return rows
+
+
+def parse_pdf_tables(pdf_url, year1, year2, require_goa=True):
+    if pdfplumber is None:
+        return []
+
+    try:
+        resp = requests.get(pdf_url, timeout=30)
+        resp.raise_for_status()
+    except Exception:
+        return []
+
+    rows = []
+    try:
+        with pdfplumber.open(io.BytesIO(resp.content)) as pdf:
+            for page in pdf.pages:
+                tables = page.extract_tables() or []
+                for table in tables:
+                    if not table or len(table) < 2:
+                        continue
+                    header = table[0]
+                    data = table[1:]
+                    df = pd.DataFrame(data, columns=header)
+                    rows.extend(parse_table(df, year1, year2, allow_single_year=True))
+    except Exception:
+        return rows
+
+    return rows
+
+
 def build_order_map():
     try:
         df = pd.read_csv(EXISTING_GOA)
@@ -262,9 +337,12 @@ def main():
 
             html_url = (detail or {}).get("html_url") or doc.get("html_url")
             xml_url = (detail or {}).get("full_text_xml_url") or doc.get("full_text_xml_url")
+            pdf_url = (detail or {}).get("pdf_url") or doc.get("pdf_url")
 
             parsed = False
             rows = []
+            source_url = None
+            source_type = None
             if xml_url:
                 try:
                     xml_text = requests.get(xml_url, timeout=30).text
@@ -272,6 +350,14 @@ def main():
                         rows = parse_xml_tables(xml_text, y1, y2)
                         if rows:
                             parsed = True
+                            source_url = html_url or xml_url
+                            source_type = "XML"
+                        else:
+                            rows = parse_xml_tables_alt(xml_text, y1, y2, require_goa=True)
+                            if rows:
+                                parsed = True
+                                source_url = html_url or xml_url
+                                source_type = "XML_ALT"
                 except Exception:
                     rows = []
 
@@ -284,6 +370,8 @@ def main():
                             rows.extend(parse_table(tbl, y1, y2))
                         if rows:
                             parsed = True
+                            source_url = html_url
+                            source_type = "HTML"
                 except Exception:
                     rows = []
 
@@ -293,6 +381,28 @@ def main():
                     gov_xml = fetch_govinfo_xml(pub)
                     if gov_xml:
                         rows = parse_xml_tables(gov_xml, y1, y2, require_goa=True)
+                        if rows:
+                            parsed = True
+                            source_url = html_url or f"https://www.govinfo.gov/content/pkg/FR-{pub}/html/FR-{pub}.htm"
+                            source_type = "XML"
+                        else:
+                            rows = parse_xml_tables_alt(gov_xml, y1, y2, require_goa=True)
+                            if rows:
+                                parsed = True
+                                source_url = html_url or f"https://www.govinfo.gov/content/pkg/FR-{pub}/html/FR-{pub}.htm"
+                                source_type = "XML_ALT"
+
+            if not parsed:
+                pub = doc.get("publication_date")
+                doc_num = doc.get("document_number")
+                if not pdf_url and pub and doc_num:
+                    pdf_url = f"https://www.govinfo.gov/content/pkg/FR-{pub}/pdf/{doc_num}.pdf"
+                if pdf_url:
+                    rows = parse_pdf_tables(pdf_url, y1, y2, require_goa=True)
+                    if rows:
+                        parsed = True
+                        source_url = html_url or pdf_url
+                        source_type = "PDF"
 
             if rows:
                 for r in rows:
@@ -301,6 +411,8 @@ def main():
                     r["OY"] = 1
                     r["Order"] = order_map.get(r["Species"], None)
                     r["IsTotal"] = f"{r['Species']}{re.sub(r'[^A-Za-z0-9]+', '', str(r['Area']))}"
+                    r["SourceURL"] = source_url
+                    r["SourceType"] = source_type
                     all_rows.append(r)
             time.sleep(0.2)
 
@@ -309,7 +421,7 @@ def main():
         sys.exit(1)
 
     out_df = pd.DataFrame(all_rows)
-    cols = ["AssmentYr", "ProjYear", "lag", "Species", "Area", "OFL", "ABC", "TAC", "Order", "OY", "IsTotal"]
+    cols = ["AssmentYr", "ProjYear", "lag", "Species", "Area", "OFL", "ABC", "TAC", "Order", "OY", "IsTotal", "SourceURL", "SourceType"]
     out_df = out_df[cols]
 
     out_df.to_csv(OUT_PATH, index=False)

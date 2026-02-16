@@ -11,7 +11,7 @@ This repository evaluates ABC (Allowable Biological Catch) and TAC (Total Allowa
 - `data/` - Source data (`BSAI_OFL_ABC_TAC.csv` with OFL/ABC/TAC records 1986–2025)
   - GOA two-year outputs:
     - `GOA_OFL_ABC_TAC_2yr.csv` (pilot, 2018–2026)
-    - `GOA_OFL_ABC_TAC_2yr_full.csv` (full scrape, 2000–2026)
+    - `GOA_OFL_ABC_TAC_2yr_full.csv` (full scrape, 1986–present)
 
 ## Key Analysis Components
 
@@ -41,7 +41,7 @@ This produces HTML (with embedded resources) and PDF locally. Rendered `.html`/`
 
 ## Data Structure
 
-The CSV contains columns: `AssmentYr`, `ProjYear`, `lag`, `Area`, `Species`, `ABC`, `OFL`, `TAC`, `OY`, `Order`
+The CSV contains columns: `AssmentYr`, `ProjYear`, `lag`, `Area`, `Species`, `ABC`, `OFL`, `TAC`, `OY`, `Order`, `SourceURL`, `SourceType`
 
 - `lag=1`: Final values used that year
 - `lag=2`: Two-year projection made the prior year
@@ -53,10 +53,16 @@ The CSV contains columns: `AssmentYr`, `ProjYear`, `lag`, `Area`, `Species`, `AB
 The GOA two-year files are produced by `scripts/scrape_goa_fedreg.py`.
 
 Key behavior:
-- Uses Federal Register API for document metadata and govinfo daily FR XML as a fallback when FR blocks XML/HTML downloads.
+- Uses Federal Register API for document metadata; falls back to govinfo daily FR XML and FR PDFs for early years.
 - Parses GPOTABLE tables labeled as Table 1/2 with OFL/ABC/TAC content and filters to Gulf of Alaska.
+- Includes an alternate XML parser for older FR XML that uses TABLE blocks.
+- Falls back to PDF table extraction when XML/HTML parsing fails (tables only; single-year tables are accepted).
 - Skips interim harvest specifications.
 - Strips footnote markers and normalizes area labels.
+- Adds `SourceURL` (FR HTML document URL when available) and `SourceType` (XML/XML_ALT/HTML/PDF).
+
+Dependencies:
+- `pdfplumber` (required only for PDF fallback parsing)
 
 Run:
 ```bash
