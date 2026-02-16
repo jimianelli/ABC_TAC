@@ -411,7 +411,7 @@ def main():
                     r["OY"] = 1
                     r["Order"] = order_map.get(r["Species"], None)
                     r["IsTotal"] = f"{r['Species']}{re.sub(r'[^A-Za-z0-9]+', '', str(r['Area']))}"
-                    r["SourceURL"] = source_url
+                    r["SourceURL"] = html_url or source_url
                     r["SourceType"] = source_type
                     all_rows.append(r)
             time.sleep(0.2)
@@ -426,6 +426,11 @@ def main():
 
     out_df.to_csv(OUT_PATH, index=False)
     print(f"Wrote {len(out_df)} rows to {OUT_PATH}")
+    if "SourceType" in out_df.columns:
+        counts = out_df["SourceType"].value_counts(dropna=False)
+        print("SourceType counts:")
+        for k, v in counts.items():
+            print(f"  {k}: {v}")
 
 
 if __name__ == "__main__":
