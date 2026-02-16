@@ -9,6 +9,9 @@ This repository evaluates ABC (Allowable Biological Catch) and TAC (Total Allowa
 - `doc/` - Quarto source document(s) and bibliography (rendered outputs are *generated*, not committed)
 - `R/` - Exploratory R scripts for data analysis and visualization
 - `data/` - Source data (`BSAI_OFL_ABC_TAC.csv` with OFL/ABC/TAC records 1986–2025)
+  - GOA two-year outputs:
+    - `GOA_OFL_ABC_TAC_2yr.csv` (pilot, 2018–2026)
+    - `GOA_OFL_ABC_TAC_2yr_full.csv` (full scrape, 2000–2026)
 
 ## Key Analysis Components
 
@@ -44,6 +47,21 @@ The CSV contains columns: `AssmentYr`, `ProjYear`, `lag`, `Area`, `Species`, `AB
 - `lag=2`: Two-year projection made the prior year
 - `OY=1`: Records included in Optimum Yield calculations
 - Seven main species account for ~90% of total ABC: Pollock, Yellowfin sole, Pacific cod, Atka mackerel, Northern rock sole, Flathead sole, Pacific ocean perch
+
+## GOA Federal Register Scraper
+
+The GOA two-year files are produced by `scripts/scrape_goa_fedreg.py`.
+
+Key behavior:
+- Uses Federal Register API for document metadata and govinfo daily FR XML as a fallback when FR blocks XML/HTML downloads.
+- Parses GPOTABLE tables labeled as Table 1/2 with OFL/ABC/TAC content and filters to Gulf of Alaska.
+- Skips interim harvest specifications.
+- Strips footnote markers and normalizes area labels.
+
+Run:
+```bash
+python scripts/scrape_goa_fedreg.py
+```
 
 ## Key Metrics
 
