@@ -3,6 +3,7 @@ import sys
 import json
 import time
 import io
+import difflib
 from datetime import datetime
 from urllib.parse import urlencode
 
@@ -25,10 +26,79 @@ PILOT_END = 2026
 OUT_PATH = "data/GOA_OFL_ABC_TAC_2yr_full.csv"
 EXISTING_GOA = "data/GOA_OFL_ABC_TAC.csv"
 
+SPECIES_CANON = [
+    "Arrowtooth Flounder",
+    "Atka Mackerel",
+    "Big Skates",
+    "Deep-water Flatfish",
+    "Demersal Shelf Rockfish",
+    "Dusky Rockfish",
+    "Flathead Sole",
+    "Longnose Skates",
+    "Northern Rockfish",
+    "Octopus",
+    "Other Flounder",
+    "Other Rockfish",
+    "Other Skates",
+    "Other Species",
+    "Pacific cod",
+    "Pacific Ocean Perch",
+    "Pelagic Shelf Rockfish",
+    "Pollock",
+    "Rex Sole",
+    "Rougheye and Blackspotted Rockfish",
+    "Sablefish",
+    "Sculpins",
+    "Shallow-water Flatfish",
+    "Sharks",
+    "Shortraker Rockfish",
+    "Shortraker/Rougheye Rockfish",
+    "Squids",
+    "Thornyhead Rockfish",
+]
 
-def fetch_docs(year=None):
+AREA_CANON = [
+    "610/620",
+    "610/620/630 (subtotal)",
+    "C",
+    "Chirikof (620)",
+    "E",
+    "E (WYK and SEO subtotal)",
+    "GW",
+    "Kodiak (630)",
+    "SEO",
+    "SEO (650)",
+    "SEO/EYK",
+    "Shelikof",
+    "Shumagin (610)",
+    "Total",
+    "Total (GW)",
+    "W",
+    "W and C",
+    "W/C/WYK",
+    "W/C/WYK (subtotal)",
+    "W/C/WYK combined",
+    "WYK",
+    "WYK (640)",
+    "WYK/SEO (subtotal)",
+    "",
+]
+
+SPECIES_CANON_SET = set(SPECIES_CANON)
+AREA_CANON_SET = set(AREA_CANON)
+
+SEARCH_TERMS = [
+    "harvest specifications",
+    "harvest specification",
+    "groundfish specifications",
+    "groundfish specification",
+    "total allowable catch",
+]
+
+
+def fetch_docs(year=None, term=None):
     params = {
-        "conditions[term]": "harvest specifications",
+        "conditions[term]": term or "harvest specifications",
         "conditions[type]": "RULE",
         "per_page": 100,
         "order": "oldest",
@@ -78,6 +148,74 @@ def clean_text(x):
     s = re.sub(r"\s+", " ", s)
     s = re.sub(r"\s*\d+$", "", s).strip()
     return s
+
+
+def _norm_key(x):
+    s = clean_text(x) or ""
+    s = s.lower()
+    s = re.sub(r"[^a-z0-9]+", " ", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+
+def normalize_species(name, cutoff=0.85):
+    canon, matched = canonicalize_species(name, cutoff=cutoff)
+    return canon if matched else name
+
+
+def canonicalize_species(name, cutoff=0.85):
+    if name is None:
+        return name, False
+    key = _norm_key(name)
+    if key == "":
+        return name, False
+
+    canon_keys = {_norm_key(c): c for c in SPECIES_CANON}
+    if key in canon_keys:
+        return canon_keys[key], True
+
+    # handle common connectors
+    key = key.replace(" and ", " ").replace("/", " ")
+
+    matches = difflib.get_close_matches(key, canon_keys.keys(), n=1, cutoff=cutoff)
+    if matches:
+        return canon_keys[matches[0]], True
+
+    return name, False
+
+
+def normalize_area(area, cutoff=0.8):
+    if area is None:
+        return area
+    key = _norm_key(area)
+    if key == "":
+        return ""
+
+    canon_keys = {_norm_key(c): c for c in AREA_CANON}
+    if key in canon_keys:
+        return canon_keys[key]
+
+    # try digit-based mapping
+    if "610" in key and "620" in key and "630" in key:
+        return "610/620/630 (subtotal)"
+    if "610" in key and "620" in key:
+        return "610/620"
+    if "630" in key:
+        return "Kodiak (630)"
+    if "620" in key:
+        return "Chirikof (620)"
+    if "610" in key:
+        return "Shumagin (610)"
+    if "640" in key:
+        return "WYK (640)"
+    if "650" in key:
+        return "SEO (650)"
+
+    matches = difflib.get_close_matches(key, canon_keys.keys(), n=1, cutoff=cutoff)
+    if matches:
+        return canon_keys[matches[0]]
+
+    return ""
 
 
 def parse_table(df, year1, year2, allow_single_year=False):
@@ -133,6 +271,10 @@ def parse_table(df, year1, year2, allow_single_year=False):
         if pd.isna(species) or str(species).strip() == "":
             continue
         area = clean_text(row.get(area_col)) if area_col else "GOA"
+        species, matched = canonicalize_species(species)
+        if not matched:
+            continue
+        area = normalize_area(area)
 
         for yr in (year1, year2):
             if yr not in col_map:
@@ -207,10 +349,13 @@ def parse_xml_tables(xml_text, year1, year2, require_goa=True):
             if table_year:
                 tmp_rows = []
                 for _, r in df.iterrows():
+                    sp_canon, matched = canonicalize_species(clean_text(r[headers[0]]))
+                    if not matched:
+                        continue
                     tmp_rows.append({
                         "ProjYear": table_year,
-                        "Species": clean_text(r[headers[0]]),
-                        "Area": clean_text(r.get(headers[1], "GOA")) or "GOA",
+                        "Species": sp_canon,
+                        "Area": normalize_area(clean_text(r.get(headers[1], "GOA")) or "GOA"),
                         "OFL": r.get("OFL"),
                         "ABC": r.get("ABC"),
                         "TAC": r.get("TAC"),
@@ -273,10 +418,18 @@ def parse_pdf_text_tables(pdf, year1):
             if not nums:
                 # species header line
                 if re.search(r"[A-Za-z]", line):
-                    current_species = clean_text(re.sub(r"\.{2,}.*", "", line))
+                    sp_raw = clean_text(re.sub(r"\.{2,}.*", "", line))
+                    sp_canon, matched = canonicalize_species(sp_raw)
+                    current_species = sp_canon if matched else None
                 continue
 
-            # probable data line
+            # probable data line: require dotted leader or area code
+            if not (re.search(r"\.{2,}", line) or re.search(r"\(\d+\)", line)):
+                continue
+
+            if len(nums) < 2:
+                continue
+
             area = re.sub(r"\.{2,}.*", "", line)
             area = re.sub(r"\s+\(\d+\)$", "", area)
             area = clean_text(area)
@@ -292,7 +445,7 @@ def parse_pdf_text_tables(pdf, year1):
                 rows.append({
                     "ProjYear": year1,
                     "Species": current_species,
-                    "Area": area or "GOA",
+                    "Area": normalize_area(area or "GOA"),
                     "OFL": ofl,
                     "ABC": abc,
                     "TAC": tac,
@@ -357,7 +510,15 @@ def main():
 
     all_rows = []
     for year in range(START_YEAR, END_YEAR + 1):
-        docs = fetch_docs(year=year)
+        docs = []
+        seen = set()
+        for term in SEARCH_TERMS:
+            for doc in fetch_docs(year=year, term=term):
+                key = doc.get("document_number") or doc.get("id") or doc.get("html_url")
+                if key in seen:
+                    continue
+                seen.add(key)
+                docs.append(doc)
         for doc in docs:
             title = doc.get("title", "")
             abstract = doc.get("abstract", "") or ""
@@ -478,6 +639,7 @@ def main():
         sys.exit(1)
 
     out_df = pd.DataFrame(all_rows)
+    out_df = out_df[out_df["Species"].isin(SPECIES_CANON_SET)]
     cols = ["AssmentYr", "ProjYear", "lag", "Species", "Area", "OFL", "ABC", "TAC", "Order", "OY", "IsTotal", "SourceURL", "SourceType", "FromPDFText"]
     out_df = out_df[cols]
 
