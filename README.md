@@ -54,7 +54,7 @@ The GOA two-year files are produced by `scripts/scrape_goa_fedreg.py`.
 
 Key behavior:
 - Uses Federal Register API for document metadata; falls back to govinfo daily FR XML and FR PDFs for early years.
-- Parses GPOTABLE tables labeled as Table 1/2 with OFL/ABC/TAC content and filters to Gulf of Alaska.
+- Parses GPOTABLE/TABLE content with OFL/ABC/TAC headers (not limited to Table 1/2) and filters to Gulf of Alaska rows.
 - Includes an alternate XML parser for older FR XML that uses TABLE blocks.
 - Falls back to PDF table extraction when XML/HTML parsing fails (tables only; single-year tables are accepted).
 - Skips interim harvest specifications.

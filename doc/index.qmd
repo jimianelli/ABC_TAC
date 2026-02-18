@@ -26,7 +26,8 @@ theme_set(theme_minimal(base_size = 12))
 
 df <- read_csv(here("data", "BSAI_OFL_ABC_TAC.csv"), show_col_types = FALSE)
 
-goaraw <- read_csv(here("data", "GOA_OFL_ABC_TAC.csv"), show_col_types = FALSE)
+#goaraw <- read_csv(here("data", "GOA_OFL_ABC_TAC.csv"), show_col_types = FALSE)
+goaraw <- read_csv(here("data", "GOA_OFL_ABC_TAC_specs.csv"), show_col_types = FALSE)
 
 mainspp <- c(
   "Pollock",
@@ -66,6 +67,36 @@ cv_tbl <- dfOY %>%
 
 cv_max <- cv_tbl %>% arrange(desc(cv_ABC)) %>% slice(1)
 cv_min_tac <- cv_tbl %>% arrange(cv_TAC) %>% slice(1)
+
+goaOY <- goaraw %>%
+  filter(OY == 1, Area == "Total") %>%
+  group_by(Year = ProjYear, lag, Species) %>%
+  summarise(
+    ABC = sum(ABC, na.rm = TRUE),
+    OFL = sum(OFL, na.rm = TRUE),
+    TAC = sum(TAC, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+goa_main_spp <- goaOY %>%
+  filter(lag == 1) %>%
+  group_by(Species) %>%
+  summarise(mean_ABC = mean(ABC, na.rm = TRUE), .groups = "drop") %>%
+  arrange(desc(mean_ABC)) %>%
+  slice_head(n = 7) %>%
+  pull(Species)
+
+goa_cv_tbl <- goaOY %>%
+  filter(lag == 1, Species %in% goa_main_spp) %>%
+  group_by(Species) %>%
+  summarise(
+    cv_ABC = if_else(mean(ABC, na.rm = TRUE) > 0, sd(ABC, na.rm = TRUE) / mean(ABC, na.rm = TRUE), NA_real_),
+    cv_TAC = if_else(mean(TAC, na.rm = TRUE) > 0, sd(TAC, na.rm = TRUE) / mean(TAC, na.rm = TRUE), NA_real_),
+    .groups = "drop"
+  )
+
+goa_cv_max <- goa_cv_tbl %>% arrange(desc(cv_ABC)) %>% slice(1)
+goa_cv_min_tac <- goa_cv_tbl %>% arrange(cv_TAC) %>% slice(1)
 
 dat <- dfOY %>%
   filter(Species %in% mainspp) %>%
@@ -236,10 +267,70 @@ where $\alpha_i$ is the stock-specific intercept for species $i$, $\beta_i$ is t
 
 # Results
 
-## GOA totals by year
+## Patterns in catch advice and limits
+
+### BSAI totals by year
+
+Here we show simple annual BSAI totals for TAC, ABC, and OFL (lag 1, OY = 1), summed across species.
+
+```{r}
+#| label: fig-bsai-totals
+#| fig-cap: "BSAI totals by year (sum across species): TAC, ABC, and OFL."
+#| fig-height: 4.5
+#| fig-width: 7
+
+bsaiyr <- dfOY %>%
+  filter(lag == 1) %>%
+  group_by(Year) %>%
+  summarise(
+    TAC = sum(TAC, na.rm = TRUE),
+    ABC = sum(ABC, na.rm = TRUE),
+    OFL = sum(OFL, na.rm = TRUE),
+    n_TAC = sum(!is.na(TAC)),
+    n_ABC = sum(!is.na(ABC)),
+    n_OFL = sum(!is.na(OFL)),
+    .groups = "drop"
+  )
+
+plot_bsai <- bsaiyr %>%
+  select(Year, TAC, ABC, OFL) %>%
+  pivot_longer(-Year, names_to = "Measure", values_to = "value") %>%
+  mutate(
+    value = na_if(value, 0),
+    Measure = factor(Measure, levels = c("TAC", "ABC", "OFL"))
+  )
+
+ggplot(plot_bsai, aes(x = Year, y = value / 1000, color = Measure)) +
+  geom_line(linewidth = 1) +
+  scale_y_continuous(labels = comma) +
+  labs(x = NULL, y = "thousand t", color = NULL) +
+  theme(legend.position = "top")
+```
+
+### BSAI Pollock
+
+Pollock provides a clear example of how ABC, OFL, and TAC move together over time (see @fig-pollock-ts).
+OFL generally sits above ABC, and TAC sits below ABC.
+
+```{r}
+#| label: fig-pollock-ts
+#| fig-cap: "BSAI Pollock ABC, OFL, and TAC over time (lag 1, OY = 1)."
+pollock_ts <- dfOY %>%
+  filter(lag == 1, Species == "Pollock") %>%
+  pivot_longer(cols = c(ABC, OFL, TAC), names_to = "Measure", values_to = "value") %>%
+  mutate(value = na_if(value, 0))
+
+ggplot(pollock_ts, aes(x = Year, y = value / 1000, color = Measure)) +
+  geom_line(linewidth = 1) +
+  scale_y_continuous(labels = comma) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(x = NULL, y = "thousand t", color = NULL)
+```
+
+### GOA totals by year
 
 The GOA harvest specifications file was munged into the same long format as the BSAI data.
-Here we show very simple annual totals from the GOA **Area == "Total"** rows for TAC, ABC, and OFL.
+Here we show annual totals from GOA `Area == "Total"` rows for TAC, ABC, and OFL.
 Because the GOA spreadsheet contains some `n/a` fields (especially for OFL/ABC in early years),
 we report totals as the sum of available numeric entries.
 
@@ -266,6 +357,7 @@ plot_goa <- goayr %>%
   select(Year, TAC, ABC, OFL) %>%
   pivot_longer(-Year, names_to = "Measure", values_to = "value") %>%
   mutate(
+    value = na_if(value, 0),
     Measure = factor(Measure, levels = c("TAC", "ABC", "OFL"))
   )
 
@@ -276,7 +368,35 @@ ggplot(plot_goa, aes(x = Year, y = value / 1000, color = Measure)) +
   theme(legend.position = "top")
 ```
 
+### GOA Pollock
+
+GOA Pollock follows the same comparison format as Figure 4 (@fig-goa-pollock-ts), showing annual ABC, OFL, and TAC trajectories.
+
+```{r}
+#| label: fig-goa-pollock-ts
+#| fig-cap: "GOA Pollock ABC, OFL, and TAC over time (lag 1, OY = 1, Area = Total)."
+goa_pollock_ts <- goaraw %>%
+  filter(lag == 1, OY == 1, Area == "Total", Species == "Pollock") %>%
+  group_by(Year = ProjYear) %>%
+  summarise(
+    ABC = sum(ABC, na.rm = TRUE),
+    OFL = sum(OFL, na.rm = TRUE),
+    TAC = sum(TAC, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  pivot_longer(cols = c(ABC, OFL, TAC), names_to = "Measure", values_to = "value") %>%
+  mutate(value = na_if(value, 0))
+
+ggplot(goa_pollock_ts, aes(x = Year, y = value / 1000, color = Measure)) +
+  geom_line(linewidth = 1) +
+  scale_y_continuous(labels = comma) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(x = NULL, y = "thousand t", color = NULL)
+```
+
 ## Variability across species
+
+### BSAI
 
 @fig-cv shows the interannual CVs for ABC and TAC.
 Pacific ocean perch has the highest ABC variability (CV about `r round(cv_max$cv_ABC, 2)`), while Pollock has the lowest TAC variability (CV about `r round(cv_min_tac$cv_TAC, 2)`), indicating tighter management consistency for the largest stock.
@@ -299,23 +419,27 @@ ggplot(cv_long, aes(x = Species, y = CV, fill = Measure)) +
   theme(legend.position = "top")
 ```
 
-## BSAI Pollock 
+### GOA
 
-Pollock provides a clear example of how ABC, OFL, and TAC move together over time (see @fig-pollock-ts).
-OFL generally sits above ABC, and TAC sits below ABC, with tighter TAC variability consistent with the low CV reported above.
+For GOA, we calculated the same CV metrics for the seven largest species by mean ABC (lag 1, OY = 1, `Area == "Total"`).
+@fig-cv-goa shows that `r goa_cv_max$Species` has the highest ABC variability (CV about `r round(goa_cv_max$cv_ABC, 2)`), while `r goa_cv_min_tac$Species` has the lowest TAC variability (CV about `r round(goa_cv_min_tac$cv_TAC, 2)`).
 
 ```{r}
-#| label: fig-pollock-ts
-#| fig-cap: "Pollock ABC, OFL, and TAC over time (lag 1, OY = 1)."
-pollock_ts <- dfOY %>%
-  filter(lag == 1, Species == "Pollock") %>%
-  pivot_longer(cols = c(ABC, OFL, TAC), names_to = "Measure", values_to = "value")
+#| label: fig-cv-goa
+#| fig-cap: "Interannual variability (CV) of ABC and TAC for selected GOA species (top seven by mean ABC; lag 1, OY = 1, Area = Total)."
+goa_cv_long <- goa_cv_tbl %>%
+  pivot_longer(cols = c(cv_ABC, cv_TAC), names_to = "Measure", values_to = "CV") %>%
+  mutate(
+    Measure = recode(Measure, cv_ABC = "ABC", cv_TAC = "TAC"),
+    Species = fct_reorder(Species, CV)
+  )
 
-ggplot(pollock_ts, aes(x = Year, y = value / 1000, color = Measure)) +
-  geom_line(linewidth = 1) +
-  scale_y_continuous(labels = comma) +
-  scale_color_brewer(palette = "Dark2") +
-  labs(x = NULL, y = "thousand t", color = NULL)
+ggplot(goa_cv_long, aes(x = Species, y = CV, fill = Measure)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  coord_flip() +
+  labs(x = NULL, y = "Coefficient of variation", fill = NULL) +
+  theme(legend.position = "top")
 ```
 
 ## Two-year vs final differences (percent)
@@ -526,12 +650,14 @@ ggplot(ts_dat, aes(x = Year, y = ABC / 1000, color = Series)) +
 
 ## TAC cross-species relationships
 
-@fig-tac-pairs shows pairwise relationships among TAC values for the main species, with all 
+### BSAI
+
+@fig-tac-pairs shows pairwise relationships among BSAI TAC values for the main species, with all 
 remaining species pooled as "Others," using points with a smooth fit in the lower triangle.
 
 ```{r}
 #| label: fig-tac-pairs
-#| fig-cap: "Pairs plot of TAC across the seven main species (lag 1, OY = 1)."
+#| fig-cap: "BSAI pairs plot of TAC across the main species plus Others (lag 1, OY = 1)."
 tac_pairs_spp <- setdiff(mainspp, c("Pacific ocean perch", "Flathead sole"))
 
 tac_main <- dfOY %>%
@@ -563,6 +689,53 @@ GGally::ggpairs(
   tac_wide,
   columns = spp_cols,
   columnLabels = spp_labels,
+  lower = list(continuous = lower_points_smooth),
+  diag = list(continuous = "densityDiag"),
+  upper = list(continuous = "cor")
+) +
+  ggthemes::theme_few(base_size = 9)
+```
+
+### GOA
+
+@fig-goa-tac-pairs shows the analogous GOA TAC relationships using the top five species by total TAC
+(lag 1, OY = 1, `Area == "Total"`), with all remaining GOA species pooled as "Others."
+
+```{r}
+#| label: fig-goa-tac-pairs
+#| fig-cap: "GOA pairs plot of TAC across top five species (by total TAC) plus Others (lag 1, OY = 1, Area = Total)."
+goa_tac_pairs_spp <- goaraw %>%
+  filter(lag == 1, OY == 1, Area == "Total") %>%
+  group_by(Species) %>%
+  summarise(total_TAC = sum(TAC, na.rm = TRUE), .groups = "drop") %>%
+  filter(is.finite(total_TAC), total_TAC > 0) %>%
+  arrange(desc(total_TAC)) %>%
+  slice_head(n = 5) %>%
+  pull(Species)
+
+goa_tac_main <- goaraw %>%
+  filter(lag == 1, OY == 1, Area == "Total", Species %in% goa_tac_pairs_spp) %>%
+  group_by(Year = ProjYear, Species) %>%
+  summarise(TAC = sum(TAC, na.rm = TRUE) / 1000, .groups = "drop") %>%
+  pivot_wider(names_from = Species, values_from = TAC)
+
+goa_tac_other <- goaraw %>%
+  filter(lag == 1, OY == 1, Area == "Total", !Species %in% goa_tac_pairs_spp) %>%
+  group_by(Year = ProjYear) %>%
+  summarise(Others = sum(TAC, na.rm = TRUE) / 1000, .groups = "drop")
+
+goa_tac_wide <- goa_tac_main %>%
+  left_join(goa_tac_other, by = "Year") %>%
+  select(Year, all_of(goa_tac_pairs_spp), Others)
+
+goa_spp_labels <- c(goa_tac_pairs_spp, "Others")
+goa_spp_cols <- gsub("[^A-Za-z0-9]+", "_", goa_spp_labels)
+goa_tac_wide <- goa_tac_wide %>% rename_with(~ goa_spp_cols, all_of(goa_spp_labels))
+
+GGally::ggpairs(
+  goa_tac_wide,
+  columns = goa_spp_cols,
+  columnLabels = goa_spp_labels,
   lower = list(continuous = lower_points_smooth),
   diag = list(continuous = "densityDiag"),
   upper = list(continuous = "cor")

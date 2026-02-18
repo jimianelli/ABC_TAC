@@ -1,7 +1,7 @@
 # Munge GOA harvest specs Excel into a long CSV comparable to data/BSAI_OFL_ABC_TAC.csv
 #
 # Input:  data/GOA_harvest specs_1986-2024.xlsx
-# Output: data/GOA_OFL_ABC_TAC.csv
+# Output: data/GOA_OFL_ABC_TAC_specs.csv (default)
 #
 # Notes / assumptions:
 # - The Excel sheet is laid out with:
@@ -24,7 +24,11 @@ suppressPackageStartupMessages({
 })
 
 in_path <- file.path("data", "GOA_harvest specs_1986-2024.xlsx")
-out_path <- file.path("data", "GOA_OFL_ABC_TAC.csv")
+
+# Optional CLI override:
+#   Rscript R/munge_goa_harvest_specs.R data/GOA_OFL_ABC_TAC_specs.csv
+args <- commandArgs(trailingOnly = TRUE)
+out_path <- if (length(args) >= 1) args[[1]] else file.path("data", "GOA_OFL_ABC_TAC_specs.csv")
 
 sheet <- "GOA harvest specs 1986-present"
 raw <- read_excel(in_path, sheet = sheet, col_names = FALSE)

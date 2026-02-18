@@ -3,6 +3,7 @@ import sys
 import json
 import time
 import io
+import os
 import difflib
 from datetime import datetime
 from urllib.parse import urlencode
@@ -18,8 +19,8 @@ except Exception:
 
 BASE = "https://www.federalregister.gov/api/v1/documents.json"
 
-START_YEAR = 1986
-END_YEAR = datetime.utcnow().year + 1
+START_YEAR = int(os.getenv("GOA_FR_START_YEAR", "1986"))
+END_YEAR = int(os.getenv("GOA_FR_END_YEAR", str(datetime.utcnow().year + 1)))
 PILOT_START = 2018
 PILOT_END = 2026
 
@@ -87,13 +88,32 @@ AREA_CANON = [
 SPECIES_CANON_SET = set(SPECIES_CANON)
 AREA_CANON_SET = set(AREA_CANON)
 
+BSAI_AREA_TOKENS = {"bs", "ai", "ebs", "bsai", "eai", "cai", "wai"}
+
 SEARCH_TERMS = [
     "harvest specifications",
     "harvest specification",
     "groundfish specifications",
     "groundfish specification",
     "total allowable catch",
+    # 2001-2002 combined BSAI+GOA specs were published under Steller Sea
+    # Lion protection measures titles; this extra term helps find them.
+    "steller sea lion harvest specifications",
 ]
+
+
+def get_with_retries(url, timeout=30, retries=4, backoff=1.5):
+    """GET with bounded retries; return response or None on repeated failure."""
+    for i in range(retries):
+        try:
+            resp = requests.get(url, timeout=timeout)
+            resp.raise_for_status()
+            return resp
+        except Exception:
+            if i == retries - 1:
+                return None
+            time.sleep(backoff * (i + 1))
+    return None
 
 
 def fetch_docs(year=None, term=None):
@@ -112,26 +132,71 @@ def fetch_docs(year=None, term=None):
     url = f"{BASE}?{urlencode(params)}"
     docs = []
     while url:
-        resp = requests.get(url, timeout=30)
-        resp.raise_for_status()
+        resp = get_with_retries(url, timeout=30, retries=4, backoff=1.0)
+        if resp is None:
+            print(f"Warning: fetch_docs failed for URL: {url}")
+            break
         data = resp.json()
         docs.extend(data.get("results", []))
         url = data.get("next_page_url")
     return docs
 
 
-def extract_years(text):
-    if not text:
+def _choose_year_pair(years, pub_year=None):
+    years = sorted(set(int(y) for y in years))
+    if not years:
         return None, None
-    years = re.findall(r"\b(19\d{2}|20\d{2})\b", text)
-    years = [int(y) for y in years]
-    if len(years) >= 2:
-        years = sorted(list(set(years)))
-        if len(years) >= 2:
-            return years[0], years[1]
     if len(years) == 1:
         return years[0], years[0]
-    return None, None
+
+    consecutive = [(a, b) for a, b in zip(years, years[1:]) if b - a == 1]
+    if consecutive:
+        if pub_year is not None:
+            consecutive = sorted(consecutive, key=lambda p: (abs(p[0] - pub_year), p[0]))
+            return consecutive[0]
+        return consecutive[0]
+
+    # Fallback when no adjacent pair appears.
+    if pub_year is not None:
+        near = sorted(years, key=lambda y: (abs(y - pub_year), y))[:2]
+        near = sorted(near)
+        return near[0], near[1]
+    return years[0], years[1]
+
+
+def extract_years(title, abstract=None, pub_year=None):
+    title = title or ""
+    abstract = abstract or ""
+
+    # Prefer explicit "YYYY and YYYY harvest specifications" phrase in title.
+    m = re.search(
+        r"\b(19\d{2}|20\d{2})\s*(?:and|&|/|-)\s*(19\d{2}|20\d{2})\s+harvest specifications\b",
+        title,
+        flags=re.IGNORECASE,
+    )
+    if m:
+        y1, y2 = int(m.group(1)), int(m.group(2))
+        return (y1, y2) if y1 <= y2 else (y2, y1)
+
+    # Single-year title style (more common in older rules).
+    m1 = re.search(
+        r"\b(19\d{2}|20\d{2})\s+harvest specifications\b",
+        title,
+        flags=re.IGNORECASE,
+    )
+    if m1:
+        y = int(m1.group(1))
+        return y, y
+
+    # Next best: infer from title years near publication year.
+    title_years = re.findall(r"\b(19\d{2}|20\d{2})\b", title)
+    y1, y2 = _choose_year_pair(title_years, pub_year=pub_year)
+    if y1 is not None:
+        return y1, y2
+
+    # Last resort: include abstract years (can be noisy, so done last).
+    blob_years = re.findall(r"\b(19\d{2}|20\d{2})\b", f"{title} {abstract}")
+    return _choose_year_pair(blob_years, pub_year=pub_year)
 
 
 def normalize_columns(df):
@@ -210,12 +275,41 @@ def normalize_area(area, cutoff=0.8):
         return "WYK (640)"
     if "650" in key:
         return "SEO (650)"
+    if "shumagin" in key:
+        return "Shumagin (610)"
+    if "chirikof" in key:
+        return "Chirikof (620)"
+    if "kodiak" in key:
+        return "Kodiak (630)"
+    if key in {"wyk", "west yakutat"}:
+        return "WYK (640)"
+    if key in {"seo", "seq", "southeast outside"}:
+        return "SEO (650)"
 
     matches = difflib.get_close_matches(key, canon_keys.keys(), n=1, cutoff=cutoff)
     if matches:
         return canon_keys[matches[0]]
 
     return ""
+
+
+def is_probably_goa_area(area):
+    """Heuristic filter to keep GOA rows in combined BSAI+GOA tables."""
+    key = _norm_key(area or "")
+    if key == "":
+        return True
+    tokens = set(key.split())
+    if tokens & BSAI_AREA_TOKENS:
+        return False
+    if "total" in tokens:
+        return True
+    # GOA area cues used in FR tables.
+    goa_hints = [
+        "goa", "gulf of alaska", "610", "620", "630", "640", "650",
+        "shumagin", "chirikof", "kodiak", "shelikof", "wyk", "seo",
+        "gw", "w c wyk", "w c wyk combined", "w and c",
+    ]
+    return any(h in key for h in goa_hints)
 
 
 def parse_table(df, year1, year2, allow_single_year=False):
@@ -309,12 +403,11 @@ def parse_xml_tables(xml_text, year1, year2, require_goa=True):
         title_el = table.find("TTITLE")
         title = "".join(title_el.itertext()).strip() if title_el is not None else ""
         title_l = title.lower()
-        if "table 1" not in title_l and "table 2" not in title_l:
-            continue
-        if not any(x in title_l for x in ["ofl", "abc", "tac"]):
-            continue
-        if require_goa and ("gulf of alaska" not in title_l and "goa" not in title_l):
-            continue
+        # Older combined rules may place GOA specs in table numbers > 2.
+        # Keep any table that appears to carry OFL/ABC/TAC content.
+        if not any(x in title_l for x in ["ofl", "abc", "tac", "harvest specification"]):
+            # Fall back to headers check below.
+            pass
 
         year_match = re.findall(r"\b(19\d{2}|20\d{2})\b", title)
         table_year = int(year_match[0]) if year_match else None
@@ -325,6 +418,10 @@ def parse_xml_tables(xml_text, year1, year2, require_goa=True):
             headers.append(" ".join(ched.itertext()).strip())
 
         if not headers:
+            continue
+        header_blob = " ".join(headers).lower()
+        if not any(x in header_blob for x in ["ofl", "abc", "tac"]):
+            # Not a harvest spec data table.
             continue
 
         prev_species = None
@@ -346,13 +443,20 @@ def parse_xml_tables(xml_text, year1, year2, require_goa=True):
             row_dict[headers[0]] = sp_val_clean
 
             df = pd.DataFrame([row_dict])
+            # First try the generic parser, which can map explicit year
+            # columns (e.g., "2003 OFL", "2004 ABC", etc.).
+            parsed_rows = parse_table(df, year1, year2, allow_single_year=True)
+            if parsed_rows:
+                rows.extend(parsed_rows)
+                continue
+
+            # Fallback for single-year rows with plain OFL/ABC/TAC headers.
             if table_year:
-                tmp_rows = []
                 for _, r in df.iterrows():
                     sp_canon, matched = canonicalize_species(clean_text(r[headers[0]]))
                     if not matched:
                         continue
-                    tmp_rows.append({
+                    rows.append({
                         "ProjYear": table_year,
                         "Species": sp_canon,
                         "Area": normalize_area(clean_text(r.get(headers[1], "GOA")) or "GOA"),
@@ -360,9 +464,9 @@ def parse_xml_tables(xml_text, year1, year2, require_goa=True):
                         "ABC": r.get("ABC"),
                         "TAC": r.get("TAC"),
                     })
-                rows.extend(tmp_rows)
-            else:
-                rows.extend(parse_table(df, year1, year2, allow_single_year=True))
+
+        if require_goa and rows:
+            rows = [r for r in rows if is_probably_goa_area(r.get("Area", ""))]
     return rows
 
 
@@ -377,9 +481,7 @@ def parse_xml_tables_alt(xml_text, year1, year2, require_goa=True):
         title_el = table.find("TITLE")
         title = "".join(title_el.itertext()).strip() if title_el is not None else ""
         title_l = title.lower()
-        if title and not any(x in title_l for x in ["ofl", "abc", "tac"]):
-            continue
-        if require_goa and title and ("gulf of alaska" not in title_l and "goa" not in title_l):
+        if title and not any(x in title_l for x in ["ofl", "abc", "tac", "harvest specification"]):
             continue
 
         try:
@@ -391,21 +493,166 @@ def parse_xml_tables_alt(xml_text, year1, year2, require_goa=True):
         for tbl in tables:
             rows.extend(parse_table(tbl, year1, year2, allow_single_year=True))
 
+    if require_goa and rows:
+        rows = [r for r in rows if is_probably_goa_area(r.get("Area", ""))]
+
     return rows
 
 
-def parse_pdf_text_tables(pdf, year1):
+def parse_pdf_text_tables(pdf, year1, year2=None):
+    area_norm_set = {_norm_key(a) for a in AREA_CANON if a is not None}
+
+    def is_area_like(text):
+        k = _norm_key(text or "")
+        if not k:
+            return False
+        if k in area_norm_set:
+            return True
+        # Common compact area rows in FR tables.
+        short_tokens = {"w", "c", "e", "wyk", "seo", "total", "subtotal", "goa"}
+        toks = set(k.split())
+        if toks and toks.issubset(short_tokens):
+            return True
+        hints = [
+            "shumagin", "chirikof", "kodiak",
+            "wyk", "seo", "w c wyk", "w and c",
+            "subtotal", "total",
+        ]
+        return any(h in k for h in hints)
+
+    def split_species_area(text, current_species=None):
+        s = clean_text(text) or ""
+        # Remove footnote digits attached to words (e.g., Pollock2).
+        s = re.sub(r"(?<=[A-Za-z])\d+\b", "", s).strip()
+        s = re.sub(r"\bn/?a\b", "", s, flags=re.IGNORECASE).strip()
+        if not s:
+            return None, None
+
+        s_norm = _norm_key(s)
+        for sp in sorted(SPECIES_CANON, key=len, reverse=True):
+            sp_norm = _norm_key(sp)
+            if s_norm.startswith(sp_norm):
+                # Remove the matched species prefix from the original string.
+                m = re.match(re.escape(sp), s, flags=re.IGNORECASE)
+                if m:
+                    area = s[m.end():].strip()
+                else:
+                    # Fallback: try canonicalized split via normalized prefix length.
+                    area = s
+                return sp, area
+
+        sp_canon, matched = canonicalize_species(s)
+        if matched:
+            return sp_canon, ""
+        if current_species is not None and is_area_like(s):
+            return current_species, s
+        return None, None
+
+    # Pass 1: parse modern table-like PDF text where rows look like
+    # "Species Area OFL ABC TAC" (often with OCR artifacts).
+    rows = []
+    in_table = False
+    current_species = None
+    current_proj_year = year1
+    for page in pdf.pages:
+        text = page.extract_text(layout=True) or page.extract_text() or ""
+        lines = [l.strip() for l in text.split("\n") if l.strip()]
+        for line in lines:
+            u = line.upper()
+            tm = re.search(r"\bTABLE\s*([12])\b", u)
+            if tm:
+                in_table = True
+                current_species = None
+                tnum = tm.group(1)
+                if tnum == "1":
+                    current_proj_year = year1
+                elif tnum == "2":
+                    current_proj_year = year2 if year2 is not None else year1
+                continue
+            if not in_table:
+                continue
+            if "BILLING CODE" in u:
+                in_table = False
+                current_species = None
+                continue
+            if (
+                "FEDERAL REGISTER/VOL" in u
+                or u.startswith("VERDATE")
+            ):
+                continue
+            if re.search(r"\bSPECIES\b.*\bABC\b.*\bTAC\b", u):
+                continue
+            if re.fullmatch(r"n/?a", line, flags=re.IGNORECASE):
+                continue
+
+            # Keep numeric content intact; clean_text() trims trailing digits
+            # for footnote markers, which is too aggressive for table rows.
+            line_clean = str(line).replace("â", " ").replace("â", " ")
+            line_clean = re.sub(r"\s+", " ", line_clean).strip()
+            line_no_codes = re.sub(r"\(\s*\d{3}\s*\)", "", line_clean)
+            nums = re.findall(r"\b\d{1,3}(?:,\d{3})*\b", line_no_codes)
+            if len(nums) < 2:
+                # May be a species-only line in wrapped layouts.
+                sp_tmp, _ = split_species_area(line_no_codes, current_species=current_species)
+                if sp_tmp is not None and sp_tmp in SPECIES_CANON_SET:
+                    current_species = sp_tmp
+                continue
+
+            # Text before the trailing numeric block is species+area text.
+            lead = re.sub(r"(?:\s+\d{1,3}(?:,\d{3})*)+\s*$", "", line_no_codes).strip()
+            if not lead:
+                continue
+            species, area_txt = split_species_area(lead, current_species=current_species)
+            if species is None or species not in SPECIES_CANON_SET:
+                continue
+            if area_txt and not is_area_like(area_txt):
+                # Guard against parsing narrative lines while a species context
+                # is still active from previous rows.
+                continue
+            current_species = species
+            area = normalize_area(area_txt or "GOA")
+
+            vals = [int(n.replace(",", "")) for n in nums]
+            ofl = abc = tac = None
+            if len(vals) >= 3:
+                ofl, abc, tac = vals[-3], vals[-2], vals[-1]
+            elif len(vals) == 2:
+                abc, tac = vals[-2], vals[-1]
+
+            if abc is None and tac is None and ofl is None:
+                continue
+            rows.append({
+                "ProjYear": current_proj_year,
+                "Species": species,
+                "Area": area,
+                "OFL": ofl,
+                "ABC": abc,
+                "TAC": tac,
+                "FromPDFText": True,
+            })
+
+    if rows:
+        return rows
+
+    # Pass 2: legacy dotted-leader parser used by older PDF layouts.
     rows = []
     in_table = False
     current_species = None
 
+    current_proj_year = year1
     for page in pdf.pages:
         text = page.extract_text(layout=True) or ""
         lines = [l.strip() for l in text.split("\n") if l.strip()]
         for line in lines:
-            if "TABLE 1" in line.upper() or "TABLE 2" in line.upper():
+            tm = re.search(r"\bTABLE\s*([12])\b", line.upper())
+            if tm:
                 in_table = True
                 current_species = None
+                tnum = tm.group(1)
+                if tnum == "1":
+                    current_proj_year = year1
+                elif tnum == "2":
+                    current_proj_year = year2 if year2 is not None else year1
                 continue
 
             if not in_table:
@@ -414,7 +661,9 @@ def parse_pdf_text_tables(pdf, year1):
             if line.upper().startswith("TABLE"):
                 continue
 
-            nums = re.findall(r"\b\d{1,3}(?:,\d{3})*\b", line)
+            # Remove area codes like "(610)" before extracting numeric columns.
+            line_clean = re.sub(r"\(\s*\d{3}\s*\)", "", line)
+            nums = re.findall(r"\b\d{1,3}(?:,\d{3})*\b", line_clean)
             if not nums:
                 # species header line
                 if re.search(r"[A-Za-z]", line):
@@ -430,20 +679,21 @@ def parse_pdf_text_tables(pdf, year1):
             if len(nums) < 2:
                 continue
 
-            area = re.sub(r"\.{2,}.*", "", line)
+            area = re.sub(r"\.{2,}.*", "", line_clean)
             area = re.sub(r"\s+\(\d+\)$", "", area)
             area = clean_text(area)
 
             vals = [int(n.replace(",", "")) for n in nums]
             abc = tac = ofl = None
             if len(vals) >= 3:
-                abc, tac, ofl = vals[-3], vals[-2], vals[-1]
+                # Standard harvest-spec column order is OFL, ABC, TAC.
+                ofl, abc, tac = vals[-3], vals[-2], vals[-1]
             elif len(vals) == 2:
                 abc, tac = vals[-2], vals[-1]
 
             if current_species and (abc is not None or tac is not None or ofl is not None):
                 rows.append({
-                    "ProjYear": year1,
+                    "ProjYear": current_proj_year,
                     "Species": current_species,
                     "Area": normalize_area(area or "GOA"),
                     "OFL": ofl,
@@ -479,7 +729,7 @@ def parse_pdf_tables(pdf_url, year1, year2, require_goa=True):
                     rows.extend(parse_table(df, year1, year2, allow_single_year=True))
 
             if not rows:
-                rows = parse_pdf_text_tables(pdf, year1)
+                rows = parse_pdf_text_tables(pdf, year1, year2=year2)
     except Exception:
         return rows
 
@@ -505,11 +755,31 @@ def fetch_govinfo_xml(pub_date):
     return None
 
 
+# Known FR document numbers for combined BSAI+GOA or hard-to-find GOA
+# harvest spec rules that the API search may miss.  Keyed by the
+# *publication year* so they are injected into the correct loop iteration.
+# Each entry is a document_number string.
+KNOWN_DOCS_BY_PUB_YEAR = {
+    # 2001 final harvest specs (emergency rule, combined BSAI+GOA under
+    # Steller sea lion protection measures).  Published 2001-01-22 as
+    # 66 FR 7276; amended 2001-03-29 (01-7668) and 2001-07-17 (01-17850).
+    2001: ["01-1213", "01-7668", "01-17850"],
+    # 2002 final harvest specs (emergency rule, combined BSAI+GOA).
+    # Published 2002-01-08 (01-32251); amended 2002-05-16 (02-12179).
+    2002: ["01-32251", "02-12179"],
+    # 2003 final GOA harvest specs (published ~2003-03; proposed 02-31368).
+    2003: ["03-4103"],
+    # 2004 final GOA harvest specs (published 2004-02-27, doc 04-4370).
+    2004: ["04-4370"],
+}
+
+
 def main():
     order_map = build_order_map()
 
     all_rows = []
     for year in range(START_YEAR, END_YEAR + 1):
+        year_before = len(all_rows)
         docs = []
         seen = set()
         for term in SEARCH_TERMS:
@@ -519,22 +789,66 @@ def main():
                     continue
                 seen.add(key)
                 docs.append(doc)
+
+        # Inject known hard-to-find documents for this publication year.
+        for doc_num in KNOWN_DOCS_BY_PUB_YEAR.get(year, []):
+            if doc_num in seen:
+                continue
+            try:
+                resp = requests.get(
+                    f"https://www.federalregister.gov/api/v1/documents/{doc_num}.json",
+                    timeout=30,
+                )
+                if resp.status_code == 200:
+                    doc = resp.json()
+                    seen.add(doc_num)
+                    docs.append(doc)
+            except Exception:
+                pass
+
         for doc in docs:
             title = doc.get("title", "")
             abstract = doc.get("abstract", "") or ""
             text_blob = f"{title} {abstract}"
 
             title_l = title.lower()
-            if "gulf of alaska" not in title_l:
+            blob_l = text_blob.lower()
+
+            # Accept documents that are either:
+            # (a) GOA-specific harvest specs (post-~2005 pattern), or
+            # (b) combined BSAI+GOA harvest specs (2001-2004 pattern,
+            #     e.g. "Steller Sea Lion Protection Measures ... Final 2001
+            #     Harvest Specifications ... Groundfish Fisheries Off Alaska")
+            is_goa_specific = "gulf of alaska" in title_l
+            is_combined_alaska = (
+                "groundfish fisheries off alaska" in title_l
+                or "groundfish fisheries off alaska" in blob_l
+            )
+            has_harvest_spec = (
+                "harvest specification" in title_l
+                or "groundfish specification" in title_l
+                or "harvest specification" in blob_l
+            )
+
+            is_known_doc = doc.get("document_number") in set(KNOWN_DOCS_BY_PUB_YEAR.get(year, []))
+
+            if not (is_goa_specific or is_combined_alaska or is_known_doc):
                 continue
-            if "harvest specification" not in title_l and "groundfish specification" not in title_l:
+            if not has_harvest_spec and not is_known_doc:
                 continue
             if "interim" in title_l:
                 continue
 
-            y1, y2 = extract_years(text_blob)
+            pub = doc.get("publication_date")
+            pub_year = None
+            if pub:
+                try:
+                    pub_year = int(pub.split("-")[0])
+                except Exception:
+                    pub_year = None
+
+            y1, y2 = extract_years(title, abstract, pub_year=pub_year)
             if not y1 or not y2:
-                pub = doc.get("publication_date")
                 if pub:
                     try:
                         y1 = int(pub.split("-")[0])
@@ -582,9 +896,24 @@ def main():
                 try:
                     html_text = requests.get(html_url, timeout=30).text
                     if "Request Access" not in html_text:
-                        tables = pd.read_html(html_text)
-                        for tbl in tables:
-                            rows.extend(parse_table(tbl, y1, y2, allow_single_year=True))
+                        # For combined BSAI+GOA documents, only keep tables
+                        # that appear in GOA sections.  We check the HTML for
+                        # "Gulf of Alaska" near each table as a heuristic.
+                        html_lower = html_text.lower()
+                        is_combined = is_combined_alaska and not is_goa_specific
+                        if is_combined and "gulf of alaska" not in html_lower:
+                            # Document body doesn't mention GOA at all — skip.
+                            pass
+                        else:
+                            tables = pd.read_html(html_text)
+                            for tbl in tables:
+                                rows.extend(parse_table(tbl, y1, y2, allow_single_year=True))
+                        if rows and is_combined:
+                            # Filter to rows whose Area looks like a GOA area
+                            # (not BSAI codes like BS, AI, EBS, BSAI).
+                            bsai_areas = {"BS", "AI", "EBS", "BSAI", "EAI", "CAI", "WAI"}
+                            rows = [r for r in rows
+                                    if r.get("Area", "").upper() not in bsai_areas]
                         if rows:
                             parsed = True
                             source_url = html_url
@@ -633,6 +962,8 @@ def main():
                     r["FromPDFText"] = bool(r.get("FromPDFText", False))
                     all_rows.append(r)
             time.sleep(0.2)
+        year_added = len(all_rows) - year_before
+        print(f"[{year}] docs={len(docs)} rows_added={year_added}")
 
     if not all_rows:
         print("No rows parsed.")
@@ -643,6 +974,105 @@ def main():
     cols = ["AssmentYr", "ProjYear", "lag", "Species", "Area", "OFL", "ABC", "TAC", "Order", "OY", "IsTotal", "SourceURL", "SourceType", "FromPDFText"]
     out_df = out_df[cols]
 
+    # Remove exact duplicate data rows generated from overlapping document
+    # sources/corrections.
+    dedup_key = ["AssmentYr", "ProjYear", "lag", "Species", "Area", "OFL", "ABC", "TAC"]
+    out_df = out_df.drop_duplicates(subset=dedup_key, keep="first").copy()
+
+    # Normalize numeric harvest fields and enforce biological ordering:
+    # OFL >= ABC >= TAC when those values are available.
+    def to_num(series):
+        s = series.astype(str).str.replace(",", "", regex=False).str.strip()
+        s = s.replace({"": pd.NA, "na": pd.NA, "n/a": pd.NA, "N/A": pd.NA, "None": pd.NA, "nan": pd.NA})
+        return pd.to_numeric(s, errors="coerce")
+
+    ofl_n = to_num(out_df["OFL"])
+    abc_n = to_num(out_df["ABC"])
+    tac_n = to_num(out_df["TAC"])
+
+    out_df["_OFL_num"] = ofl_n
+    out_df["_ABC_num"] = abc_n
+    out_df["_TAC_num"] = tac_n
+
+    # Backfill missing Area == "Total" rows by species-year-lag from
+    # area-level components when totals are absent.
+    leaf_areas = {
+        "W", "C", "E", "WYK", "SEO",
+        "Shumagin (610)", "Chirikof (620)", "Kodiak (630)",
+        "WYK (640)", "SEO (650)"
+    }
+    derived_rows = []
+    grp_cols = ["AssmentYr", "ProjYear", "lag", "Species", "OY"]
+    for keys, g in out_df.groupby(grp_cols, dropna=False):
+        areas = g["Area"].fillna("").astype(str).str.strip()
+        has_total = areas.str.startswith("Total").any()
+        if has_total:
+            continue
+
+        candidates = g.loc[
+            (areas != "")
+            & (~areas.str.startswith("Total"))
+            & (~areas.str.contains("subtotal", case=False, regex=True))
+        ].copy()
+        if candidates.empty:
+            continue
+
+        leaf = candidates[candidates["Area"].isin(leaf_areas)]
+        use_rows = leaf if not leaf.empty else candidates
+
+        ofl_sum = use_rows["_OFL_num"].sum(min_count=1)
+        abc_sum = use_rows["_ABC_num"].sum(min_count=1)
+        tac_sum = use_rows["_TAC_num"].sum(min_count=1)
+        if pd.isna(ofl_sum) and pd.isna(abc_sum) and pd.isna(tac_sum):
+            continue
+
+        first = use_rows.iloc[0]
+        row = {
+            "AssmentYr": keys[0],
+            "ProjYear": keys[1],
+            "lag": keys[2],
+            "Species": keys[3],
+            "Area": "Total",
+            "OFL": first.get("OFL"),
+            "ABC": first.get("ABC"),
+            "TAC": first.get("TAC"),
+            "Order": first.get("Order"),
+            "OY": keys[4],
+            "IsTotal": f"{keys[3]}Total",
+            "SourceURL": first.get("SourceURL"),
+            "SourceType": "DERIVED_TOTAL",
+            "FromPDFText": False,
+            "_OFL_num": ofl_sum,
+            "_ABC_num": abc_sum,
+            "_TAC_num": tac_sum,
+        }
+        derived_rows.append(row)
+
+    if derived_rows:
+        out_df = pd.concat([out_df, pd.DataFrame(derived_rows)], ignore_index=True, sort=False)
+        # Keep one row per key-area after adding derived totals.
+        out_df = out_df.drop_duplicates(subset=dedup_key, keep="first").copy()
+
+    tac_hi = tac_n.notna() & abc_n.notna() & (tac_n > abc_n)
+    # Recompute numeric vectors after derived rows were appended.
+    ofl_n = out_df["_OFL_num"].copy()
+    abc_n = out_df["_ABC_num"].copy()
+    tac_n = out_df["_TAC_num"].copy()
+
+    tac_hi = tac_n.notna() & abc_n.notna() & (tac_n > abc_n)
+    if tac_hi.any():
+        tac_n.loc[tac_hi] = abc_n.loc[tac_hi]
+
+    ofl_lo = ofl_n.notna() & abc_n.notna() & (ofl_n < abc_n)
+    if ofl_lo.any():
+        ofl_n.loc[ofl_lo] = abc_n.loc[ofl_lo]
+
+    # Keep NA where values are unavailable.
+    out_df["OFL"] = ofl_n.round().astype("Int64")
+    out_df["ABC"] = abc_n.round().astype("Int64")
+    out_df["TAC"] = tac_n.round().astype("Int64")
+    out_df = out_df.drop(columns=["_OFL_num", "_ABC_num", "_TAC_num"])
+
     out_df.to_csv(OUT_PATH, index=False)
     print(f"Wrote {len(out_df)} rows to {OUT_PATH}")
     if "SourceType" in out_df.columns:
@@ -650,6 +1080,14 @@ def main():
         print("SourceType counts:")
         for k, v in counts.items():
             print(f"  {k}: {v}")
+    if "AssmentYr" in out_df.columns:
+        years = sorted(out_df["AssmentYr"].dropna().astype(int).unique())
+        expected = set(range(START_YEAR, END_YEAR + 1))
+        missing = sorted(expected - set(years))
+        print(f"Assessment years in output: {years[0]}-{years[-1]} ({len(years)} years)")
+        if missing:
+            print("Missing assessment years in requested range:")
+            print("  " + ", ".join(str(y) for y in missing))
 
 
 if __name__ == "__main__":
