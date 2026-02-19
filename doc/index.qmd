@@ -1036,18 +1036,64 @@ choose_gmrf_param <- function() {
 
 gmrf_param <- choose_gmrf_param()
 
-fit <- dsem(
-  sem = sem,
-  tsdata = tsdata,
-  estimate_delta0 = TRUE,
-  control = dsem_control(
-    quiet = TRUE,
-    gmrf_parameterization = gmrf_param,
-    newton_loops = 0,
-    extra_convergence_checks = FALSE,
-    getsd = TRUE
+fit_dsem_once <- function(gmrf, family_opt = NULL) {
+  args <- list(
+    sem = sem,
+    tsdata = tsdata,
+    estimate_delta0 = TRUE,
+    control = dsem_control(
+      quiet = TRUE,
+      gmrf_parameterization = gmrf,
+      newton_loops = 0,
+      extra_convergence_checks = FALSE,
+      getsd = TRUE
+    )
   )
-)
+  if (!is.null(family_opt)) args$family <- family_opt
+  do.call(dsem::dsem, args)
+}
+
+# Robust fit across dsem versions:
+# 1) try chosen gmrf with default family
+# 2) if needed, retry with family = "gaussian"
+# 3) then cycle other gmrf options.
+gmrf_candidates <- unique(c(
+  gmrf_param,
+  "full", "project", "gmrf_project", "mvn_project", "separable", "projection"
+))
+
+fit <- NULL
+fit_notes <- character()
+
+for (g in gmrf_candidates) {
+  for (fam in list(NULL, "gaussian")) {
+    fam_tag <- if (is.null(fam)) "default" else fam
+    res <- tryCatch(
+      fit_dsem_once(g, fam),
+      error = function(e) e
+    )
+    if (!inherits(res, "error")) {
+      fit <- res
+      fit_notes <- c(fit_notes, paste0("fit succeeded with gmrf=", g, ", family=", fam_tag))
+      break
+    } else {
+      fit_notes <- c(
+        fit_notes,
+        paste0("fit failed with gmrf=", g, ", family=", fam_tag, ": ", conditionMessage(res))
+      )
+    }
+  }
+  if (!is.null(fit)) break
+}
+
+if (is.null(fit)) {
+  stop(
+    paste(
+      "DSEM fit failed for all gmrf/family combinations.",
+      paste(fit_notes, collapse = " | ")
+    )
+  )
+}
 
 dsem_summary <- summary(fit)
 
