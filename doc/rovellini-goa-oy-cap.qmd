@@ -1,0 +1,72 @@
+---
+title: "Rescaling groundfish projected catch to meet the GOA OY cap"
+author: "Alberto Rovellini"
+date: "2025-05-23"
+format:
+  html:
+    standalone: true
+    toc: true
+  pdf:
+    toc: true
+---
+
+This approach takes a vector of projected catch allocation $C$ for a set of stocks and applies an optimization-based rescaling to transform it into a vector $C'$ such that, given an ecosystem cap on total harvest $OY$, the following conditions are satisfied for each stock $i$:
+
+1. $\sum_{i=1}^{n} C'_i \le OY$
+2. $C'_i \le C_i$
+3. If $C_i > 0$, then $C'_i > 0$
+
+The input needed for the rescaling is a set of weights $w$. The approach laid out here assumes that high-value stocks will have higher $w_i$ and will undergo lower rescaling. To satisfy condition 3 above, we need $w_i > 0$ for all stocks.
+
+Atlantis GOA does not explicitly model harvest specifications such as $ABC$ and $TAC$ at this time. The method presented here is used in Atlantis GOA to rescale a stock's $F$ such that the realized catch over the coming year will approximately match the rescaled catch computed using this method, ensuring compliance with the cap. Current areas of improvement include accounting for by-catch constraints. Currently, the user is responsible for selecting a set of weights that will not lead to non-target stock catch allocations that are too low. Non-target stocks may have lower commercial value, but they need to be accounted for as by-catch. Similar concerns apply to prohibited species catch, such as Pacific halibut. Methods to address these concerns are under development.
+
+## Formulation
+
+Our goal is to find a single multiplier $m$ that, when applied with the weights $w$, produces rescaled ABCs that sum exactly to the cap. The approach first checks if rescaling is needed (i.e., if $\sum_{i=1}^{n} C_i > OY$). If not, no rescaling is performed and $C'_i = C_i$ for all stocks.
+
+If rescaling is needed, we calculate the reduction ratio $r$:
+
+$$
+r = \frac{OY}{\sum_{i=1}^{n} C_i}
+$$
+
+This ratio tells us how much the total catch exceeds the cap.
+
+We then search for a multiplier $m$ that, when used in the following rescaling equation, produces rescaled ABCs that sum to the cap:
+
+$$
+C'_i = C_i \times r^{(1 / (w_i \times m))}
+$$
+
+Stocks with higher weights undergo less reduction because the exponent $1 / (w_i \times m)$ becomes smaller as $w_i$ increases. This preserves catch for high-value stocks while reducing catch more substantially for low-value stocks.
+
+## Finding the multiplier
+
+To find the optimal multiplier $m$, we formulate an objective function that measures how close the sum of rescaled ABCs is to the cap:
+
+$$
+f(m) = \left( OY - \sum_{i=1}^{n} C_i \times r^{(1 / (w_i \times m))} \right)^2
+$$
+
+The goal is to find the value of $m$ that minimizes this. We locate the optimal multiplier by means of numerical optimization using the bisection method (this assumes monotonic $f(m)$). This is probably simplistic but it is also something that we can easily code into Atlantis without more complex optimization approaches (I'd like to avoid having to call additional C libraries as that may break Beth's code, also it seems like we should not need more complex optimization).
+
+## The Bisection Method
+
+The bisection method works by repeatedly dividing an interval in half and determining which half contains the minimum. The steps are:
+
+1. Start with an interval $[a, b]$ where the minimum of $f(m)$ is believed to exist (here arbitrarily using $[0, 2]$ but should / could explore a different range).
+2. Calculate the midpoint $c = (a + b) / 2$.
+3. Estimate the derivative of $f(m)$ at $c$ using the central difference approximation:
+
+$$
+f'(c) \approx \frac{f(c + h) - f(c - h)}{2h}
+$$
+
+where $h$ is a small step size.
+
+4. If $f'(c) \approx 0$ (within a tolerance), we've found the minimum.
+5. If $f'(c) > 0$, the minimum is in $[a, c]$, so set $b = c$.
+6. If $f'(c) < 0$, the minimum is in $[c, b]$, so set $a = c$.
+7. Repeat steps 2--6 until the interval is sufficiently small (tolerance set to `1e-7` for now, and 100 iterations as it should be a simple function).
+
+This method converges to the optimal multiplier $m$ that balances the rescaling across stocks.

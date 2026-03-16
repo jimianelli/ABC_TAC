@@ -1,0 +1,138 @@
+---
+title: "Stoplight Test Framework for Multispecies Model Ensemble Inclusion"
+subtitle: "GOACLIM / ACLIM Topic 2 — Proposed Model Comparison Methods"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: cosmo
+    code-fold: true
+    self-contained: true
+  pdf:
+    toc: true
+    number-sections: true
+    colorlinks: true
+    geometry:
+      - top=1in
+      - bottom=1in
+      - left=1in
+      - right=1in
+  docx:
+    toc: true
+    number-sections: true
+bibliography: references.bib
+---
+
+## Overview
+
+This document proposes a practical screening framework for deciding whether a multispecies or ecosystem model is credible enough to include in an ensemble analysis.
+The stoplight framework is not a formal statistical test. Its purpose is to support a transparent group decision about model inclusion, model caveats, and model fitness for a specific use.
+
+In plain terms, the framework asks three questions:
+
+1. Does the model produce biologically and dynamically plausible behavior?
+2. Does that behavior agree with available assessment information closely enough for the intended use?
+3. If the model disagrees, is that disagreement informative, or is it a sign that the model is not ready for inclusion?
+
+The stoplight language is meant to summarize those answers:
+
+- **Green:** The model passes the criterion and can be used without special concern for that issue.
+- **Yellow:** The model is usable, but the result should be interpreted cautiously and documented explicitly.
+- **Red:** The model fails a key criterion badly enough that it should be revised, excluded, or only discussed as a clear outlier.
+
+Tests are organized by purpose (research synthesis vs. management advice) and by phase (hindcast/initialization vs. projection period). Focal species for Topic 2 are walleye pollock, Pacific cod, and arrowtooth flounder.
+
+## Tiered Approach
+
+The rigor of the stoplight criteria should scale with the intended use of the ensemble. A model that is acceptable for a research synthesis may still be too weak for direct management use.
+
+- **Tier 1 (Research/synthesis paper):** The model should reproduce broad ecological patterns and plausible species dynamics. This is the minimum standard for including a model in the Topic 2 \(F=0\) climate comparison.
+- **Tier 2 (Management advice):** The model should not only be plausible, but should also agree quantitatively with assessment-based benchmarks closely enough to support management interpretation. This is the more demanding standard for harvest strategy evaluation and advice-oriented work (Topics 3--4).
+
+The main significance of the framework is therefore decision-oriented rather than statistical: it helps the working group explain why a model was included, included with caveats, or left out.
+
+## Criteria: Hindcast / Model Initialization Phase {#sec-hindcast}
+
+@tbl-hindcast summarizes the stoplight criteria applied during the hindcast and initialization phase.
+
+| Criterion | Metric | Tier 1 (Research) | Tier 2 (Management) | Notes |
+|:----------|:-------|:-------------------|:---------------------|:------|
+| Species persistence | All focal species present at end of hindcast | Required (hard stop) | Required (hard stop) | No extinctions of pollock, cod, or ATF |
+| Biomass plausibility | Biomass of focal species vs. historical bounds | Within order of magnitude of assessment estimates | Within assessment CI at start of projection period | Absolute scale differs across model types; relative metrics preferred |
+| Trend direction | Direction of recent biomass trend (increasing/stable/declining) | Qualitative agreement with assessment | Quantitative agreement (similar slope sign and approximate magnitude) | Compare over final 5--10 years of hindcast |
+| No steep artifacts | Biomass trajectories free of sharp artificial trends | No >50% change in first 5 years unless data-supported | No >25% change in first 5 years unless data-supported | Particularly relevant for Atlantis/Ecopath spin-up |
+| Stock status agreement | Relative status (B/B~MSY~ or B/B~0~) | Same broad category (above/below reference point) | Within ±20% of assessment-based status ratio | Key criterion --- relative metric normalizes across model structures |
+| F~ref~ consistency | Multispecies F~MSY~ or proxy vs. single-species F~ref~ | Multispecies F~ref~ ≤ single-species F~ref~ (directional check) | Multispecies F~ref~ within 0.3--1.0× single-species F~ref~ | Multispecies F~ref~ expected to be lower due to explicit predation mortality; less critical for F=0 runs but useful diagnostic |
+| Diet composition | Proportion consumed by major predators | Major prey items present in diet; qualitative agreement with diet data | Proportions within ±20% of observed diet fractions for key predator--prey pairs | Circular for models fit to diet data (e.g., CEATTLE); most useful for Atlantis, mizer, Ecopath |
+| Age/size structure | Age or size composition at equilibrium or end of hindcast | Consistent with initial conditions (no major departures) | Consistent with assessment-estimated compositions | Model-type dependent; more applicable to age-structured models |
+
+: Stoplight criteria for the hindcast / model initialization phase. {#tbl-hindcast}
+
+## Criteria: Projection Period {#sec-projection}
+
+@tbl-projection summarizes the stoplight criteria applied during the projection period.
+
+| Criterion | Metric | Tier 1 (Research) | Tier 2 (Management) | Notes |
+|:----------|:-------|:-------------------|:---------------------|:------|
+| Species persistence | All focal species present through 2100 | Required (hard stop) | Required (hard stop) | Under $F=0$, extinction would indicate serious model issues |
+| Trend plausibility | Direction and magnitude of projected change | Ecologically plausible (no runaway dynamics) | Consistent with expected climate responses from literature | Hard to define precisely; focus on identifying clear outliers |
+| Ranking consistency | Relative ranking of species biomass | Models agree on which species are most/least abundant | Models agree on ranking and approximate relative proportions | Useful cross-model diagnostic |
+| Climate signal | Difference between SSP126 and SSP585 trajectories | Detectable difference in expected direction for at least some species | Statistically distinguishable trajectories with ecologically consistent direction | If a model shows no climate signal, investigate before including |
+
+: Stoplight criteria for the projection period. {#tbl-projection}
+
+## Defining "Similar" {#sec-similar}
+
+Because models span a wide range of structural complexity (fitted statistical models like CEATTLE vs. whole-ecosystem models like Atlantis), a single quantitative threshold for "similar" is inappropriate.
+We recommend a hierarchical definition:
+
+### Qualitative concordance (minimum for Tier 1)
+
+Models agree on direction of change and relative ranking of species.
+For example, if the assessment indicates pollock biomass > cod biomass and pollock is stable while cod is declining, a passing model should reproduce this pattern.
+
+### Model-class-specific quantitative thresholds
+
+Each modeler proposes what constitutes reasonable agreement for their model type, documented transparently.
+Suggested starting points:
+
+- **Fitted statistical models** (CEATTLE, mizer): biomass within ±20% of assessment, status ratios within ±0.1
+- **Minimally tuned ecosystem models** (Atlantis, Ecopath/Ecosim/Rpath): biomass within ±50% of assessment, correct status category
+
+### Ensemble-level diagnostics
+
+Rather than strict pass/fail for individual models, assess whether the ensemble as a whole brackets the assessment estimate.
+A model that is an outlier on every metric may warrant exclusion, while a model that is an outlier on one metric but informative on others may still contribute.
+
+## Implementation Notes {#sec-notes}
+
+**$F=0$ context.**
+Since Topic 2 runs use $F=0$, criteria related to $F_\text{ref}$ and catch are diagnostics of model setup rather than projection outputs.
+They remain useful for verifying that internal productivity is reasonable.
+
+**Model-specific expectations.**
+Atlantis hindcasts will never reproduce data patterns like a fitted CEATTLE model.
+Stoplight tests should be calibrated accordingly --- the goal is not to hold all models to the same quantitative standard but to ensure each model is performing within the expectations of its structural class.
+
+**Post-hoc evaluation.**
+Some stoplight assessments (particularly for projection plausibility) may need to occur after initial runs are completed.
+The framework should be viewed as iterative: run, evaluate, discuss, potentially adjust inclusion criteria.
+
+**Transparency over exclusion.**
+Where possible, retain models that are borderline and document their performance rather than excluding them.
+The ensemble benefits from structural diversity, and understanding *why* a model disagrees can be as informative as the agreement among models that pass.
+
+## Suggested Workflow {#sec-workflow}
+
+1. Each modeler completes hindcast and $F=0$ projection runs per Topic 2 specifications.
+2. Each modeler evaluates their model against the Tier 1 criteria above and reports results in a standardized format.
+3. Working group reviews results collectively, identifies any hard-stop failures.
+4. For borderline cases, discuss whether to include with caveats or exclude.
+5. Document all decisions and rationale in the synthesis paper methods section.
+
+## References {#sec-references}
+
+::: {#refs}
+:::

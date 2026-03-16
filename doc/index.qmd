@@ -24,10 +24,16 @@ library(GGally)
 
 theme_set(theme_minimal(base_size = 12))
 
-df <- read_csv(here("data", "BSAI_OFL_ABC_TAC.csv"), show_col_types = FALSE)
+data_root <- if (file.exists(file.path("..", "data", "BSAI_OFL_ABC_TAC.csv"))) {
+  file.path("..", "data")
+} else {
+  "data"
+}
 
-#goaraw <- read_csv(here("data", "GOA_OFL_ABC_TAC.csv"), show_col_types = FALSE)
-goaraw <- read_csv(here("data", "GOA_OFL_ABC_TAC_specs.csv"), show_col_types = FALSE)
+df <- read_csv(file.path(data_root, "BSAI_OFL_ABC_TAC.csv"), show_col_types = FALSE)
+
+#goaraw <- read_csv(file.path(data_root, "GOA_OFL_ABC_TAC.csv"), show_col_types = FALSE)
+goaraw <- read_csv(file.path(data_root, "GOA_OFL_ABC_TAC_specs.csv"), show_col_types = FALSE)
 
 mainspp <- c(
   "Pollock",
@@ -250,7 +256,7 @@ $$
 
 ## Dynamic structural equation model setup
 
-This section sets up a dynamic structural equation model (DSEM) using the `dsem` package. DSEMs blend structural equation modeling with state-space time-series dynamics to estimate both contemporaneous effects and temporal persistence, allowing mechanistic interpretation of multivariate ecological systems [@Thorson2024DSEM]. The dependent variables are TACs for Pollock and Pacific cod, and the independent variables are ABCs for all other species. The code below fits a parsimonious AR(1) structure for each TAC with contemporaneous ABC effects and shows how to generate expected TACs given new ABC inputs.
+This section sets up dynamic structural equation models (DSEMs) using the `dsem` package. DSEMs blend structural equation modeling with state-space time-series dynamics to estimate both contemporaneous effects and temporal persistence, allowing mechanistic interpretation of multivariate ecological systems [@Thorson2024DSEM]. Below, the DSEM work is shown separately for BSAI and GOA. In both regions, the dependent variables are TACs for Pollock and Pacific cod, with contemporaneous ABC inputs drawn from a region-specific set of major species.
 
 Seemingly unrelated regression (SUR) provides a useful static reference point for understanding dynamic structural equation models (DSEM). In SUR, multiple regression equations are estimated jointly, allowing for contemporaneous correlation among equation-specific error terms while excluding any dynamic feedback or causal coupling across outcomes [@Zellner1962SUR]. DSEM can be viewed as a strict generalization of this framework: correlated disturbances are retained, but are embedded within a dynamic state-space formulation that allows for autoregressive behavior, latent processes, and explicit structural pathways across variables and time [@Asparouhov2018DSEM]. From this perspective, SUR corresponds to a single-time-slice, purely contemporaneous special case of DSEM in which temporal dependence and structural effects are suppressed. This connection clarifies how joint modeling gains efficiency through shared stochastic components, while DSEM extends that logic by separating persistent process variation from transient noise and propagating information forward through time.
 
@@ -403,7 +409,7 @@ Pacific ocean perch has the highest ABC variability (CV about `r round(cv_max$cv
 
 ```{r}
 #| label: fig-cv
-#| fig-cap: "Interannual variability (CV) of ABC and TAC for the main species."
+#| fig-cap: "Interannual variability (CV) of ABC and TAC for the main BSAI species, 1986-2026."
 cv_long <- cv_tbl %>%
   pivot_longer(cols = c(cv_ABC, cv_TAC), names_to = "Measure", values_to = "CV") %>%
   mutate(
@@ -426,7 +432,7 @@ For GOA, we calculated the same CV metrics for the seven largest species by mean
 
 ```{r}
 #| label: fig-cv-goa
-#| fig-cap: "Interannual variability (CV) of ABC and TAC for selected GOA species (top seven by mean ABC; lag 1, OY = 1, Area = Total)."
+#| fig-cap: "Interannual variability (CV) of ABC and TAC for selected GOA species, 1986-2024 (top seven by mean ABC; lag 1, OY = 1, Area = Total)."
 goa_cv_long <- goa_cv_tbl %>%
   pivot_longer(cols = c(cv_ABC, cv_TAC), names_to = "Measure", values_to = "CV") %>%
   mutate(
@@ -745,94 +751,102 @@ GGally::ggpairs(
 
 
 ## TAC-ABC regressions
-As noted, we fit multiple regressions for the five main species (Pollock, Pacific cod, Yellowfin sole, Atka mackerel, 
-Northern rock sole) and a pooled "Other" category comprising all remaining species. Each model uses log(ABC) for 
-the focal stock, separate log(ABC) terms for each other stock group, and a centered year term to proxy policy indicators.
+As noted, we fit multiple regressions with log(ABC) for the focal stock, separate log(ABC) terms for each other stock group, and a centered year term to proxy policy indicators.
 
 ```{r}
-#| label: tbl-pre-dsem-reg
-#| tbl-cap: "Log-log TAC~ABC regressions with separate other-stock terms (lag 1, OY = 1)."
-main5 <- setdiff(mainspp, c("Pacific ocean perch", "Flathead sole"))
-group_names <- c(main5, "Other")
+safe_names <- function(x) {
+  x %>%
+    gsub("[^A-Za-z0-9]+", "_", ., perl = TRUE) %>%
+    gsub("^_|_$", "", ., perl = TRUE)
+}
 
-reg_base <- dfOY %>%
-  filter(lag == 1) %>%
-  mutate(Group = if_else(Species %in% main5, Species, "Other")) %>%
-  group_by(Year, Group) %>%
-  summarise(
-    ABC = sum(ABC, na.rm = TRUE),
-    TAC = sum(TAC, na.rm = TRUE),
-    .groups = "drop"
-  ) %>%
-  pivot_wider(names_from = Group, values_from = c(ABC, TAC), values_fill = 0)
+fit_tac_abc_regressions <- function(data, main_groups) {
+  group_names <- c(main_groups, "Other")
 
-safe_names <- function(x) gsub(" ", "_", x)
-names(reg_base) <- safe_names(names(reg_base))
-group_safe <- safe_names(group_names)
-
-reg_fits <- purrr::map2(group_names, group_safe, function(group, group_safe) {
-  abc_col <- paste0("ABC_", group_safe)
-  tac_col <- paste0("TAC_", group_safe)
-  other_groups <- setdiff(group_names, group)
-  other_cols <- paste0("ABC_", safe_names(other_groups))
-
-  df <- reg_base %>%
-    transmute(
-      Year,
-      ABC_i = .data[[abc_col]],
-      TAC_i = .data[[tac_col]],
-      across(all_of(other_cols), ~ .x, .names = "{.col}"),
-      Year_c = Year - mean(Year)
+  reg_base <- data %>%
+    mutate(Group = if_else(Species %in% main_groups, Species, "Other")) %>%
+    group_by(Year, Group) %>%
+    summarise(
+      ABC = sum(ABC, na.rm = TRUE),
+      TAC = sum(TAC, na.rm = TRUE),
+      .groups = "drop"
     ) %>%
-    filter(TAC_i > 0) %>%
-    filter(if_all(all_of(c("ABC_i", other_cols)), ~ .x > 0)) %>%
-    mutate(
-      log_TAC_i = log(TAC_i),
-      log_ABC_i = log(ABC_i),
-      across(all_of(other_cols), ~ log(.x), .names = "log_{.col}")
+    pivot_wider(names_from = Group, values_from = c(ABC, TAC), values_fill = 0)
+
+  names(reg_base) <- safe_names(names(reg_base))
+  group_safe <- safe_names(group_names)
+
+  reg_fits <- purrr::map2(group_names, group_safe, function(group, group_safe_i) {
+    abc_col <- paste0("ABC_", group_safe_i)
+    tac_col <- paste0("TAC_", group_safe_i)
+    other_groups <- setdiff(group_names, group)
+    other_cols <- paste0("ABC_", safe_names(other_groups))
+
+    df <- reg_base %>%
+      transmute(
+        Year,
+        ABC_i = .data[[abc_col]],
+        TAC_i = .data[[tac_col]],
+        across(all_of(other_cols), ~ .x, .names = "{.col}"),
+        Year_c = Year - mean(Year)
+      ) %>%
+      filter(TAC_i > 0) %>%
+      filter(if_all(all_of(c("ABC_i", other_cols)), ~ .x > 0)) %>%
+      mutate(
+        log_TAC_i = log(TAC_i),
+        log_ABC_i = log(ABC_i),
+        across(all_of(other_cols), ~ log(.x), .names = "log_{.col}")
+      )
+
+    rhs <- c("log_ABC_i", paste0("log_", other_cols), "Year_c")
+    model <- lm(as.formula(paste("log_TAC_i ~", paste(rhs, collapse = " + "))), data = df)
+    list(species = group, data = df, model = model)
+  })
+
+  reg_results <- purrr::map_dfr(reg_fits, function(x) {
+    coefs <- coef(x$model)
+    out <- tibble(
+      Species = x$species,
+      n = nrow(x$data),
+      Intercept = unname(coefs["(Intercept)"]),
+      log_ABC = unname(coefs["log_ABC_i"]),
+      Year_c = unname(coefs["Year_c"]),
+      R2 = summary(x$model)$r.squared
     )
 
-  rhs <- c("log_ABC_i", paste0("log_", other_cols), "Year_c")
-  model <- lm(as.formula(paste("log_TAC_i ~", paste(rhs, collapse = " + "))), data = df)
-  list(species = group, data = df, model = model)
-})
+    for (g in group_names) {
+      col_name <- paste0("log_ABC_", safe_names(g))
+      out[[col_name]] <- if (g == x$species) NA_real_ else unname(coefs[col_name])
+    }
 
-reg_results <- purrr::map_dfr(reg_fits, function(x) {
-  coefs <- coef(x$model)
-  out <- tibble(
-    Species = x$species,
-    n = nrow(x$data),
-    Intercept = unname(coefs["(Intercept)"]),
-    log_ABC = unname(coefs["log_ABC_i"]),
-    Year_c = unname(coefs["Year_c"]),
-    R2 = summary(x$model)$r.squared
+    out
+  }) %>%
+    mutate(order = match(Species, group_names)) %>%
+    arrange(order) %>%
+    select(-order)
+
+  reg_pred <- purrr::map_dfr(reg_fits, function(x) {
+    pred_log <- predict(x$model, newdata = x$data)
+    tibble(
+      Year = x$data$Year,
+      Species = x$species,
+      Observed = x$data$TAC_i,
+      Predicted = exp(pred_log)
+    )
+  })
+
+  list(
+    results = reg_results,
+    pred = reg_pred,
+    group_names = group_names
   )
+}
 
-  for (g in group_names) {
-    col_name <- paste0("log_ABC_", safe_names(g))
-    out[[col_name]] <- if (g == x$species) NA_real_ else unname(coefs[col_name])
-  }
+render_regression_table <- function(reg_results, group_names) {
+  abc_cols <- paste0("log_ABC_", safe_names(group_names))
 
-  out
-}) %>%
-  mutate(order = match(Species, group_names)) %>%
-  arrange(order) %>%
-  select(-order)
-
-reg_pred <- purrr::map_dfr(reg_fits, function(x) {
-  pred_log <- predict(x$model, newdata = x$data)
-  tibble(
-    Year = x$data$Year,
-    Species = x$species,
-    Observed = x$data$TAC_i,
-    Predicted = exp(pred_log)
-  )
-})
-
-abc_cols <- paste0("log_ABC_", safe_names(group_names))
-
-reg_results %>%
-  gt::gt(rowname_col = "Species") %>%
+  reg_results %>%
+    gt::gt(rowname_col = "Species") %>%
   gt::cols_label(
     n = "n",
     Intercept = "Intercept",
@@ -843,178 +857,338 @@ reg_results %>%
   ) %>%
   gt::fmt_number(columns = c(Intercept, log_ABC, all_of(abc_cols), Year_c, R2), decimals = 3) %>%
   gt::fmt_number(columns = n, decimals = 0)
+}
+
+plot_regression_predictions <- function(reg_pred) {
+  ggplot(reg_pred, aes(x = Year)) +
+    geom_line(aes(y = Predicted, color = "Predicted"), linewidth = 1) +
+    geom_point(aes(y = Observed, color = "Observed"), size = 1.2, alpha = 0.8) +
+    facet_grid(Species ~ ., scales = "free_y") +
+    scale_color_manual(values = c(Predicted = "steelblue", Observed = "grey40")) +
+    scale_y_continuous(labels = comma) +
+    labs(x = NULL, y = "TAC", color = NULL)
+}
+
+bsai_reg_main5 <- setdiff(mainspp, c("Pacific ocean perch", "Flathead sole"))
+bsai_reg <- fit_tac_abc_regressions(
+  data = dfOY %>% filter(lag == 1),
+  main_groups = bsai_reg_main5
+)
+
+goa_reg_main5 <- goaraw %>%
+  filter(lag == 1, OY == 1, Area == "Total") %>%
+  group_by(Species) %>%
+  summarise(total_TAC = sum(TAC, na.rm = TRUE), .groups = "drop") %>%
+  filter(is.finite(total_TAC), total_TAC > 0) %>%
+  arrange(desc(total_TAC)) %>%
+  slice_head(n = 5) %>%
+  pull(Species)
+
+goa_reg <- fit_tac_abc_regressions(
+  data = goaOY %>% filter(lag == 1),
+  main_groups = goa_reg_main5
+)
+```
+
+### BSAI
+
+For BSAI, we retain the existing five-stock specification: Pollock, Pacific cod, Yellowfin sole, Atka mackerel, Northern rock sole, plus a pooled "Other" category.
+
+```{r}
+#| label: tbl-pre-dsem-reg-bsai
+#| tbl-cap: "BSAI log-log TAC~ABC regressions with separate other-stock terms (lag 1, OY = 1)."
+render_regression_table(bsai_reg$results, bsai_reg$group_names)
 ```
 
 ```{r}
-#| label: fig-pre-dsem-pred
-#| fig-cap: "Observed vs predicted TAC from log-linear multiple regressions (lag 1, OY = 1)."
+#| label: fig-pre-dsem-pred-bsai
+#| fig-cap: "BSAI observed vs predicted TAC from log-linear multiple regressions (lag 1, OY = 1)."
 #| fig-height: 5
 #| fig-width: 7
-ggplot(reg_pred, aes(x = Year)) +
-  geom_line(aes(y = Predicted, color = "Predicted"), linewidth = 1) +
-  geom_point(aes(y = Observed, color = "Observed"), size = 1.2, alpha = 0.8) +
-  facet_grid(Species ~ ., scales = "free_y") +
-  scale_color_manual(values = c(Predicted = "steelblue", Observed = "grey40")) +
-  scale_y_continuous(labels = comma) +
-  labs(x = NULL, y = "TAC", color = NULL)
+plot_regression_predictions(bsai_reg$pred)
+```
+
+### GOA
+
+For GOA, we use the top five species by total TAC from the `Area == "Total"` series (`r paste(goa_reg_main5, collapse = ", ")`), plus a pooled "Other" category.
+
+```{r}
+#| label: tbl-pre-dsem-reg-goa
+#| tbl-cap: "GOA log-log TAC~ABC regressions with separate other-stock terms (lag 1, OY = 1, Area = Total)."
+render_regression_table(goa_reg$results, goa_reg$group_names)
+```
+
+```{r}
+#| label: fig-pre-dsem-pred-goa
+#| fig-cap: "GOA observed vs predicted TAC from log-linear multiple regressions (lag 1, OY = 1, Area = Total)."
+#| fig-height: 5
+#| fig-width: 7
+plot_regression_predictions(goa_reg$pred)
+```
+
+## GOA OY-cap rescaling alternative
+
+As a GOA-specific alternative, we considered the weighted OY-cap rescaling method described in [the separate GOA OY-cap note](rovellini-goa-oy-cap.qmd). The method starts with projected stock-specific allocations $C_i$ and, when the total exceeds a GOA-wide cap $OY$, rescales them to
+
+$$
+C'_i = C_i \times r^{(1 / (w_i m))}, \qquad r = \frac{OY}{\sum_i C_i},
+$$
+
+where $w_i > 0$ are stock-specific weights and $m$ is a common multiplier chosen so that the adjusted allocations sum to the cap. Higher weights imply less reduction, so the method can preserve relatively prioritized stocks while still satisfying the aggregate constraint.
+
+For illustration, we applied the method to the latest GOA `Area == "Total"` ABC vector and evaluated three lower cap levels: 95%, 90%, and 85% of the observed aggregate ABC. Because this repository does not include ex-vessel value series or explicit policy weights, we use each stock's historical mean TAC/ABC ratio as a simple proxy weight. That makes this a sensitivity analysis rather than a recommended operational rule, but it is still useful for seeing how an explicit cap-rescaling mechanism differs from the regression and DSEM approaches above.
+
+```{r}
+#| label: goa-oy-cap-setup
+rescale_oy_cap <- function(catch, weights, oy_cap, tol = 1e-8, max_iter = 200) {
+  catch <- as.numeric(catch)
+  weights <- as.numeric(weights)
+
+  total_catch <- sum(catch, na.rm = TRUE)
+  if (!is.finite(total_catch) || total_catch <= 0) {
+    stop("Total projected catch must be positive.")
+  }
+
+  if (oy_cap >= total_catch) {
+    return(list(multiplier = NA_real_, scaled = catch, binding = FALSE))
+  }
+
+  r <- oy_cap / total_catch
+  total_gap <- function(m) {
+    sum(catch * r^(1 / (weights * m))) - oy_cap
+  }
+
+  lower <- 1e-6
+  upper <- 2
+  while (total_gap(upper) < 0 && upper < 1e6) {
+    upper <- upper * 2
+  }
+
+  for (i in seq_len(max_iter)) {
+    mid <- (lower + upper) / 2
+    gap_mid <- total_gap(mid)
+    if (abs(gap_mid) < tol) break
+    if (gap_mid > 0) {
+      upper <- mid
+    } else {
+      lower <- mid
+    }
+  }
+
+  multiplier <- (lower + upper) / 2
+  scaled <- catch * r^(1 / (weights * multiplier))
+
+  list(multiplier = multiplier, scaled = scaled, binding = TRUE)
+}
+
+goa_oy_latest_year <- goaOY %>%
+  filter(lag == 1) %>%
+  summarise(Year = max(Year, na.rm = TRUE)) %>%
+  pull(Year)
+
+goa_oy_weights <- goaOY %>%
+  filter(lag == 1, is.finite(ABC), ABC > 0, is.finite(TAC), TAC >= 0) %>%
+  mutate(weight = TAC / ABC) %>%
+  filter(is.finite(weight), weight > 0) %>%
+  group_by(Species) %>%
+  summarise(weight = mean(weight, na.rm = TRUE), .groups = "drop")
+
+goa_oy_base <- goaOY %>%
+  filter(lag == 1, Year == goa_oy_latest_year, is.finite(ABC), ABC > 0) %>%
+  select(Species, ABC, TAC) %>%
+  left_join(goa_oy_weights, by = "Species") %>%
+  mutate(weight = if_else(is.finite(weight) & weight > 0, weight, 0.01)) %>%
+  arrange(desc(ABC))
+
+goa_oy_total_abc <- sum(goa_oy_base$ABC, na.rm = TRUE)
+goa_oy_total_tac <- sum(goa_oy_base$TAC, na.rm = TRUE)
+
+goa_oy_cap_levels <- tibble(
+  Scenario = c("Observed ABC (100%)", "95% cap", "90% cap", "85% cap"),
+  cap_factor = c(1.00, 0.95, 0.90, 0.85),
+  OY_cap = goa_oy_total_abc * cap_factor
+)
+
+goa_oy_alloc <- purrr::map_dfr(seq_len(nrow(goa_oy_cap_levels)), function(i) {
+  scenario_row <- goa_oy_cap_levels[i, ]
+  fit <- rescale_oy_cap(
+    catch = goa_oy_base$ABC,
+    weights = goa_oy_base$weight,
+    oy_cap = scenario_row$OY_cap
+  )
+
+  goa_oy_base %>%
+    mutate(
+      Scenario = scenario_row$Scenario,
+      cap_factor = scenario_row$cap_factor,
+      OY_cap = scenario_row$OY_cap,
+      multiplier = fit$multiplier,
+      ABC_rescaled = fit$scaled,
+      pct_reduction = 1 - ABC_rescaled / ABC
+    )
+})
+
+goa_oy_summary <- goa_oy_alloc %>%
+  group_by(Scenario, cap_factor, OY_cap) %>%
+  summarise(
+    multiplier = first(multiplier),
+    total_ABC = sum(ABC, na.rm = TRUE),
+    total_rescaled = sum(ABC_rescaled, na.rm = TRUE),
+    mean_reduction = mean(pct_reduction, na.rm = TRUE),
+    pollock_reduction = pct_reduction[Species == "Pollock"][1],
+    pacific_cod_reduction = pct_reduction[Species == "Pacific cod"][1],
+    arrowtooth_reduction = pct_reduction[Species == "Arrowtooth Flounder"][1],
+    .groups = "drop"
+  )
+
+goa_oy_top10 <- goa_oy_base %>%
+  slice_head(n = 10) %>%
+  pull(Species)
+```
+
+The baseline GOA ABC total in `r goa_oy_latest_year` is `r comma(goa_oy_total_abc)` t, compared with aggregate TAC of `r comma(goa_oy_total_tac)` t. Under the weighting rule used here, the cap-rescaling method reduces lower-priority stocks more than high-utilization stocks such as Pollock, Pacific ocean perch, and Rex sole, while still preserving strictly positive allocations for all stocks with positive baseline ABC.
+
+```{r}
+#| label: tbl-goa-oy-cap
+#| tbl-cap: "Illustrative GOA OY-cap rescaling scenarios for the latest annual ABC vector."
+goa_oy_summary %>%
+  mutate(
+    OY_cap = comma(round(OY_cap)),
+    multiplier = if_else(is.na(multiplier), "NA", format(round(multiplier, 3), nsmall = 3)),
+    total_ABC = comma(round(total_ABC)),
+    total_rescaled = comma(round(total_rescaled)),
+    mean_reduction = percent(mean_reduction, accuracy = 0.1),
+    pollock_reduction = percent(pollock_reduction, accuracy = 0.1),
+    pacific_cod_reduction = percent(pacific_cod_reduction, accuracy = 0.1),
+    arrowtooth_reduction = percent(arrowtooth_reduction, accuracy = 0.1)
+  ) %>%
+  select(
+    Scenario,
+    OY_cap,
+    multiplier,
+    total_ABC,
+    total_rescaled,
+    mean_reduction,
+    pollock_reduction,
+    pacific_cod_reduction,
+    arrowtooth_reduction
+  ) %>%
+  gt::gt() %>%
+  gt::cols_label(
+    OY_cap = "OY cap",
+    multiplier = "m",
+    total_ABC = "Baseline ABC",
+    total_rescaled = "Rescaled ABC",
+    mean_reduction = "Mean reduction",
+    pollock_reduction = "Pollock reduction",
+    pacific_cod_reduction = "Pacific cod reduction",
+    arrowtooth_reduction = "Arrowtooth reduction"
+  )
+```
+
+```{r}
+#| label: fig-goa-oy-cap
+#| fig-cap: "Illustrative GOA OY-cap rescaling for the ten largest stocks in the latest year, under alternative aggregate cap levels."
+#| fig-height: 5.5
+#| fig-width: 8
+goa_oy_plot <- goa_oy_alloc %>%
+  filter(cap_factor < 1, Species %in% goa_oy_top10) %>%
+  mutate(
+    Scenario = factor(Scenario, levels = c("95% cap", "90% cap", "85% cap")),
+    Species = factor(Species, levels = rev(goa_oy_top10))
+  )
+
+ggplot(goa_oy_plot, aes(x = Species, y = pct_reduction, fill = Scenario)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  coord_flip() +
+  scale_y_continuous(labels = percent_format(accuracy = 1)) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(x = NULL, y = "Reduction from baseline ABC", fill = NULL) +
+  theme(legend.position = "top")
 ```
 ## DAGs for the DSEM
 
 ```{r}
-#| label: fig-dsem-dag-contemporaneous
-#| fig-cap: "Contemporaneous DSEM DAG with ABC drivers for Pollock and Pacific cod TACs."
-abc_vars <- c(
-  "ABC_Yellowfin_sole",
-  "ABC_Atka_mackerel",
-  "ABC_Northern_rock_sole",
-  "ABC_Flathead_sole",
-  "ABC_Pacific_ocean_perch"
-)
-
-dag_static <- ggdag::dagify(
-  TAC_Pollock ~ ABC_Yellowfin_sole + ABC_Atka_mackerel + ABC_Northern_rock_sole +
-    ABC_Flathead_sole + ABC_Pacific_ocean_perch,
-  TAC_Pacific_cod ~ ABC_Yellowfin_sole + ABC_Atka_mackerel + ABC_Northern_rock_sole +
-    ABC_Flathead_sole + ABC_Pacific_ocean_perch,
-  labels = c(
-    ABC_Yellowfin_sole = "ABC: Yellowfin sole",
-    ABC_Atka_mackerel = "ABC: Atka mackerel",
-    ABC_Northern_rock_sole = "ABC: Northern rock sole",
-    ABC_Flathead_sole = "ABC: Flathead sole",
-    ABC_Pacific_ocean_perch = "ABC: Pacific ocean perch",
-    TAC_Pollock = "TAC: Pollock",
-    TAC_Pacific_cod = "TAC: Pacific cod"
-  ),
-  coords = list(
-    x = c(
-      ABC_Yellowfin_sole = 0,
-      ABC_Atka_mackerel = 0,
-      ABC_Northern_rock_sole = 0,
-      ABC_Flathead_sole = 0,
-      ABC_Pacific_ocean_perch = 0,
-      TAC_Pollock = 2,
-      TAC_Pacific_cod = 2
-    ),
-    y = c(
-      ABC_Yellowfin_sole = 2,
-      ABC_Atka_mackerel = 1,
-      ABC_Northern_rock_sole = 0,
-      ABC_Flathead_sole = -1,
-      ABC_Pacific_ocean_perch = -2,
-      TAC_Pollock = 1,
-      TAC_Pacific_cod = -1
-    )
-  )
-)
-
-dag_static_tidy <- ggdag::tidy_dagitty(dag_static)
-
-ggplot(dag_static_tidy, aes(x = x, y = y, xend = xend, yend = yend)) +
-  ggdag::geom_dag_edges() +
-  ggdag::geom_dag_node() +
-  ggdag::geom_dag_label_repel(aes(label = label), color = "black", size = 3) +
-  ggdag::theme_dag()
-```
-
-```{r}
-#| label: fig-dsem-dag-dynamic
-#| fig-cap: "Dynamic DSEM DAG with AR(1) TAC structure and contemporaneous ABC effects."
-dag_dynamic <- ggdag::dagify(
-  TAC_Pollock_t ~ ABC_Yellowfin_sole_t + ABC_Atka_mackerel_t + ABC_Northern_rock_sole_t +
-    ABC_Flathead_sole_t + ABC_Pacific_ocean_perch_t + TAC_Pollock_t1,
-  TAC_Pacific_cod_t ~ ABC_Yellowfin_sole_t + ABC_Atka_mackerel_t + ABC_Northern_rock_sole_t +
-    ABC_Flathead_sole_t + ABC_Pacific_ocean_perch_t + TAC_Pacific_cod_t1,
-  labels = c(
-    ABC_Yellowfin_sole_t = "ABC YFS (t)",
-    ABC_Atka_mackerel_t = "ABC AMK (t)",
-    ABC_Northern_rock_sole_t = "ABC NRS (t)",
-    ABC_Flathead_sole_t = "ABC FHS (t)",
-    ABC_Pacific_ocean_perch_t = "ABC POP (t)",
-    TAC_Pollock_t1 = "TAC Pollock (t-1)",
-    TAC_Pollock_t = "TAC Pollock (t)",
-    TAC_Pacific_cod_t1 = "TAC Pac. cod (t-1)",
-    TAC_Pacific_cod_t = "TAC Pac. cod (t)"
-  ),
-  coords = list(
-    x = c(
-      ABC_Yellowfin_sole_t = 0,
-      ABC_Atka_mackerel_t = 0,
-      ABC_Northern_rock_sole_t = 0,
-      ABC_Flathead_sole_t = 0,
-      ABC_Pacific_ocean_perch_t = 0,
-      TAC_Pollock_t1 = 1,
-      TAC_Pollock_t = 2,
-      TAC_Pacific_cod_t1 = 1,
-      TAC_Pacific_cod_t = 2
-    ),
-    y = c(
-      ABC_Yellowfin_sole_t = 2,
-      ABC_Atka_mackerel_t = 1,
-      ABC_Northern_rock_sole_t = 0,
-      ABC_Flathead_sole_t = -1,
-      ABC_Pacific_ocean_perch_t = -2,
-      TAC_Pollock_t1 = 1,
-      TAC_Pollock_t = 1,
-      TAC_Pacific_cod_t1 = -1,
-      TAC_Pacific_cod_t = -1
-    )
-  )
-)
-
-dag_dynamic_tidy <- ggdag::tidy_dagitty(dag_dynamic)
-
-ggplot(dag_dynamic_tidy, aes(x = x, y = y, xend = xend, yend = yend)) +
-  ggdag::geom_dag_edges() +
-  ggdag::geom_dag_node() +
-  ggdag::geom_dag_label_repel(aes(label = label), color = "black", size = 3) +
-  ggdag::theme_dag()
-```
-
-```{r}
-#| label: dsem-setup
+#| label: dsem-helpers
 #| eval: true
 library(dsem)
 
-dsem_dep <- c("Pollock", "Pacific cod")
+safe_names <- function(x) {
+  x %>%
+    gsub("[^A-Za-z0-9]+", "_", ., perl = TRUE) %>%
+    gsub("^_|_$", "", ., perl = TRUE)
+}
 
-# Predict TAC from a full set of ABC inputs (including the focal stocks).
-# This is closer to the intended "replace ATTACH" use case.
-dsem_indep <- mainspp
+centered_positions <- function(n) {
+  if (n <= 1) {
+    0
+  } else {
+    seq(from = (n - 1) / 2, to = -(n - 1) / 2, length.out = n)
+  }
+}
 
-dsem_df <- dfOY %>%
-  filter(lag == 1, Species %in% mainspp) %>%
-  select(Year, Species, TAC, ABC) %>%
-  pivot_wider(
-    names_from = Species,
-    values_from = c(TAC, ABC),
-    names_sep = "_"
-  ) %>%
-  arrange(Year)
+plot_dsem_dag <- function(dep_species, indep_species, dynamic = FALSE) {
+  dep_nodes <- paste0("TAC_", safe_names(dep_species))
+  indep_nodes <- paste0("ABC_", safe_names(indep_species))
 
-safe_names <- function(x) gsub(" ", "_", x)
-names(dsem_df) <- safe_names(names(dsem_df))
+  static_formulas <- lapply(dep_nodes, function(dep_node) {
+    reformulate(indep_nodes, response = dep_node)
+  })
 
-dep_safe <- safe_names(dsem_dep)
-indep_safe <- safe_names(dsem_indep)
+  x_coords <- setNames(rep(0, length(indep_nodes)), indep_nodes)
+  y_coords <- setNames(centered_positions(length(indep_nodes)), indep_nodes)
 
-y_cols <- paste0("TAC_", dep_safe)
-x_cols <- paste0("ABC_", indep_safe)
+  if (dynamic) {
+    lag_nodes <- paste0(dep_nodes, "_lag")
+    dynamic_formulas <- Map(function(dep_node, lag_node) {
+      reformulate(c(indep_nodes, lag_node), response = dep_node)
+    }, dep_nodes, lag_nodes)
 
-# Scale inputs for numerical stability; back-transform predictions later.
-ts_raw <- dsem_df[, c(y_cols, x_cols)]
-ts_scaled <- scale(ts_raw)
-ts_center <- attr(ts_scaled, "scaled:center")
-ts_scale <- attr(ts_scaled, "scaled:scale")
+    labels <- c(
+      setNames(paste0("ABC ", indep_species, " (t)"), indep_nodes),
+      setNames(paste0("TAC ", dep_species, " (t-1)"), lag_nodes),
+      setNames(paste0("TAC ", dep_species, " (t)"), dep_nodes)
+    )
 
-tsdata <- ts(ts_scaled, start = min(dsem_df$Year))
+    x_coords <- c(
+      x_coords,
+      setNames(rep(1, length(lag_nodes)), lag_nodes),
+      setNames(rep(2, length(dep_nodes)), dep_nodes)
+    )
+    dep_y <- centered_positions(length(dep_nodes))
+    y_coords <- c(
+      y_coords,
+      setNames(dep_y, lag_nodes),
+      setNames(dep_y, dep_nodes)
+    )
 
-# Build SEM: AR(1) for TACs plus contemporaneous ABC effects.
-ar_lines <- paste0(y_cols, " -> ", y_cols, ", 1, ar_", dep_safe)
-abc_lines <- unlist(lapply(y_cols, function(y) {
-  paste0(x_cols, " -> ", y, ", 0, b_", gsub("ABC_", "", x_cols), "_to_", gsub("TAC_", "", y))
-}))
+    dag_obj <- do.call(
+      ggdag::dagify,
+      c(dynamic_formulas, list(labels = labels, coords = list(x = x_coords, y = y_coords)))
+    )
+  } else {
+    labels <- c(
+      setNames(paste("ABC:", indep_species), indep_nodes),
+      setNames(paste("TAC:", dep_species), dep_nodes)
+    )
 
-sem <- paste(c(ar_lines, abc_lines), collapse = "\n")
+    x_coords <- c(x_coords, setNames(rep(2, length(dep_nodes)), dep_nodes))
+    y_coords <- c(y_coords, setNames(centered_positions(length(dep_nodes)), dep_nodes))
+
+    dag_obj <- do.call(
+      ggdag::dagify,
+      c(static_formulas, list(labels = labels, coords = list(x = x_coords, y = y_coords)))
+    )
+  }
+
+  dag_tidy <- ggdag::tidy_dagitty(dag_obj)
+
+  ggplot(dag_tidy, aes(x = x, y = y, xend = xend, yend = yend)) +
+    ggdag::geom_dag_edges() +
+    ggdag::geom_dag_node() +
+    ggdag::geom_dag_label_repel(aes(label = label), color = "black", size = 3) +
+    ggdag::theme_dag()
+}
 
 # dsem has changed allowed values for gmrf_parameterization across versions.
 # Choose a value that works for the installed package (GitHub Actions may differ
@@ -1034,202 +1208,339 @@ choose_gmrf_param <- function() {
   stop("Could not find a supported gmrf_parameterization value for dsem")
 }
 
-gmrf_param <- choose_gmrf_param()
-
-fit_dsem_once <- function(gmrf, family_opt = NULL) {
-  args <- list(
-    sem = sem,
-    tsdata = tsdata,
-    estimate_delta0 = TRUE,
-    control = dsem_control(
-      quiet = TRUE,
-      gmrf_parameterization = gmrf,
-      newton_loops = 0,
-      extra_convergence_checks = FALSE,
-      getsd = TRUE
-    )
-  )
-  if (!is.null(family_opt)) args$family <- family_opt
-  do.call(dsem::dsem, args)
-}
-
-# Robust fit across dsem versions:
-# 1) try chosen gmrf with default family
-# 2) if needed, retry with family = "gaussian"
-# 3) then cycle other gmrf options.
-gmrf_candidates <- unique(c(
-  gmrf_param,
-  "full", "project", "gmrf_project", "mvn_project", "separable", "projection"
-))
-
-fit <- NULL
-fit_notes <- character()
-
-for (g in gmrf_candidates) {
-  for (fam in list(NULL, "gaussian")) {
-    fam_tag <- if (is.null(fam)) "default" else fam
-    res <- tryCatch(
-      fit_dsem_once(g, fam),
-      error = function(e) e
-    )
-    if (!inherits(res, "error")) {
-      fit <- res
-      fit_notes <- c(fit_notes, paste0("fit succeeded with gmrf=", g, ", family=", fam_tag))
-      break
-    } else {
-      fit_notes <- c(
-        fit_notes,
-        paste0("fit failed with gmrf=", g, ", family=", fam_tag, ": ", conditionMessage(res))
-      )
-    }
-  }
-  if (!is.null(fit)) break
-}
-
-if (is.null(fit)) {
-  stop(
-    paste(
-      "DSEM fit failed for all gmrf/family combinations.",
-      paste(fit_notes, collapse = " | ")
-    )
-  )
-}
-
-dsem_summary <- summary(fit)
-
-# Predict expected TACs given new ABC inputs (append future rows with TAC = NA).
-#
-# IMPORTANT: the DSEM forecast requires *assumed future ABCs* as inputs.
-# Below we create a simple demonstrator scenario by carrying forward the last
-# observed ABCs and applying small annual changes (edit these as needed).
-
-n_future <- 5
-set.seed(1)
-
-# Last observed ABC vector (lag 1, OY = 1) used as the baseline.
-last_abc <- as.numeric(dsem_df[nrow(dsem_df), x_cols])
-names(last_abc) <- x_cols
-
-# Scenario: modest annual increases for Pollock and Pacific cod ABC, slight
-# decline for others, plus small random noise.
-growth <- rep(0.00, length(x_cols))
-names(growth) <- x_cols
-if ("ABC_Pollock" %in% x_cols) growth["ABC_Pollock"] <- 0.02
-if ("ABC_Pacific_cod" %in% x_cols) growth["ABC_Pacific_cod"] <- 0.01
-
-other_cols <- setdiff(x_cols, c("ABC_Pollock", "ABC_Pacific_cod"))
-growth[other_cols] <- -0.005
-
-noise_sd <- 0.03
-
-new_abc_raw <- sapply(seq_len(n_future), function(h) {
-  eps <- rnorm(length(x_cols), mean = 0, sd = noise_sd)
-  pmax(last_abc * (1 + growth) ^ h * (1 + eps), 1)
-})
-new_abc_raw <- t(new_abc_raw)
-colnames(new_abc_raw) <- x_cols
-
 scale_with <- function(x, center, scale) {
   sweep(sweep(x, 2, center, "-"), 2, scale, "/")
 }
 
-new_abc_scaled <- scale_with(new_abc_raw, ts_center[x_cols], ts_scale[x_cols])
+last_finite <- function(x) {
+  x <- x[is.finite(x)]
+  if (length(x) == 0) NA_real_ else tail(x, 1)
+}
 
-newdata <- as.data.frame(tsdata)
-newdata_future <- as.data.frame(new_abc_scaled)
-newdata_future[, y_cols] <- NA_real_
-newdata <- bind_rows(newdata, newdata_future)
+fit_dsem_region <- function(data, dep_species, indep_species, n_future = 5, seed = 1) {
+  dsem_df <- data %>%
+    filter(Species %in% unique(c(dep_species, indep_species))) %>%
+    group_by(Year, Species) %>%
+    summarise(
+      TAC = sum(TAC, na.rm = TRUE),
+      ABC = sum(ABC, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    pivot_wider(
+      names_from = Species,
+      values_from = c(TAC, ABC),
+      names_sep = "_"
+    ) %>%
+    arrange(Year)
 
-newdata_ts <- ts(as.matrix(newdata), start = start(tsdata), frequency = frequency(tsdata))
+  names(dsem_df) <- safe_names(names(dsem_df))
 
-pred_scaled <- predict(fit, newdata = newdata_ts, type = "response")
-colnames(pred_scaled) <- colnames(newdata_ts)
-pred <- sweep(pred_scaled, 2, ts_scale[colnames(pred_scaled)], "*")
-pred <- sweep(pred, 2, ts_center[colnames(pred)], "+")
+  dep_safe <- safe_names(dep_species)
+  indep_safe <- safe_names(indep_species)
+  y_cols <- paste0("TAC_", dep_safe)
+  x_cols <- paste0("ABC_", indep_safe)
 
-# Extract the forecast horizon.
-pred_tac_future <- tail(pred[, y_cols], n_future)
+  ts_raw <- dsem_df[, c(y_cols, x_cols)]
+  ts_scaled <- scale(ts_raw)
+  ts_center <- attr(ts_scaled, "scaled:center")
+  ts_scale <- attr(ts_scaled, "scaled:scale")
+  ts_center[is.na(ts_center)] <- 0
+  ts_scale[is.na(ts_scale) | ts_scale == 0] <- 1
 
-# Combine assumed ABCs and predicted TACs for a compact forecast table.
-forecast_years <- max(dsem_df$Year) + seq_len(n_future)
-forecast_tbl <- as_tibble(new_abc_raw) %>%
-  mutate(Year = forecast_years) %>%
-  bind_cols(as_tibble(pred_tac_future))
+  tsdata <- ts(ts_scaled, start = min(dsem_df$Year))
+
+  ar_lines <- paste0(y_cols, " -> ", y_cols, ", 1, ar_", dep_safe)
+  abc_lines <- unlist(lapply(y_cols, function(y) {
+    paste0(x_cols, " -> ", y, ", 0, b_", gsub("ABC_", "", x_cols), "_to_", gsub("TAC_", "", y))
+  }))
+  sem <- paste(c(ar_lines, abc_lines), collapse = "\n")
+
+  gmrf_param <- choose_gmrf_param()
+
+  fit_dsem_once <- function(gmrf, family_opt = NULL) {
+    args <- list(
+      sem = sem,
+      tsdata = tsdata,
+      estimate_delta0 = TRUE,
+      control = dsem_control(
+        quiet = TRUE,
+        gmrf_parameterization = gmrf,
+        newton_loops = 0,
+        extra_convergence_checks = FALSE,
+        getsd = TRUE
+      )
+    )
+    if (!is.null(family_opt)) args$family <- family_opt
+    do.call(dsem::dsem, args)
+  }
+
+  gmrf_candidates <- unique(c(
+    gmrf_param,
+    "full", "project", "gmrf_project", "mvn_project", "separable", "projection"
+  ))
+
+  fit <- NULL
+  fit_notes <- character()
+
+  for (g in gmrf_candidates) {
+    for (fam in list(NULL, "gaussian")) {
+      fam_tag <- if (is.null(fam)) "default" else fam
+      res <- tryCatch(
+        fit_dsem_once(g, fam),
+        error = function(e) e
+      )
+      if (!inherits(res, "error")) {
+        fit <- res
+        fit_notes <- c(fit_notes, paste0("fit succeeded with gmrf=", g, ", family=", fam_tag))
+        break
+      } else {
+        fit_notes <- c(
+          fit_notes,
+          paste0("fit failed with gmrf=", g, ", family=", fam_tag, ": ", conditionMessage(res))
+        )
+      }
+    }
+    if (!is.null(fit)) break
+  }
+
+  if (is.null(fit)) {
+    stop(
+      paste(
+        "DSEM fit failed for all gmrf/family combinations.",
+        paste(fit_notes, collapse = " | ")
+      )
+    )
+  }
+
+  dsem_summary <- summary(fit)
+
+  set.seed(seed)
+
+  last_abc <- vapply(dsem_df[x_cols], last_finite, numeric(1))
+  growth <- setNames(rep(-0.005, length(x_cols)), x_cols)
+  dep_abc_cols <- intersect(paste0("ABC_", dep_safe), x_cols)
+  if (length(dep_abc_cols) >= 1) growth[dep_abc_cols[1]] <- 0.02
+  if (length(dep_abc_cols) >= 2) growth[dep_abc_cols[2]] <- 0.01
+
+  noise_sd <- 0.03
+
+  new_abc_raw <- sapply(seq_len(n_future), function(h) {
+    eps <- rnorm(length(x_cols), mean = 0, sd = noise_sd)
+    pmax(last_abc * (1 + growth) ^ h * (1 + eps), 1)
+  })
+  new_abc_raw <- t(new_abc_raw)
+  colnames(new_abc_raw) <- x_cols
+
+  new_abc_scaled <- scale_with(new_abc_raw, ts_center[x_cols], ts_scale[x_cols])
+
+  newdata <- as.data.frame(tsdata)
+  newdata_future <- as.data.frame(new_abc_scaled)
+  newdata_future[, y_cols] <- NA_real_
+  newdata <- bind_rows(newdata, newdata_future)
+  newdata <- newdata[, colnames(as.data.frame(tsdata))]
+
+  newdata_ts <- ts(as.matrix(newdata), start = start(tsdata), frequency = frequency(tsdata))
+
+  pred_scaled <- predict(fit, newdata = newdata_ts, type = "response")
+  colnames(pred_scaled) <- colnames(newdata_ts)
+  pred <- sweep(pred_scaled, 2, ts_scale[colnames(pred_scaled)], "*")
+  pred <- sweep(pred, 2, ts_center[colnames(pred)], "+")
+
+  forecast_years <- max(dsem_df$Year) + seq_len(n_future)
+  pred_tac_future <- tail(pred[, y_cols], n_future)
+  forecast_tbl <- as_tibble(new_abc_raw) %>%
+    mutate(Year = forecast_years) %>%
+    bind_cols(as_tibble(pred_tac_future))
+
+  list(
+    fit = fit,
+    summary = dsem_summary,
+    dsem_df = dsem_df,
+    y_cols = y_cols,
+    x_cols = x_cols,
+    pred = pred,
+    n_future = n_future,
+    forecast_years = forecast_years,
+    forecast_tbl = forecast_tbl,
+    fit_notes = fit_notes
+  )
+}
+
+summarize_dsem_results <- function(dsem_summary) {
+  dsem_summary %>%
+    mutate(
+      Term = if_else(lag > 0, paste0(path, " (lag ", lag, ")"), path),
+      Group = case_when(
+        lag > 0 ~ "Autoregressive (lagged TAC)",
+        str_detect(first, "^ABC_") ~ "ABC -> TAC",
+        TRUE ~ "Other"
+      )
+    ) %>%
+    arrange(Group, Term) %>%
+    select(Group, Term, Estimate, Std_Error, z_value, p_value)
+}
+
+render_dsem_forecast_table <- function(region_fit) {
+  region_fit$forecast_tbl %>%
+    select(Year, starts_with("ABC_"), starts_with("TAC_")) %>%
+    gt::gt() %>%
+    gt::fmt_number(columns = starts_with("ABC_"), decimals = 0) %>%
+    gt::fmt_number(columns = starts_with("TAC_"), decimals = 0)
+}
+
+render_dsem_summary_table <- function(region_fit) {
+  summarize_dsem_results(region_fit$summary) %>%
+    gt::gt(rowname_col = "Term", groupname_col = "Group") %>%
+    gt::cols_label(
+      Estimate = "Estimate",
+      Std_Error = "Std. Error",
+      z_value = "z",
+      p_value = "p"
+    ) %>%
+    gt::fmt_number(columns = c(Estimate, Std_Error), decimals = 3) %>%
+    gt::fmt_number(columns = z_value, decimals = 2) %>%
+    gt::fmt_number(columns = p_value, decimals = 3)
+}
+
+plot_dsem_predictions <- function(region_fit) {
+  pred_years <- c(region_fit$dsem_df$Year, region_fit$forecast_years)
+  pred_df <- as_tibble(region_fit$pred[, region_fit$y_cols]) %>%
+    mutate(Year = pred_years) %>%
+    pivot_longer(-Year, names_to = "Species", values_to = "Predicted")
+
+  obs_df <- region_fit$dsem_df %>%
+    select(Year, all_of(region_fit$y_cols)) %>%
+    pivot_longer(-Year, names_to = "Species", values_to = "Observed")
+
+  plot_df <- left_join(pred_df, obs_df, by = c("Year", "Species"))
+
+  ggplot(plot_df, aes(x = Year)) +
+    geom_line(aes(y = Predicted, color = "Predicted"), linewidth = 1) +
+    geom_point(aes(y = Observed, color = "Observed"), size = 1.4, alpha = 0.8) +
+    facet_grid(Species ~ ., scales = "free_y") +
+    scale_color_manual(values = c(Predicted = "steelblue", Observed = "grey40")) +
+    scale_y_continuous(labels = comma) +
+    labs(x = NULL, y = "TAC", color = NULL)
+}
+
+bsai_dsem_dep <- c("Pollock", "Pacific cod")
+bsai_dsem_indep <- mainspp
+bsai_dsem <- fit_dsem_region(
+  data = dfOY %>% filter(lag == 1, Species %in% mainspp),
+  dep_species = bsai_dsem_dep,
+  indep_species = bsai_dsem_indep
+)
+
+goa_dsem_dep <- c("Pollock", "Pacific cod")
+goa_dsem_indep <- goaraw %>%
+  filter(lag == 1, OY == 1, Area == "Total") %>%
+  group_by(Species) %>%
+  summarise(total_TAC = sum(TAC, na.rm = TRUE), .groups = "drop") %>%
+  filter(is.finite(total_TAC), total_TAC > 0) %>%
+  arrange(desc(total_TAC)) %>%
+  slice_head(n = 7) %>%
+  pull(Species)
+
+goa_dsem <- fit_dsem_region(
+  data = goaOY %>% filter(lag == 1, Species %in% goa_dsem_indep),
+  dep_species = goa_dsem_dep,
+  indep_species = goa_dsem_indep
+)
+```
+
+### BSAI
+
+```{r}
+#| label: fig-dsem-dag-contemporaneous-bsai
+#| fig-cap: "BSAI contemporaneous DSEM DAG with ABC drivers for Pollock and Pacific cod TACs."
+plot_dsem_dag(
+  dep_species = bsai_dsem_dep,
+  indep_species = setdiff(bsai_dsem_indep, bsai_dsem_dep),
+  dynamic = FALSE
+)
+```
+
+```{r}
+#| label: fig-dsem-dag-dynamic-bsai
+#| fig-cap: "BSAI dynamic DSEM DAG with AR(1) TAC structure and contemporaneous ABC effects."
+plot_dsem_dag(
+  dep_species = bsai_dsem_dep,
+  indep_species = setdiff(bsai_dsem_indep, bsai_dsem_dep),
+  dynamic = TRUE
+)
+```
+
+### GOA
+
+```{r}
+#| label: fig-dsem-dag-contemporaneous-goa
+#| fig-cap: "GOA contemporaneous DSEM DAG with ABC drivers for Pollock and Pacific cod TACs."
+plot_dsem_dag(
+  dep_species = goa_dsem_dep,
+  indep_species = setdiff(goa_dsem_indep, goa_dsem_dep),
+  dynamic = FALSE
+)
+```
+
+```{r}
+#| label: fig-dsem-dag-dynamic-goa
+#| fig-cap: "GOA dynamic DSEM DAG with AR(1) TAC structure and contemporaneous ABC effects."
+plot_dsem_dag(
+  dep_species = goa_dsem_dep,
+  indep_species = setdiff(goa_dsem_indep, goa_dsem_dep),
+  dynamic = TRUE
+)
 ```
 
 ## DSEM estimates
-This DSEM estimates TAC dynamics for Pollock and Pacific cod with two components: (1) AR(1) persistence in each 
-TAC time series and (2) contemporaneous influence of ABC inputs (including both focal-stock ABC and cross-stock ABCs). The model is fit on scaled 
-inputs for stability, then predictions are transformed back to the original TAC units for interpretation.
+In both regions, the DSEM estimates TAC dynamics for Pollock and Pacific cod with two components: (1) AR(1) persistence in each TAC time series and (2) contemporaneous influence of ABC inputs, including both focal-stock ABC and cross-stock ABCs. Models are fit on scaled inputs for stability, then predictions are transformed back to the original TAC units for interpretation. The forecast tables below remain illustrative and use the same simple forward ABC scenario in each region.
 
-To make the forecasting intent concrete, the setup chunk above also constructs a simple example set of future ABC inputs and returns a `forecast_tbl` object containing assumed ABCs and the corresponding predicted TACs.
+### BSAI
+
+For BSAI, the DSEM uses the seven main stocks (`r paste(bsai_dsem_indep, collapse = ", ")`) as contemporaneous ABC inputs.
 
 ```{r}
-#| label: tbl-dsem-forecast
-#| tbl-cap: "Example DSEM forecast: assumed future ABCs and predicted TACs (illustrative scenario)."
-forecast_tbl %>%
-  select(Year, starts_with("ABC_"), starts_with("TAC_")) %>%
-  gt::gt() %>%
-  gt::fmt_number(columns = starts_with("ABC_"), decimals = 0) %>%
-  gt::fmt_number(columns = starts_with("TAC_"), decimals = 0)
+#| label: tbl-dsem-forecast-bsai
+#| tbl-cap: "BSAI example DSEM forecast: assumed future ABCs and predicted TACs (illustrative scenario)."
+render_dsem_forecast_table(bsai_dsem)
 ```
 
 ```{r}
-#| label: tbl-dsem-summary
-#| tbl-cap: "Summary of DSEM results."
-dsem_anova <- dsem_summary %>%
-  mutate(
-    Term = if_else(lag > 0, paste0(path, " (lag ", lag, ")"), path),
-    Group = case_when(
-      lag > 0 ~ "Autoregressive (lagged TAC)",
-      str_detect(first, "^ABC_") ~ "ABC -> TAC",
-      TRUE ~ "Other"
-    ),
-    Estimate = Estimate,
-    Std_Error = Std_Error,
-    z_value = z_value,
-    p_value = p_value
-  ) %>%
-  arrange(Group, Term) %>%
-  select(Group, Term, Estimate, Std_Error, z_value, p_value)
-
-dsem_anova %>%
-  gt::gt(rowname_col = "Term", groupname_col = "Group") %>%
-  gt::cols_label(
-    Estimate = "Estimate",
-    Std_Error = "Std. Error",
-    z_value = "z",
-    p_value = "p"
-  ) %>%
-  gt::fmt_number(columns = c(Estimate, Std_Error), decimals = 3) %>%
-  gt::fmt_number(columns = z_value, decimals = 2) %>%
-  gt::fmt_number(columns = p_value, decimals = 3)
+#| label: tbl-dsem-summary-bsai
+#| tbl-cap: "Summary of BSAI DSEM results."
+render_dsem_summary_table(bsai_dsem)
 ```
 
 ```{r}
-#| label: fig-dsem-pred
-#| fig-cap: "Observed vs predicted TACs from the DSEM (back-transformed to original units)."
+#| label: fig-dsem-pred-bsai
+#| fig-cap: "Observed vs predicted BSAI TACs from the DSEM (back-transformed to original units)."
 #| fig-height: 5
 #| fig-width: 7
+plot_dsem_predictions(bsai_dsem)
+```
 
-pred_years <- c(dsem_df$Year, max(dsem_df$Year) + seq_len(n_future))
-pred_df <- as_tibble(pred[, y_cols]) %>%
-  mutate(Year = pred_years) %>%
-  pivot_longer(-Year, names_to = "Species", values_to = "Predicted")
+### GOA
 
-obs_df <- dsem_df %>%
-  select(Year, all_of(y_cols)) %>%
-  pivot_longer(-Year, names_to = "Species", values_to = "Observed")
+For GOA, the DSEM uses the top seven GOA species by total TAC from the `Area == "Total"` series (`r paste(goa_dsem_indep, collapse = ", ")`) as contemporaneous ABC inputs.
 
-plot_df <- left_join(pred_df, obs_df, by = c("Year", "Species"))
+```{r}
+#| label: tbl-dsem-forecast-goa
+#| tbl-cap: "GOA example DSEM forecast: assumed future ABCs and predicted TACs (illustrative scenario)."
+render_dsem_forecast_table(goa_dsem)
+```
 
-ggplot(plot_df, aes(x = Year)) +
-  geom_line(aes(y = Predicted, color = "Predicted"), linewidth = 1) +
-  geom_point(aes(y = Observed, color = "Observed"), size = 1.4, alpha = 0.8) +
-  facet_grid(Species~., scales = "free_y") +
-  scale_color_manual(values = c(Predicted = "steelblue", Observed = "grey40")) +
-  scale_y_continuous(labels = comma) +
-  labs(x = NULL, y = "TAC", color = NULL)
+```{r}
+#| label: tbl-dsem-summary-goa
+#| tbl-cap: "Summary of GOA DSEM results."
+render_dsem_summary_table(goa_dsem)
+```
+
+```{r}
+#| label: fig-dsem-pred-goa
+#| fig-cap: "Observed vs predicted GOA TACs from the DSEM (back-transformed to original units)."
+#| fig-height: 5
+#| fig-width: 7
+plot_dsem_predictions(goa_dsem)
 ```
 
 

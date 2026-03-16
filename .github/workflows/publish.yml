@@ -43,10 +43,10 @@ jobs:
       - name: Setup Quarto
         uses: quarto-dev/quarto-actions/setup@v2
 
-      - name: Render Quarto document
+      - name: Render Quarto site
         run: |
           cd doc
-          quarto render index.qmd --to html
+          quarto render --to html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -54,7 +54,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: doc
+          path: doc/_site
 
   deploy:
     environment:

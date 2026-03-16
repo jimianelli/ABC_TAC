@@ -1,0 +1,21 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - stoplight_criteria_framework.qmd
+    - rovellini-goa-oy-cap.qmd
+  resources:
+    - .nojekyll
+
+website:
+  title: "ABC TAC Analyses"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: stoplight_criteria_framework.qmd
+        text: Stoplight Framework
+      - href: rovellini-goa-oy-cap.qmd
+        text: GOA OY Cap
+
