@@ -687,6 +687,7 @@ spp_labels <- c(tac_pairs_spp, "Others")
 spp_cols <- gsub(" ", "_", spp_labels)
 tac_wide <- tac_wide %>% rename_with(~ spp_cols, all_of(spp_labels))
 
+# Draw lower-triangle pairs panels with points plus a LOESS trend.
 lower_points_smooth <- function(data, mapping, ...) {
   ggplot(data = data, mapping = mapping) +
     geom_point(alpha = 0.5, size = 0.7) +
@@ -756,12 +757,15 @@ GGally::ggpairs(
 As noted, we fit multiple regressions with log(ABC) for the focal stock, separate log(ABC) terms for each other stock group, and a centered year term to proxy policy indicators.
 
 ```{r}
+# Convert arbitrary stock labels into safe column-name fragments.
 safe_names <- function(x) {
   x %>%
     gsub("[^A-Za-z0-9]+", "_", ., perl = TRUE) %>%
     gsub("^_|_$", "", ., perl = TRUE)
 }
 
+# Fit stock-specific log(TAC) regressions using own-stock ABC, other-stock ABC,
+# and a centered year effect; return coefficient summaries and fitted values.
 fit_tac_abc_regressions <- function(data, main_groups) {
   group_names <- c(main_groups, "Other")
 
@@ -844,6 +848,7 @@ fit_tac_abc_regressions <- function(data, main_groups) {
   )
 }
 
+# Format the regression coefficient summary as a gt table.
 render_regression_table <- function(reg_results, group_names) {
   abc_cols <- paste0("log_ABC_", safe_names(group_names))
 
@@ -861,6 +866,7 @@ render_regression_table <- function(reg_results, group_names) {
   gt::fmt_number(columns = n, decimals = 0)
 }
 
+# Plot observed TAC against fitted regression predictions by stock.
 plot_regression_predictions <- function(reg_pred) {
   ggplot(reg_pred, aes(x = Year)) +
     geom_line(aes(y = Predicted, color = "Predicted"), linewidth = 1) +
@@ -942,6 +948,8 @@ For illustration, we applied the method to the latest GOA `Area == "Total"` ABC 
 
 ```{r}
 #| label: goa-oy-cap-setup
+# Rescale projected catches to satisfy an aggregate OY cap while preserving
+# relative priority through stock-specific weights.
 rescale_oy_cap <- function(catch, weights, oy_cap, tol = 1e-8, max_iter = 200) {
   catch <- as.numeric(catch)
   weights <- as.numeric(weights)
@@ -956,6 +964,7 @@ rescale_oy_cap <- function(catch, weights, oy_cap, tol = 1e-8, max_iter = 200) {
   }
 
   r <- oy_cap / total_catch
+  # Measure the current difference between the rescaled total and the cap.
   total_gap <- function(m) {
     sum(catch * r^(1 / (weights * m))) - oy_cap
   }
@@ -1115,12 +1124,14 @@ ggplot(goa_oy_plot, aes(x = Species, y = pct_reduction, fill = Scenario)) +
 #| eval: true
 library(dsem)
 
+# Convert arbitrary stock labels into safe column-name fragments.
 safe_names <- function(x) {
   x %>%
     gsub("[^A-Za-z0-9]+", "_", ., perl = TRUE) %>%
     gsub("^_|_$", "", ., perl = TRUE)
 }
 
+# Return vertically centered node positions for DAG plots.
 centered_positions <- function(n) {
   if (n <= 1) {
     0
@@ -1129,6 +1140,7 @@ centered_positions <- function(n) {
   }
 }
 
+# Build a static or dynamic DAG showing ABC-to-TAC links for the selected stocks.
 plot_dsem_dag <- function(dep_species, indep_species, dynamic = FALSE) {
   dep_nodes <- paste0("TAC_", safe_names(dep_species))
   indep_nodes <- paste0("ABC_", safe_names(indep_species))
@@ -1195,6 +1207,7 @@ plot_dsem_dag <- function(dep_species, indep_species, dynamic = FALSE) {
 # dsem has changed allowed values for gmrf_parameterization across versions.
 # Choose a value that works for the installed package (GitHub Actions may differ
 # from local).
+# Find a `gmrf_parameterization` value accepted by the installed dsem version.
 choose_gmrf_param <- function() {
   candidates <- c(
     "full", "project", "gmrf_project", "mvn_project", # seen in newer versions
@@ -1210,15 +1223,19 @@ choose_gmrf_param <- function() {
   stop("Could not find a supported gmrf_parameterization value for dsem")
 }
 
+# Apply stored centering and scaling constants to new data.
 scale_with <- function(x, center, scale) {
   sweep(sweep(x, 2, center, "-"), 2, scale, "/")
 }
 
+# Return the last finite value in a numeric vector.
 last_finite <- function(x) {
   x <- x[is.finite(x)]
   if (length(x) == 0) NA_real_ else tail(x, 1)
 }
 
+# Fit a regional DSEM, compute leave-one-out diagnostics, and generate an
+# illustrative forward TAC forecast from observed or supplied ABC scenarios.
 fit_dsem_region <- function(
   data,
   dep_species,
@@ -1268,6 +1285,7 @@ fit_dsem_region <- function(
 
   gmrf_param <- choose_gmrf_param()
 
+  # Try one specific DSEM configuration so callers can loop over fallbacks.
   fit_dsem_once <- function(gmrf, family_opt = NULL) {
     args <- list(
       sem = sem,
@@ -1416,6 +1434,7 @@ fit_dsem_region <- function(
   )
 }
 
+# Refit the DSEM sequentially through time and score one-step-ahead forecasts.
 run_dsem_retrospective <- function(data, dep_species, indep_species, start_year = 2015, seed = 1) {
   full_df <- data %>%
     filter(Species %in% unique(c(dep_species, indep_species))) %>%
@@ -1509,6 +1528,7 @@ run_dsem_retrospective <- function(data, dep_species, indep_species, start_year 
   })
 }
 
+# Re-label raw DSEM coefficient output into management-facing term groups.
 summarize_dsem_results <- function(dsem_summary) {
   dsem_summary %>%
     mutate(
@@ -1523,6 +1543,7 @@ summarize_dsem_results <- function(dsem_summary) {
     select(Group, Term, Estimate, Std_Error, z_value, p_value)
 }
 
+# Render the future ABC inputs and forecast TAC outputs as a gt table.
 render_dsem_forecast_table <- function(region_fit) {
   region_fit$forecast_tbl %>%
     select(Year, starts_with("ABC_"), starts_with("TAC_")) %>%
@@ -1531,6 +1552,7 @@ render_dsem_forecast_table <- function(region_fit) {
     gt::fmt_number(columns = starts_with("TAC_"), decimals = 0)
 }
 
+# Render the grouped DSEM coefficient summary as a gt table.
 render_dsem_summary_table <- function(region_fit) {
   summarize_dsem_results(region_fit$summary) %>%
     gt::gt(rowname_col = "Term", groupname_col = "Group") %>%
@@ -1545,6 +1567,7 @@ render_dsem_summary_table <- function(region_fit) {
     gt::fmt_number(columns = p_value, decimals = 3)
 }
 
+# Back-transform leave-one-out residuals into TAC units for one fitted region.
 extract_dsem_loo_residuals <- function(region_fit, region_name) {
   region_fit$loo_tbl %>%
     filter(Series %in% region_fit$y_cols) %>%
@@ -1560,10 +1583,12 @@ extract_dsem_loo_residuals <- function(region_fit, region_name) {
     select(Region, Year, Species, Observed, Predicted, SE, Residual, Std_Residual)
 }
 
+# Bind leave-one-out residual diagnostics across all fitted regions.
 collect_dsem_loo_residuals <- function(region_fits) {
   purrr::imap_dfr(region_fits, extract_dsem_loo_residuals)
 }
 
+# Summarize leave-one-out residual performance metrics by region and species.
 render_dsem_residual_comparison_table <- function(region_fits) {
   collect_dsem_loo_residuals(region_fits) %>%
     group_by(Region, Species) %>%
@@ -1588,6 +1613,7 @@ render_dsem_residual_comparison_table <- function(region_fits) {
     gt::fmt_number(columns = c(Mean_abs_z, Max_abs_z), decimals = 2)
 }
 
+# Plot standardized leave-one-out residuals through time by species and region.
 plot_dsem_loo_residuals <- function(region_fits) {
   plot_df <- collect_dsem_loo_residuals(region_fits)
 
@@ -1600,10 +1626,12 @@ plot_dsem_loo_residuals <- function(region_fits) {
     labs(x = NULL, y = "Standardized leave-one-out residual")
 }
 
+# Combine retrospective forecast results from each region into one data frame.
 collect_dsem_retrospective <- function(retro_fits) {
   purrr::imap_dfr(retro_fits, ~ mutate(.x, Region = .y), .id = NULL)
 }
 
+# Summarize one-step-ahead retrospective forecast accuracy by region and species.
 render_dsem_retrospective_summary_table <- function(retro_fits) {
   collect_dsem_retrospective(retro_fits) %>%
     filter(Status == "ok") %>%
@@ -1630,6 +1658,7 @@ render_dsem_retrospective_summary_table <- function(retro_fits) {
     gt::fmt_number(columns = MAPE, decimals = 2)
 }
 
+# Plot observed versus retrospective one-step-ahead TAC predictions.
 plot_dsem_retrospective <- function(retro_fits) {
   plot_df <- collect_dsem_retrospective(retro_fits) %>%
     filter(Status == "ok") %>%
@@ -1644,6 +1673,7 @@ plot_dsem_retrospective <- function(retro_fits) {
     labs(x = NULL, y = "TAC", color = NULL)
 }
 
+# Plot in-sample fitted TAC values plus the forward forecast extension.
 plot_dsem_predictions <- function(region_fit) {
   pred_years <- c(region_fit$dsem_df$Year, region_fit$forecast_years)
   pred_df <- as_tibble(region_fit$pred[, region_fit$y_cols]) %>%
