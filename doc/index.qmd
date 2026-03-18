@@ -6,10 +6,12 @@ format:
     toc-depth: 2
     embed-resources: true
     lightbox: true
+    code-fold: true
+    code-summary: "Show code"
   pdf:
     toc: true
 execute:
-  echo: false
+  echo: true
   warning: false
   message: false
 bibliography: ref.bib
@@ -1217,7 +1219,16 @@ last_finite <- function(x) {
   if (length(x) == 0) NA_real_ else tail(x, 1)
 }
 
-fit_dsem_region <- function(data, dep_species, indep_species, n_future = 5, seed = 1) {
+fit_dsem_region <- function(
+  data,
+  dep_species,
+  indep_species,
+  n_future = 5,
+  seed = 1,
+  future_abc_raw = NULL,
+  future_years = NULL,
+  compute_loo = TRUE
+) {
   dsem_df <- data %>%
     filter(Species %in% unique(c(dep_species, indep_species))) %>%
     group_by(Year, Species) %>%
@@ -1313,23 +1324,59 @@ fit_dsem_region <- function(data, dep_species, indep_species, n_future = 5, seed
   }
 
   dsem_summary <- summary(fit)
+  if (isTRUE(compute_loo)) {
+    loo_tbl <- dsem::loo_residuals(fit, what = "loo", track_progress = FALSE) %>%
+      as_tibble() %>%
+      rename(
+        Year = 1,
+        Series = 2,
+        Observed_scaled = obs,
+        Predicted_scaled = est,
+        SE_scaled = se
+      ) %>%
+      mutate(
+        Year = as.numeric(Year),
+        Series = as.character(Series)
+      )
+  } else {
+    loo_tbl <- tibble(
+      Year = numeric(),
+      Series = character(),
+      Observed_scaled = numeric(),
+      Predicted_scaled = numeric(),
+      SE_scaled = numeric()
+    )
+  }
 
-  set.seed(seed)
+  if (is.null(future_abc_raw)) {
+    set.seed(seed)
 
-  last_abc <- vapply(dsem_df[x_cols], last_finite, numeric(1))
-  growth <- setNames(rep(-0.005, length(x_cols)), x_cols)
-  dep_abc_cols <- intersect(paste0("ABC_", dep_safe), x_cols)
-  if (length(dep_abc_cols) >= 1) growth[dep_abc_cols[1]] <- 0.02
-  if (length(dep_abc_cols) >= 2) growth[dep_abc_cols[2]] <- 0.01
+    last_abc <- vapply(dsem_df[x_cols], last_finite, numeric(1))
+    growth <- setNames(rep(-0.005, length(x_cols)), x_cols)
+    dep_abc_cols <- intersect(paste0("ABC_", dep_safe), x_cols)
+    if (length(dep_abc_cols) >= 1) growth[dep_abc_cols[1]] <- 0.02
+    if (length(dep_abc_cols) >= 2) growth[dep_abc_cols[2]] <- 0.01
 
-  noise_sd <- 0.03
+    noise_sd <- 0.03
 
-  new_abc_raw <- sapply(seq_len(n_future), function(h) {
-    eps <- rnorm(length(x_cols), mean = 0, sd = noise_sd)
-    pmax(last_abc * (1 + growth) ^ h * (1 + eps), 1)
-  })
-  new_abc_raw <- t(new_abc_raw)
-  colnames(new_abc_raw) <- x_cols
+    new_abc_raw <- sapply(seq_len(n_future), function(h) {
+      eps <- rnorm(length(x_cols), mean = 0, sd = noise_sd)
+      pmax(last_abc * (1 + growth) ^ h * (1 + eps), 1)
+    })
+    new_abc_raw <- t(new_abc_raw)
+    colnames(new_abc_raw) <- x_cols
+    forecast_years <- max(dsem_df$Year) + seq_len(n_future)
+  } else {
+    new_abc_raw <- future_abc_raw %>%
+      as.data.frame() %>%
+      select(all_of(x_cols))
+    n_future <- nrow(new_abc_raw)
+    forecast_years <- if (is.null(future_years)) {
+      max(dsem_df$Year) + seq_len(n_future)
+    } else {
+      future_years
+    }
+  }
 
   new_abc_scaled <- scale_with(new_abc_raw, ts_center[x_cols], ts_scale[x_cols])
 
@@ -1346,7 +1393,6 @@ fit_dsem_region <- function(data, dep_species, indep_species, n_future = 5, seed
   pred <- sweep(pred_scaled, 2, ts_scale[colnames(pred_scaled)], "*")
   pred <- sweep(pred, 2, ts_center[colnames(pred)], "+")
 
-  forecast_years <- max(dsem_df$Year) + seq_len(n_future)
   pred_tac_future <- tail(pred[, y_cols], n_future)
   forecast_tbl <- as_tibble(new_abc_raw) %>%
     mutate(Year = forecast_years) %>%
@@ -1356,14 +1402,111 @@ fit_dsem_region <- function(data, dep_species, indep_species, n_future = 5, seed
     fit = fit,
     summary = dsem_summary,
     dsem_df = dsem_df,
+    dep_species = dep_species,
     y_cols = y_cols,
     x_cols = x_cols,
     pred = pred,
+    ts_center = ts_center,
+    ts_scale = ts_scale,
+    loo_tbl = loo_tbl,
     n_future = n_future,
     forecast_years = forecast_years,
     forecast_tbl = forecast_tbl,
     fit_notes = fit_notes
   )
+}
+
+run_dsem_retrospective <- function(data, dep_species, indep_species, start_year = 2015, seed = 1) {
+  full_df <- data %>%
+    filter(Species %in% unique(c(dep_species, indep_species))) %>%
+    group_by(Year, Species) %>%
+    summarise(
+      TAC = sum(TAC, na.rm = TRUE),
+      ABC = sum(ABC, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    pivot_wider(
+      names_from = Species,
+      values_from = c(TAC, ABC),
+      names_sep = "_"
+    ) %>%
+    arrange(Year)
+
+  names(full_df) <- safe_names(names(full_df))
+
+  dep_safe <- safe_names(dep_species)
+  indep_safe <- safe_names(indep_species)
+  y_cols <- paste0("TAC_", dep_safe)
+  x_cols <- paste0("ABC_", indep_safe)
+
+  target_years <- full_df %>%
+    filter(Year >= start_year) %>%
+    pull(Year)
+
+  purrr::map_dfr(seq_along(target_years), function(i) {
+    target_year <- target_years[[i]]
+    target_row <- full_df %>%
+      filter(Year == target_year)
+
+    if (nrow(target_row) != 1 || any(!is.finite(unlist(target_row[, x_cols, drop = FALSE])))) {
+      return(tibble(
+        Year = target_year,
+        Training_end = target_year - 1,
+        Species = dep_species,
+        Observed = as.numeric(target_row[, y_cols, drop = FALSE]),
+        Predicted = NA_real_,
+        Error = NA_real_,
+        Abs_Error = NA_real_,
+        APE = NA_real_,
+        Status = "missing_future_abc"
+      ))
+    }
+
+    fit_i <- tryCatch(
+      fit_dsem_region(
+        data = data %>% filter(Year < target_year),
+        dep_species = dep_species,
+        indep_species = indep_species,
+        n_future = 1,
+        seed = seed + i,
+        future_abc_raw = target_row[, x_cols, drop = FALSE],
+        future_years = target_year,
+        compute_loo = FALSE
+      ),
+      error = function(e) e
+    )
+
+    if (inherits(fit_i, "error")) {
+      return(tibble(
+        Year = target_year,
+        Training_end = target_year - 1,
+        Species = dep_species,
+        Observed = as.numeric(target_row[, y_cols, drop = FALSE]),
+        Predicted = NA_real_,
+        Error = NA_real_,
+        Abs_Error = NA_real_,
+        APE = NA_real_,
+        Status = paste0("fit_failed: ", conditionMessage(fit_i))
+      ))
+    }
+
+    predicted <- fit_i$forecast_tbl %>%
+      select(all_of(y_cols))
+
+    tibble(
+      Year = target_year,
+      Training_end = target_year - 1,
+      Species = dep_species,
+      Observed = as.numeric(target_row[, y_cols, drop = FALSE]),
+      Predicted = as.numeric(predicted[1, , drop = FALSE]),
+      Status = "ok"
+    ) %>%
+      mutate(
+        Error = Observed - Predicted,
+        Abs_Error = abs(Error),
+        APE = if_else(Observed != 0, 100 * Abs_Error / abs(Observed), NA_real_)
+      )
+  })
 }
 
 summarize_dsem_results <- function(dsem_summary) {
@@ -1400,6 +1543,105 @@ render_dsem_summary_table <- function(region_fit) {
     gt::fmt_number(columns = c(Estimate, Std_Error), decimals = 3) %>%
     gt::fmt_number(columns = z_value, decimals = 2) %>%
     gt::fmt_number(columns = p_value, decimals = 3)
+}
+
+extract_dsem_loo_residuals <- function(region_fit, region_name) {
+  region_fit$loo_tbl %>%
+    filter(Series %in% region_fit$y_cols) %>%
+    mutate(
+      Region = region_name,
+      Species = region_fit$dep_species[match(Series, region_fit$y_cols)],
+      Observed = Observed_scaled * region_fit$ts_scale[Series] + region_fit$ts_center[Series],
+      Predicted = Predicted_scaled * region_fit$ts_scale[Series] + region_fit$ts_center[Series],
+      SE = SE_scaled * region_fit$ts_scale[Series],
+      Residual = Observed - Predicted,
+      Std_Residual = if_else(SE_scaled > 0, (Observed_scaled - Predicted_scaled) / SE_scaled, NA_real_)
+    ) %>%
+    select(Region, Year, Species, Observed, Predicted, SE, Residual, Std_Residual)
+}
+
+collect_dsem_loo_residuals <- function(region_fits) {
+  purrr::imap_dfr(region_fits, extract_dsem_loo_residuals)
+}
+
+render_dsem_residual_comparison_table <- function(region_fits) {
+  collect_dsem_loo_residuals(region_fits) %>%
+    group_by(Region, Species) %>%
+    summarise(
+      Bias = mean(Residual, na.rm = TRUE),
+      MAE = mean(abs(Residual), na.rm = TRUE),
+      RMSE = sqrt(mean(Residual^2, na.rm = TRUE)),
+      Mean_abs_z = mean(abs(Std_Residual), na.rm = TRUE),
+      Max_abs_z = max(abs(Std_Residual), na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    arrange(Region, Species) %>%
+    gt::gt(rowname_col = "Species", groupname_col = "Region") %>%
+    gt::cols_label(
+      Bias = "Bias",
+      MAE = "MAE",
+      RMSE = "RMSE",
+      Mean_abs_z = "Mean |z|",
+      Max_abs_z = "Max |z|"
+    ) %>%
+    gt::fmt_number(columns = c(Bias, MAE, RMSE), decimals = 0) %>%
+    gt::fmt_number(columns = c(Mean_abs_z, Max_abs_z), decimals = 2)
+}
+
+plot_dsem_loo_residuals <- function(region_fits) {
+  plot_df <- collect_dsem_loo_residuals(region_fits)
+
+  ggplot(plot_df, aes(x = Year, y = Std_Residual)) +
+    geom_hline(yintercept = 0, color = "grey60", linewidth = 0.4) +
+    geom_hline(yintercept = c(-2, 2), color = "firebrick", linetype = "dashed", linewidth = 0.4) +
+    geom_line(color = "steelblue", linewidth = 0.8) +
+    geom_point(color = "steelblue", size = 1.5, alpha = 0.85) +
+    facet_grid(Species ~ Region) +
+    labs(x = NULL, y = "Standardized leave-one-out residual")
+}
+
+collect_dsem_retrospective <- function(retro_fits) {
+  purrr::imap_dfr(retro_fits, ~ mutate(.x, Region = .y), .id = NULL)
+}
+
+render_dsem_retrospective_summary_table <- function(retro_fits) {
+  collect_dsem_retrospective(retro_fits) %>%
+    filter(Status == "ok") %>%
+    group_by(Region, Species) %>%
+    summarise(
+      n_years = n(),
+      Bias = mean(Error, na.rm = TRUE),
+      MAE = mean(Abs_Error, na.rm = TRUE),
+      RMSE = sqrt(mean(Error^2, na.rm = TRUE)),
+      MAPE = mean(APE, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    arrange(Region, Species) %>%
+    gt::gt(rowname_col = "Species", groupname_col = "Region") %>%
+    gt::cols_label(
+      n_years = "Years",
+      Bias = "Bias",
+      MAE = "MAE",
+      RMSE = "RMSE",
+      MAPE = "MAPE (%)"
+    ) %>%
+    gt::fmt_number(columns = n_years, decimals = 0) %>%
+    gt::fmt_number(columns = c(Bias, MAE, RMSE), decimals = 0) %>%
+    gt::fmt_number(columns = MAPE, decimals = 2)
+}
+
+plot_dsem_retrospective <- function(retro_fits) {
+  plot_df <- collect_dsem_retrospective(retro_fits) %>%
+    filter(Status == "ok") %>%
+    pivot_longer(c(Observed, Predicted), names_to = "Series", values_to = "TAC")
+
+  ggplot(plot_df, aes(x = Year, y = TAC, color = Series)) +
+    geom_line(linewidth = 0.9) +
+    geom_point(size = 1.5, alpha = 0.85) +
+    facet_grid(Species ~ Region, scales = "free_y") +
+    scale_color_manual(values = c(Observed = "grey40", Predicted = "steelblue")) +
+    scale_y_continuous(labels = comma) +
+    labs(x = NULL, y = "TAC", color = NULL)
 }
 
 plot_dsem_predictions <- function(region_fit) {
@@ -1445,6 +1687,20 @@ goa_dsem <- fit_dsem_region(
   data = goaOY %>% filter(lag == 1, Species %in% goa_dsem_indep),
   dep_species = goa_dsem_dep,
   indep_species = goa_dsem_indep
+)
+
+bsai_dsem_retro <- run_dsem_retrospective(
+  data = dfOY %>% filter(lag == 1, Species %in% mainspp),
+  dep_species = bsai_dsem_dep,
+  indep_species = bsai_dsem_indep,
+  start_year = 2015
+)
+
+goa_dsem_retro <- run_dsem_retrospective(
+  data = goaOY %>% filter(lag == 1, Species %in% goa_dsem_indep),
+  dep_species = goa_dsem_dep,
+  indep_species = goa_dsem_indep,
+  start_year = 2015
 )
 ```
 
@@ -1495,6 +1751,8 @@ plot_dsem_dag(
 ## DSEM estimates
 In both regions, the DSEM estimates TAC dynamics for Pollock and Pacific cod with two components: (1) AR(1) persistence in each TAC time series and (2) contemporaneous influence of ABC inputs, including both focal-stock ABC and cross-stock ABCs. Models are fit on scaled inputs for stability, then predictions are transformed back to the original TAC units for interpretation. The forecast tables below remain illustrative and use the same simple forward ABC scenario in each region.
 
+We also compare leave-one-out residuals from `dsem::loo_residuals()` for the fitted TAC series. These diagnostics show whether the dynamic model leaves systematic bias or large standardized errors for Pollock and Pacific cod in either region when each year is predicted from the rest of the time series.
+
 ### BSAI
 
 For BSAI, the DSEM uses the seven main stocks (`r paste(bsai_dsem_indep, collapse = ", ")`) as contemporaneous ABC inputs.
@@ -1543,6 +1801,40 @@ render_dsem_summary_table(goa_dsem)
 plot_dsem_predictions(goa_dsem)
 ```
 
+### Leave-one-out residual comparisons
+
+```{r}
+#| label: tbl-dsem-loo-residuals
+#| tbl-cap: "Leave-one-out TAC residual summaries for the BSAI and GOA DSEM fits."
+render_dsem_residual_comparison_table(list(BSAI = bsai_dsem, GOA = goa_dsem))
+```
+
+```{r}
+#| label: fig-dsem-loo-residuals
+#| fig-cap: "Standardized leave-one-out TAC residuals for the BSAI and GOA DSEM fits."
+#| fig-height: 5.5
+#| fig-width: 8
+plot_dsem_loo_residuals(list(BSAI = bsai_dsem, GOA = goa_dsem))
+```
+
+### Retrospective skill test from 2015 onward
+
+For each year from 2015 onward, we refit the DSEM using only data available through the previous year and then forecast that year’s Pollock and Pacific cod TACs using the realized ABC vector for that year. This is a rolling-origin, leave-future-out test of one-step-ahead skill rather than an in-sample fit diagnostic.
+
+```{r}
+#| label: tbl-dsem-retrospective
+#| tbl-cap: "Rolling one-step-ahead DSEM skill from 2015 onward, using only prior history to predict each year."
+render_dsem_retrospective_summary_table(list(BSAI = bsai_dsem_retro, GOA = goa_dsem_retro))
+```
+
+```{r}
+#| label: fig-dsem-retrospective
+#| fig-cap: "Rolling one-step-ahead DSEM forecasts versus observed TAC from 2015 onward."
+#| fig-height: 5.5
+#| fig-width: 8
+plot_dsem_retrospective(list(BSAI = bsai_dsem_retro, GOA = goa_dsem_retro))
+```
+
 
 # Discussion
 ## Projection updates under new data and assessment
@@ -1555,6 +1847,106 @@ Interim management procedure (MP) work reframes the problem by explicitly separa
 This framing is directly relevant to BSAI groundfish, where large stocks (pollock, cod, flatfish) dominate total ABC and where management stability is highly valued. Multi-year ABCs smooth year-to-year variability, but smoothing pushes uncertainty forward in time. When a subsequent assessment revises recruitment trajectories or selectivity patterns, the resulting adjustment can appear disproportionate relative to the modest interim changes that preceded it. The Canadian and U.S. guidance documents emphasize that this tension is intrinsic: stability and responsiveness trade off, and neither can be maximized simultaneously [@Krohn2019DFOInterim; @MAFMC2012MultiYearABC; @SEDAR2022Projections].
 
 The ICES and MSE-oriented literature adds an important synthesis [@ICESAdviceFramework]. Geromont and Butterworth [@Geromont2015ComplexVsSimple] and Walter et al. [@Walter2023WhenMSE] show that systems relying on simple, pre-tested update rules often experience smaller and more interpretable snaps than systems that defer all learning to infrequent, high-dimensional assessments. In that sense, forecast-to-assimilation snap is best understood as a design property of the advice system, not merely an outcome of assessment error. For BSAI groundfish, this perspective motivates explicit evaluation of how multi-year projections, rollover rules, and interim updates distribute learning over time—shaping not only biological risk, but also the credibility and usability of scientific advice.
+
+
+# Appendix
+## Function catalog
+
+This appendix documents the custom functions defined in this report. The two `safe_names()` definitions are intentionally duplicated so the regression and DSEM chunks can run independently during rendering.
+
+```{r}
+#| label: tbl-function-catalog
+#| tbl-cap: "Catalog of custom functions defined in the report."
+function_catalog <- tibble::tribble(
+  ~Workflow, ~Function, ~Scope, ~Purpose,
+  "Exploratory plots", "lower_points_smooth", "top-level", "Helper for `GGally::ggpairs()` lower panels with points plus a loess smooth.",
+  "Regression", "safe_names", "top-level", "Sanitizes species and column names into ASCII-safe identifiers for regression design matrices.",
+  "Regression", "fit_tac_abc_regressions", "top-level", "Builds grouped TAC/ABC data, fits stock-specific log-linear regressions, and returns coefficient and prediction objects.",
+  "Regression", "render_regression_table", "top-level", "Formats regression coefficients and fit statistics with `gt`.",
+  "Regression", "plot_regression_predictions", "top-level", "Plots observed versus predicted TAC trajectories from the regression fits.",
+  "GOA OY cap", "rescale_oy_cap", "top-level", "Implements weighted cap rescaling and returns the rescaled catch vector plus the solved multiplier.",
+  "GOA OY cap", "total_gap", "nested in `rescale_oy_cap()`", "Objective helper used in the bisection search to match the aggregate OY cap.",
+  "DSEM", "safe_names", "top-level", "Sanitizes species and state names used to build DSEM series names and path labels.",
+  "DSEM", "centered_positions", "top-level", "Creates vertically centered node positions for static and dynamic DAG plots.",
+  "DSEM", "plot_dsem_dag", "top-level", "Builds static or dynamic DAG visualizations of the DSEM structure with `ggdag`.",
+  "DSEM", "choose_gmrf_param", "top-level", "Finds a `gmrf_parameterization` value accepted by the installed `dsem` version.",
+  "DSEM", "scale_with", "top-level", "Applies stored centering and scaling constants to new predictor matrices.",
+  "DSEM", "last_finite", "top-level", "Returns the last finite value in a series, used to seed the forward ABC scenario.",
+  "DSEM", "fit_dsem_region", "top-level", "Prepares regional multivariate time series, fits the DSEM, computes forecasts, and caches leave-one-out residual output.",
+  "DSEM", "fit_dsem_once", "nested in `fit_dsem_region()`", "Small wrapper that calls `dsem::dsem()` for one GMRF/family combination.",
+  "DSEM skill testing", "run_dsem_retrospective", "top-level", "Runs a rolling one-step-ahead retrospective from 2015 onward by fitting each target year only on prior history.",
+  "DSEM", "summarize_dsem_results", "top-level", "Re-labels and groups `summary(fit)` output into interpretable DSEM coefficient categories.",
+  "DSEM", "render_dsem_forecast_table", "top-level", "Formats the illustrative future ABC/TAC scenario table.",
+  "DSEM", "render_dsem_summary_table", "top-level", "Formats the DSEM coefficient summary table with `gt`.",
+  "DSEM residuals", "extract_dsem_loo_residuals", "top-level", "Back-transforms TAC leave-one-out predictions and residuals for one regional fit.",
+  "DSEM residuals", "collect_dsem_loo_residuals", "top-level", "Combines leave-one-out residual data across multiple regional DSEM fits.",
+  "DSEM residuals", "render_dsem_residual_comparison_table", "top-level", "Summarizes bias, MAE, RMSE, and standardized residual magnitudes across regions and species.",
+  "DSEM residuals", "plot_dsem_loo_residuals", "top-level", "Plots standardized leave-one-out TAC residuals through time.",
+  "DSEM skill testing", "collect_dsem_retrospective", "top-level", "Combines rolling one-step-ahead results across regional retrospective runs.",
+  "DSEM skill testing", "render_dsem_retrospective_summary_table", "top-level", "Summarizes rolling retrospective skill using bias, MAE, RMSE, and MAPE.",
+  "DSEM skill testing", "plot_dsem_retrospective", "top-level", "Plots observed TAC against rolling one-step-ahead DSEM forecasts from 2015 onward.",
+  "DSEM", "plot_dsem_predictions", "top-level", "Plots observed and predicted TAC values from fitted and forecast DSEM output."
+)
+
+function_catalog %>%
+  gt::gt(rowname_col = "Function", groupname_col = "Workflow") %>%
+  gt::cols_label(
+    Scope = "Scope",
+    Purpose = "Purpose"
+  ) %>%
+  gt::cols_width(
+    Scope ~ gt::px(180),
+    Purpose ~ gt::px(540)
+  )
+```
+
+## DSEM package specifics
+
+The DSEM portion of the report depends on package-specific behavior in `dsem`, especially around model specification, version compatibility, prediction, and residual diagnostics. The table below records the main package interfaces and how they are used here.
+
+```{r}
+#| label: tbl-dsem-package-notes
+#| tbl-cap: "DSEM package interfaces and implementation details used in this report."
+dsem_package_notes <- tibble::tribble(
+  ~Topic, ~Package_interface, ~How_used_here, ~Why_it_matters,
+  "Model fitting", "`dsem::dsem()`", "Fits each regional multivariate TAC-ABC time series after converting the data frame to a scaled `ts` object.", "This is the core model fit that produces latent states, coefficient summaries, and predictions.",
+  "Version compatibility", "`dsem::dsem_control(gmrf_parameterization = ...)`", "The helper `choose_gmrf_param()` tests several candidate values because accepted names differ across installed package versions.", "Without this compatibility layer, the same report can fail locally or in CI when `dsem` changes its control vocabulary.",
+  "SEM specification", "line-based SEM string", "Autoregressive TAC paths and contemporaneous ABC-to-TAC paths are concatenated into the `sem` string passed to `dsem()`.", "The report constructs the model explicitly rather than relying on a canned template, so the path structure is transparent in the source.",
+  "State initialization", "`estimate_delta0 = TRUE`", "Enabled for both BSAI and GOA fits inside `fit_dsem_region()`.", "This lets the model estimate initial state offsets rather than forcing a fixed starting value.",
+  "Standardization", "base `scale()` plus stored centers/scales", "All TAC and ABC series are fit on a common scaled basis, then predictions and leave-one-out outputs are transformed back to TAC units for display.", "Scaling improves optimizer stability and makes coefficients comparable across series with very different magnitudes.",
+  "Prediction", "`predict(fit, newdata = ..., type = \"response\")`", "Used after appending future ABC scenarios with missing TAC values to obtain fitted-plus-forecast TAC paths.", "This provides a single prediction pass covering observed years and the illustrative forecast horizon.",
+  "Retrospective skill", "rolling one-step-ahead refits", "For each year from 2015 onward, the report refits the DSEM on data through `year - 1` and predicts that year using the realized ABC vector.", "This is the leave-future-out skill test in the DSEM section and gives a stricter assessment than full-sample fitted values.",
+  "Fallback fit strategy", "candidate GMRF and family loop", "The code tries multiple GMRF parameterizations and both default and Gaussian family settings before failing.", "This makes the document more robust to package and platform differences without changing the scientific specification.",
+  "Coefficient summaries", "`summary(fit)`", "The raw summary output is regrouped into autoregressive and ABC-to-TAC terms before rendering.", "The package summary is machine-oriented; the report labels it in management-facing terms.",
+  "LOO residual diagnostics", "`dsem::loo_residuals(fit, what = \"loo\")`", "The report uses the returned table of observed values, leave-one-out estimates, and standard errors, then back-transforms TAC series and computes standardized residuals.", "This provides a package-native cross-check on fit quality that is more stringent than in-sample residual inspection.",
+  "Residual scale handling", "`obs`, `est`, and `se` columns from `loo_residuals()`", "Residual summaries are computed as TAC-unit errors after back-transformation, while standardized residuals remain on the scaled latent-state basis.", "Keeping both scales separates management-scale error magnitude from model-based z-score diagnostics."
+)
+
+dsem_package_notes %>%
+  gt::gt(rowname_col = "Topic") %>%
+  gt::cols_label(
+    Package_interface = "Package interface",
+    How_used_here = "How used here",
+    Why_it_matters = "Why it matters"
+  ) %>%
+  gt::cols_width(
+    Package_interface ~ gt::px(180),
+    How_used_here ~ gt::px(300),
+    Why_it_matters ~ gt::px(300)
+  )
+```
+
+## DSEM object contents used by the report
+
+For the regional DSEM fits, the report retains a small structured list rather than passing the raw `dsem` fit object through every downstream chunk. The most important retained components are:
+
+- `fit`: the original fitted `dsem` object, needed for any additional package-native inspection.
+- `summary`: the coefficient summary returned by `summary(fit)`.
+- `dsem_df`, `y_cols`, and `x_cols`: the regional data frame and the TAC/ABC series names used to build the model.
+- `pred`, `forecast_years`, and `forecast_tbl`: fitted values plus the illustrative forward ABC scenario and resulting TAC forecasts.
+- `ts_center` and `ts_scale`: the centering and scaling constants required to back-transform predictions and leave-one-out residuals.
+- `loo_tbl`: the leave-one-out residual table returned by `dsem::loo_residuals(..., what = "loo")`.
+- `fit_notes`: a log of which GMRF/family combinations failed or succeeded during fitting.
 
 
 # References
