@@ -33,6 +33,7 @@ data_root <- if (file.exists(file.path("..", "data", "BSAI_OFL_ABC_TAC.csv"))) {
 }
 
 df <- read_csv(file.path(data_root, "BSAI_OFL_ABC_TAC.csv"), show_col_types = FALSE)
+ebs_pollock_catch <- read_csv(file.path(data_root, "Catch1991-2025.csv"), show_col_types = FALSE)
 
 #goaraw <- read_csv(file.path(data_root, "GOA_OFL_ABC_TAC.csv"), show_col_types = FALSE)
 goaraw <- read_csv(file.path(data_root, "GOA_OFL_ABC_TAC_specs.csv"), show_col_types = FALSE)
@@ -283,7 +284,7 @@ Here we show simple annual BSAI totals for TAC, ABC, and OFL (lag 1, OY = 1), su
 
 ```{r}
 #| label: fig-bsai-totals
-#| fig-cap: "BSAI totals by year (sum across species): TAC, ABC, and OFL."
+#| fig-cap: "BSAI totals by year (sum across species): TAC, ABC, and OFL, with EBS pollock catch overlaid from 1991-2025."
 #| fig-height: 4.5
 #| fig-width: 7
 
@@ -298,14 +299,16 @@ bsaiyr <- dfOY %>%
     n_ABC = sum(!is.na(ABC)),
     n_OFL = sum(!is.na(OFL)),
     .groups = "drop"
-  )
+  ) %>%
+  left_join(ebs_pollock_catch, by = "Year")
 
 plot_bsai <- bsaiyr %>%
-  select(Year, TAC, ABC, OFL) %>%
+  select(Year, TAC, ABC, OFL, Catch) %>%
   pivot_longer(-Year, names_to = "Measure", values_to = "value") %>%
   mutate(
     value = na_if(value, 0),
-    Measure = factor(Measure, levels = c("TAC", "ABC", "OFL"))
+    Measure = recode(Measure, Catch = "EBS pollock catch"),
+    Measure = factor(Measure, levels = c("TAC", "ABC", "OFL", "EBS pollock catch"))
   )
 
 ggplot(plot_bsai, aes(x = Year, y = value / 1000, color = Measure)) +
